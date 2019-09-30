@@ -1,9 +1,9 @@
 package scc.srv;
 
+import utils.Secrets;
+
 import com.microsoft.azure.storage.CloudStorageAccount;
-import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
-import com.microsoft.azure.storage.blob.CloudBlobContainer;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -15,7 +15,7 @@ import java.util.Set;
 @ApplicationPath("/")
 public class MainApplication extends Application {
 
-    public static String storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=ccsbackend47967;AccountKey=GMFXjCsXBa2iGrLslyuQ3yeugh/uEFoTzdp/F/25J3y0Bev4dyGpm3kOCgiic5wMWtEBwZKJsflsM+aMlmSBBw==;EndpointSuffix=core.windows.net";
+    public static String storageConnectionString = Secrets.AZURE_STORAGE_KEY;
     public static CloudStorageAccount storageAccount;
     public static CloudBlobClient blobClient;
 
