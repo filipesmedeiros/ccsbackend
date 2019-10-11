@@ -1,2 +1,6 @@
 D:\faculdade\ccs\lab1\scc-backend\src\scc\srv\MainApplication.java
+D:\faculdade\ccs\lab1\scc-backend\src\utils\Storage.java
+D:\faculdade\ccs\lab1\scc-backend\src\exceptions\ErrorConnectingToDatabaseException.java
+D:\faculdade\ccs\lab1\scc-backend\src\utils\Secrets.java
 D:\faculdade\ccs\lab1\scc-backend\src\scc\srv\MediaResource.java
+D:\faculdade\ccs\lab1\scc-backend\src\exceptions\ContainerDoesNotExistException.java

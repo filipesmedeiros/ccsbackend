@@ -1,9 +1,8 @@
 package scc.srv;
 
-import utils.Secrets;
-
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
+import utils.Secrets;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -15,26 +14,21 @@ import java.util.Set;
 @ApplicationPath("/")
 public class MainApplication extends Application {
 
-    public static String storageConnectionString = Secrets.AZURE_STORAGE_KEY;
-    public static CloudStorageAccount storageAccount;
+    private static CloudStorageAccount storage;
     public static CloudBlobClient blobClient;
 
-    public static void initializeStorageConnection()
+    public static void initializeStorage()
             throws URISyntaxException, InvalidKeyException {
-        if(storageAccount == null)
-            try {
-                storageAccount = CloudStorageAccount.parse(storageConnectionString);
-            } catch(InvalidKeyException ike) {
-                System.out.println("Invalid storageConnectionString. Try again.");
-                ike.printStackTrace();
-                throw ike;
-            } catch(URISyntaxException use) {
-                System.out.println("Invalid URI. Try again.");
-                use.printStackTrace();
-                throw use;
-            }
+        try {
+            if(storage == null)
+                storage = CloudStorageAccount.parse(Secrets.AZURE_STORAGE_KEY);
+        } catch(URISyntaxException | InvalidKeyException e) {
+            System.out.println("Something went wrong with init storage. Check key.");
+            e.printStackTrace();
+            throw e;
+        }
         if(blobClient == null)
-            blobClient = storageAccount.createCloudBlobClient();
+            blobClient = storage.createCloudBlobClient();
     }
 
     @Override
