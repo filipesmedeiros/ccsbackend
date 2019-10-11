@@ -1,6 +1,6 @@
-scc\srv\MainApplication.class
-scc\srv\MediaResource.class
-exceptions\ContainerDoesNotExistException.class
-utils\Secrets.class
-utils\Storage.class
-exceptions\ErrorConnectingToDatabaseException.class
+utils/Secrets.class
+exceptions/ContainerDoesNotExistException.class
+scc/srv/MainApplication.class
+exceptions/ErrorConnectingToDatabaseException.class
+scc/srv/MediaResource.class
+utils/Storage.class

@@ -1,6 +1,6 @@
-D:\faculdade\ccs\lab1\scc-backend\src\scc\srv\MainApplication.java
-D:\faculdade\ccs\lab1\scc-backend\src\utils\Storage.java
-D:\faculdade\ccs\lab1\scc-backend\src\exceptions\ErrorConnectingToDatabaseException.java
-D:\faculdade\ccs\lab1\scc-backend\src\utils\Secrets.java
-D:\faculdade\ccs\lab1\scc-backend\src\scc\srv\MediaResource.java
-D:\faculdade\ccs\lab1\scc-backend\src\exceptions\ContainerDoesNotExistException.java
+/Users/fran/Desktop/ccsbackend/src/exceptions/ErrorConnectingToDatabaseException.java
+/Users/fran/Desktop/ccsbackend/src/exceptions/ContainerDoesNotExistException.java
+/Users/fran/Desktop/ccsbackend/src/utils/Secrets.java
+/Users/fran/Desktop/ccsbackend/src/utils/Storage.java
+/Users/fran/Desktop/ccsbackend/src/scc/srv/MainApplication.java
+/Users/fran/Desktop/ccsbackend/src/scc/srv/MediaResource.java

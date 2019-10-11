@@ -17,6 +17,7 @@ public class MediaResource {
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_JSON)
     public String upload(byte[] data) {
+        System.out.println("Ola mundo");
         try {
             return Storage.upload(data, "user-avatar", true);
         } catch (ErrorConnectingToDatabaseException | StorageException e) {
@@ -29,9 +30,11 @@ public class MediaResource {
     }
 
     @GET
+    @Path("/{blobId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public byte[] download(String blobId) {
+    public byte[] download(@PathParam("blobId") String blobId) {
+        System.out.println("Ola mundo");
         try {
             return Storage.download(blobId, "user-avatar");
         } catch (ErrorConnectingToDatabaseException e) {
