@@ -1,3 +1,4 @@
 src/utils.Secrets.java
 target/*
 /target/
+.DS_Store
