@@ -2,3 +2,5 @@ src/utils.Storage.java
 target/*
 /target/
 .DS_Store
+.idea
+.idea/*
