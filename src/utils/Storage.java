@@ -15,13 +15,15 @@ import java.util.Arrays;
 
 public class Storage {
 
-    public static String upload(byte[] data, String container, boolean override)
+    private static final String CONTAINER = "images";
+
+    public static String upload(byte[] data, boolean override)
             throws ErrorConnectingToDatabaseException, URISyntaxException, StorageException, InvalidKeyException {
 
         MainApplication.initializeStorage();
 
         try {
-            CloudBlobContainer blobContainer = MainApplication.blobClient.getContainerReference(container);
+            CloudBlobContainer blobContainer = MainApplication.blobClient.getContainerReference(CONTAINER);
             blobContainer.createIfNotExists(BlobContainerPublicAccessType.BLOB,
                     new BlobRequestOptions(),
                     new OperationContext());
@@ -35,31 +37,31 @@ public class Storage {
         } catch (StorageException | URISyntaxException e) {
             e.printStackTrace();
             throw e;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
             throw new ErrorConnectingToDatabaseException();
         }
     }
 
-    public static byte[] download(String blobId, String container)
+    public static byte[] download(String blobId)
             throws ContainerDoesNotExistException, URISyntaxException,
             InvalidKeyException, ErrorConnectingToDatabaseException {
 
         MainApplication.initializeStorage();
 
         try{
-            CloudBlobContainer blobContainer = MainApplication.blobClient.getContainerReference(container);
+            CloudBlobContainer blobContainer = MainApplication.blobClient.getContainerReference(CONTAINER);
             if(!blobContainer.exists())
                 throw new ContainerDoesNotExistException();
             CloudBlob blob = blobContainer.getBlobReferenceFromServer(blobId);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             blob.download(out);
             return out.toByteArray();
-        } catch(URISyntaxException e) {
-            e.printStackTrace();
-            throw e;
-        } catch(StorageException e) {
-            e.printStackTrace();
+        } catch(URISyntaxException urise) {
+            urise.printStackTrace();
+            throw urise;
+        } catch(StorageException se) {
+            se.printStackTrace();
             throw new ErrorConnectingToDatabaseException();
         }
     }

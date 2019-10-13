@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="ccsbackend-0.0.1-SNAPSHOT.war">
+    <root id="archive" name="scc-backend-0.0.1-SNAPSHOT.war">
       <element id="artifact" artifact-name="ccsbackend:war exploded" />
     </root>
   </artifact>

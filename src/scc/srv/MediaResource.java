@@ -17,9 +17,8 @@ public class MediaResource {
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_JSON)
     public String upload(byte[] data) {
-        System.out.println("Ola mundo");
         try {
-            return Storage.upload(data, "user-avatar", true);
+            return Storage.upload(data, false);
         } catch (ErrorConnectingToDatabaseException | StorageException e) {
             e.printStackTrace();
             throw new ServiceUnavailableException();
@@ -34,9 +33,8 @@ public class MediaResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public byte[] download(@PathParam("blobId") String blobId) {
-        System.out.println("Ola mundo");
         try {
-            return Storage.download(blobId, "user-avatar");
+            return Storage.download(blobId);
         } catch (ErrorConnectingToDatabaseException e) {
             e.printStackTrace();
             throw new ServiceUnavailableException();
