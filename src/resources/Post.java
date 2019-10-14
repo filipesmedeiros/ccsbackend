@@ -9,10 +9,11 @@ import java.util.Date;
 
 public class Post extends Document {
 
-    private String subreddit, opUsername, title, text, imageUrl;
-    private Date creationDate;
+    public String subreddit, opUsername, title, text, imageUrl;
+    public Date creationDate;
 
     public Post(String subreddit, String opUsername, String title, String text, String imageUrl, Date creationDate) {
+        super();
         this.subreddit = subreddit;
         this.opUsername = opUsername;
         this.title = title;

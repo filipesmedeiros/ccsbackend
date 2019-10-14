@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 
 @Path("/images")
-public class ImageResource {
+public class ImagesResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)

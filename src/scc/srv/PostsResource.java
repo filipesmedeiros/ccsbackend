@@ -1,9 +1,8 @@
 package scc.srv;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.azure.cosmosdb.Document;
+import com.microsoft.azure.cosmosdb.RequestOptions;
 import resources.Post;
-import resources.User;
 import utils.Database;
 
 import javax.ws.rs.*;
@@ -11,7 +10,6 @@ import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.Date;
 
-import static resources.Post.fromJson;
 
 @Path("/posts")
 public class PostsResource {
@@ -24,13 +22,12 @@ public class PostsResource {
     public String addPost(String jsonPost) {
         try {
             System.out.println(jsonPost);
-            Post post = fromJson(jsonPost, new Date());
-            //User user = new User();
-            //user.setName("amigo");
+            Post post = Post.fromJson(jsonPost, new Date());
             System.out.println(post.getCreationDate());
             System.out.println(post.getSubreddit());
             System.out.println(post.getOpUsername());
-            return Database.createResource(POST_COL, post, null, false);
+            Document postDoc = new Document(jsonPost);
+            return Database.createResource(POST_COL, postDoc, new RequestOptions(), true);
         } catch (IOException e) {
             e.printStackTrace();
             throw new BadRequestException();

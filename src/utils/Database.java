@@ -32,14 +32,17 @@ public class Database {
         initializeDatabase();
 
         String collection = getCollectionString(col);
-        Observable<ResourceResponse<Document>> resp = dbClient.createDocument(collection, doc, requestOptions, autoGenId);
+
+        System.out.println(doc.get("title"));
+
+        Observable<ResourceResponse<Document>> resp = dbClient.createDocument(collection, doc, requestOptions, !autoGenId);
         return resp.toBlocking().first().getResource().getId();
     }
+
     /*
     public Document getResource(String col, String query) {
         String collection = getCollectionString(col);
 
     }
     */
-
 }
