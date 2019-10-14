@@ -1,9 +1,8 @@
 package utils;
 
-import com.microsoft.azure.cosmosdb.ConnectionMode;
-import com.microsoft.azure.cosmosdb.ConnectionPolicy;
-import com.microsoft.azure.cosmosdb.ConsistencyLevel;
+import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
+import rx.Observable;
 
 public class Database {
 
@@ -11,7 +10,7 @@ public class Database {
     private static final String AZURE_DB_ID = "ccsbackend-database";
     private static AsyncDocumentClient dbClient;
 
-    static synchronized AsyncDocumentClient initializeDatabase() {
+    private static synchronized AsyncDocumentClient initializeDatabase() {
         if (dbClient == null) {
             ConnectionPolicy connectionPolicy = new ConnectionPolicy();
             connectionPolicy.setConnectionMode(ConnectionMode.Direct);
@@ -24,7 +23,23 @@ public class Database {
         return dbClient;
     }
 
-    static String getCollectionString(String col) {
+    private static String getCollectionString(String col) {
+
         return String.format("/dbs/%s/colls/%s", AZURE_DB_ID, col);
     }
+
+    public static String createResource(String col, Document doc, RequestOptions requestOptions, boolean autoGenId) {
+        initializeDatabase();
+
+        String collection = getCollectionString(col);
+        Observable<ResourceResponse<Document>> resp = dbClient.createDocument(collection, doc, requestOptions, autoGenId);
+        return resp.toBlocking().first().getResource().getId();
+    }
+    /*
+    public Document getResource(String col, String query) {
+        String collection = getCollectionString(col);
+
+    }
+    */
+
 }
