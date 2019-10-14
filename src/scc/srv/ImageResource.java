@@ -10,8 +10,8 @@ import javax.ws.rs.core.MediaType;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 
-@Path("/media")
-public class MediaResource {
+@Path("/images")
+public class ImageResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)

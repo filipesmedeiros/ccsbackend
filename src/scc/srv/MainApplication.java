@@ -14,27 +14,11 @@ import java.util.Set;
 @ApplicationPath("/")
 public class MainApplication extends Application {
 
-    private static CloudStorageAccount storage;
-    public static CloudBlobClient blobClient;
-
-    public static void initializeStorage()
-            throws URISyntaxException, InvalidKeyException {
-        try {
-            if(storage == null)
-                storage = CloudStorageAccount.parse(Secrets.AZURE_STORAGE_KEY);
-        } catch(URISyntaxException | InvalidKeyException e) {
-            System.out.println("Something went wrong with init storage. Check key.");
-            e.printStackTrace();
-            throw e;
-        }
-        if(blobClient == null)
-            blobClient = storage.createCloudBlobClient();
-    }
-
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> set = new HashSet<>();
-        set.add(MediaResource.class);
+        set.add(ImageResource.class);
+        set.add(PostsResource.class);
         return set;
     }
 }
