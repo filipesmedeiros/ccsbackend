@@ -4,6 +4,8 @@ import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
 import rx.Observable;
 
+import java.util.Iterator;
+
 public class Database {
 
     private static final String AZURE_DB_ENDPOINT = "https://ccsbackend-database.documents.azure.com:443/";
@@ -36,10 +38,18 @@ public class Database {
         return resp.toBlocking().first().getResource().getId();
     }
 
-    /*
-    public Document getResource(String col, String query) {
+    public static Iterator<FeedResponse<Document>> getResource(String col, String query) {
         String collection = getCollectionString(col);
 
+        FeedOptions queryOptions = new FeedOptions();
+        queryOptions.setEnableCrossPartitionQuery(true);
+        queryOptions.setMaxDegreeOfParallelism(-1);
+
+        return dbClient.queryDocuments(collection, query, queryOptions)
+                .toBlocking()
+                .getIterator();
+
+
     }
-    */
+
 }

@@ -9,11 +9,12 @@ import java.util.Date;
 
 public class Post extends Document {
 
-    public String subreddit, opUsername, title, text, imageUrl;
+    public String postId, subreddit, opUsername, title, text, imageUrl;
     public Date creationDate;
 
-    public Post(String subreddit, String opUsername, String title, String text, String imageUrl, Date creationDate) {
+    public Post(String postId,String subreddit, String opUsername, String title, String text, String imageUrl, Date creationDate) {
         super();
+        this.postId = postId;
         this.subreddit = subreddit;
         this.opUsername = opUsername;
         this.title = title;
@@ -74,7 +75,8 @@ public class Post extends Document {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(jsonPost);
 
-        return new Post(jsonNode.get("subreddit").asText(),
+        return new Post(jsonNode.get("postId").asText(),
+                        jsonNode.get("subreddit").asText(),
                         jsonNode.get("opUsername").asText(),
                         jsonNode.get("title").asText(),
                         jsonNode.get("text").asText(),
