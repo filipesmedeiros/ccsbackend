@@ -1,10 +1,15 @@
 package utils;
 
+import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
+import resources.Post;
 import rx.Observable;
 
+import javax.print.Doc;
+import javax.ws.rs.NotFoundException;
 import java.util.Iterator;
+import java.util.List;
 
 public class Database {
 
@@ -38,18 +43,27 @@ public class Database {
         return resp.toBlocking().first().getResource().getId();
     }
 
-    public static Iterator<FeedResponse<Document>> getResource(String col, String query) {
+    public static String getResourceJson(String col, String query) {
         String collection = getCollectionString(col);
 
         FeedOptions queryOptions = new FeedOptions();
         queryOptions.setEnableCrossPartitionQuery(true);
         queryOptions.setMaxDegreeOfParallelism(-1);
 
-        return dbClient.queryDocuments(collection, query, queryOptions)
+        Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection, query, queryOptions)
                 .toBlocking()
                 .getIterator();
 
-
+        while(it.hasNext()) {
+            List<Document> documentsInFragment = it.next().getResults();
+            System.out.println(documentsInFragment.size());
+            if(documentsInFragment.size() > 0) {
+                Document d = documentsInFragment.get(0);
+                String docJson = d.toJson();
+                System.out.println(d.toJson());
+                return docJson;
+            }
+        }
+        throw new NotFoundException();
     }
-
 }

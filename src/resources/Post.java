@@ -1,27 +1,11 @@
 package resources;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.azure.cosmosdb.Document;
-
-import java.io.IOException;
 import java.util.Date;
 
-public class Post extends Document {
+public class Post {
 
-    public String postId, subreddit, opUsername, title, text, imageUrl;
+    private String id, subreddit, opUsername, title, text, imageUrl;
     public Date creationDate;
-
-    public Post(String postId,String subreddit, String opUsername, String title, String text, String imageUrl, Date creationDate) {
-        super();
-        this.postId = postId;
-        this.subreddit = subreddit;
-        this.opUsername = opUsername;
-        this.title = title;
-        this.text = text;
-        this.imageUrl = imageUrl;
-        this.creationDate = creationDate;
-    }
 
     public String getSubreddit() {
         return subreddit;
@@ -71,16 +55,11 @@ public class Post extends Document {
         this.creationDate = creationDate;
     }
 
-    public static Post fromJson(String jsonPost, Date date) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(jsonPost);
+    public String getId() {
+        return id;
+    }
 
-        return new Post(jsonNode.get("postId").asText(),
-                        jsonNode.get("subreddit").asText(),
-                        jsonNode.get("opUsername").asText(),
-                        jsonNode.get("title").asText(),
-                        jsonNode.get("text").asText(),
-                        jsonNode.get("imageUrl").asText(),
-                        date);
+    public void setId(String id) {
+        this.id = id;
     }
 }
