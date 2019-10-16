@@ -1,12 +1,12 @@
 package resources;
 
-import java.util.Date;
+import com.microsoft.azure.cosmosdb.Document;
 
 public class Post {
 
     private String id, subreddit, opUsername, title, text, imageUrl;
     public long creationDate;
-    public int likes, dislikes, karma;
+    public int upvotes, downvotes, karma;
 
     public String getSubreddit() {
         return subreddit;
@@ -20,20 +20,20 @@ public class Post {
         return opUsername;
     }
 
-    public int getLikes() {
-        return likes;
+    public int getUpvotes() {
+        return upvotes;
     }
 
-    public void setLikes(int likes) {
-        this.likes = likes;
+    public void setUpvotes(int upvotes) {
+        this.upvotes = upvotes;
     }
 
-    public int getDislikes() {
-        return dislikes;
+    public int getDownvotes() {
+        return downvotes;
     }
 
-    public void setDislikes(int dislikes) {
-        this.dislikes = dislikes;
+    public void setDownvotes(int downvotes) {
+        this.downvotes = downvotes;
     }
 
     public int getKarma() {
@@ -86,5 +86,31 @@ public class Post {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Document toDocument() {
+        Document doc = new Document();
+        doc.setId(id);
+        doc.set("subreddit", subreddit);
+        doc.set("opUsername", opUsername);
+        doc.set("text", text);
+        doc.set("title", title);
+        doc.set("imageUrl", imageUrl);
+        doc.set("creationDate", creationDate);
+        doc.set("upvotes", upvotes);
+        doc.set("downvotes", downvotes);
+        doc.set("karma", karma);
+        return doc;
+    }
+
+    public Post swapOneVote(boolean up) {
+        if(up) {
+            upvotes++;
+            downvotes--;
+        } else {
+            upvotes--;
+            downvotes++;
+        }
+        return this;
     }
 }

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.Document;
 import com.microsoft.azure.cosmosdb.RequestOptions;
 import resources.Post;
+import resources.PostVote;
 import utils.Database;
 
 import javax.ws.rs.*;
@@ -14,7 +15,8 @@ import java.util.Date;
 @Path("/posts")
 public class PostsResource {
 
-    private static final String POST_COL = "Posts";
+    public static final String POST_COL = "Posts";
+    public static final String POSTVOTE_COL = "PostVotes";
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -41,36 +43,81 @@ public class PostsResource {
         return new Gson().fromJson(postJson, Post.class);
     }
 
-    @POST
-    @Path("/setlike")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public String setLike() {
-        return "";
-    }
+    @Path("/{postId}")
+    private class Votes {
 
-    @POST
-    @Path("/unsetlike")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public String unsetLike() {
-        return "";
-    }
+        @POST
+        @Path("/setupvote")
+        @Consumes(MediaType.APPLICATION_JSON)
+        @Produces(MediaType.APPLICATION_JSON)
+        public String setLike(@PathParam("postId") String postId, String jsonUsername) {
+            return addPostVote(postId, jsonUsername, true);
+        }
 
-    @POST
-    @Path("/setdislike")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public String setDislike() {
-        return "";
-    }
+        @POST
+        @Path("/unsetupvote")
+        @Consumes(MediaType.APPLICATION_JSON)
+        @Produces(MediaType.APPLICATION_JSON)
+        public void unsetLike(@PathParam("postId") String postId, String jsonUsername) {
+            deletePostVote(postId, jsonUsername);
+        }
 
-    @POST
-    @Path("/unsetdislike")
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
-    public String unsetDislike() {
-        return "";
-    }
+        @POST
+        @Path("/setdownvote")
+        @Consumes(MediaType.APPLICATION_JSON)
+        @Produces(MediaType.APPLICATION_JSON)
+        public String setDislike(@PathParam("postId") String postId, String jsonUsername) {
+            return addPostVote(postId, jsonUsername, false);
+        }
 
+        @POST
+        @Path("/unsetdownvote")
+        @Consumes(MediaType.APPLICATION_JSON)
+        @Produces(MediaType.APPLICATION_JSON)
+        public void unsetDislike(@PathParam("postId") String postId, String jsonUsername) {
+            deletePostVote(postId, jsonUsername);
+        }
+
+        // TODO having this private method is good?
+        private void deletePostVote(String postId, String jsonUsername) {
+            Document usernameDoc = new Document(jsonUsername);
+            String userId = usernameDoc.getId();
+            String postVoteId = PostVote.generateId(postId, userId);
+            Database.deleteResource(POSTVOTE_COL, postVoteId);
+        }
+
+        private String addPostVote(String postId, String jsonUsername, boolean up) {
+            Gson gson = new Gson();
+            Document usernameDoc = new Document(jsonUsername);
+            String userId = usernameDoc.getId();
+            if(!Database.resourceExists(UsersResource.USERS_COL, userId))
+                throw new BadRequestException("The author of the vote does not exist.");
+
+            Post post;
+            try {
+                post = gson.fromJson(Database.getResourceJson(POST_COL, postId), Post.class);
+            } catch(NotFoundException nfe) {
+                throw new BadRequestException("The post does not exist.");
+            }
+
+            // TODO Verify is we need atomic operations
+
+            String postVoteId = PostVote.generateId(postId, userId);
+            PostVote newPostVote = new PostVote(postVoteId, up, postId, userId);
+            try {
+                PostVote previousPostVote = gson.fromJson(Database.getResourceJson(POSTVOTE_COL, postVoteId), PostVote.class);
+                if(previousPostVote.isUp() != up) {
+                    post.swapOneVote(up);
+                    Database.putResourceOverwrite(post.toDocument(), POST_COL);
+                    return Database.putResourceOverwrite(newPostVote.toDocument(), POSTVOTE_COL);
+                }
+            } catch(NotFoundException nfe) {
+                post.setUpvotes(post.getUpvotes() + (up ? 1 : -1));
+                Database.putResourceOverwrite(post.toDocument(), POST_COL);
+                return Database.putResourceOverwrite(newPostVote.toDocument(), POSTVOTE_COL);
+            }
+
+            throw new BadRequestException("User already has upvote on this post.");
+        }
+    }
 }

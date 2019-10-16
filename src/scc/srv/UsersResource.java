@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/users")
 public class UsersResource {
 
-    private static final String USERS_COL = "Users";
+    public static final String USERS_COL = "Users";
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

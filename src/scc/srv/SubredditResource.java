@@ -11,7 +11,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/subreddits")
 public class SubredditResource {
 
-    private static final String SUBREDDIT_COL = "Subreddits";
+    public static final String SUBREDDIT_COL = "Subreddits";
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

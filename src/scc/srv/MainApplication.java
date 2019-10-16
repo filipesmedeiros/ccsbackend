@@ -10,16 +10,18 @@ public class MainApplication extends Application {
 
     // TODO fazer verificacoes quando vamos fazer posts (user existe, etc)
     // TODO verificar se estamos a tratar bem das excecoes que podem aparecer a aceder ao cosmos
-    // TODO fazer sistema de likes e dislikes
+    // TODO fazer sistema de upvotes e downvotes
     // TODO fazer os comentarios
     // TODO decidir e implementar o sistema de frontpage (all)
     // TODO decidir e implementar o sistema de frontpage (subreddit)
     // TODO decidir e implementar os comentários de um post
+    // TODO apagar/editar users, subreddits etc (texto mas nao titulo nos posts)
 
     // TODO ------ CENAS OPCIONAIS MAS QUE DEVEM SER FIXES E NAO MUITO DIFICEIS ----
     // TODO sistema de subscricao a subreddits, para um user ter a sua propria frontpage
     // TODO ver requestoptions do cosmos
     // TODO ter karma associado a utilizadores
+    // TODO verificacoes tipo tamanho dos usernames etc
 
     @Override
     public Set<Class<?>> getClasses() {

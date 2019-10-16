@@ -5,13 +5,18 @@ import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
 import exceptions.ConflictException;
 import rx.Observable;
 
+import javax.print.Doc;
 import javax.ws.rs.NotFoundException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
 public class Database {
 
-    private static final String AZURE_DB_ENDPOINT = "https://ccsbackend-database.documents.azure.com:443/";
+    private static final String AZURE_DB_URL = "https://ccsbackend-database.documents.azure.com";
+    private static final String AZURE_DB_ENDPOINT = AZURE_DB_URL + ":443/";
     private static final String AZURE_DB_ID = "ccsbackend-database";
     private static AsyncDocumentClient dbClient;
 
@@ -28,8 +33,11 @@ public class Database {
         return dbClient;
     }
 
-    private static String getCollectionString(String col) {
+    private static String getDocumentURI(String col, String id) {
+        return AZURE_DB_URL + getCollectionString(col) + "/docs/" + id;
+    }
 
+    private static String getCollectionString(String col) {
         return String.format("/dbs/%s/colls/%s", AZURE_DB_ID, col);
     }
 
@@ -41,11 +49,21 @@ public class Database {
         return resp.toBlocking().first().getResource().getId();
     }
 
-    public static String createResourceIfNotExists(Document doc, String col) {
+    public static String putResourceOverwrite(Document doc, String col) {
+        return createResource(col, doc, new RequestOptions(), false);
+    }
 
+    public static String createResourceIfNotExists(Document doc, String col) {
         if(!Database.resourceExists(col, doc.getId()))
             return createResource(col, doc, new RequestOptions(), false);
         throw new ConflictException();
+    }
+
+    public static void deleteResource(String col, String id) {
+        Observable<ResourceResponse<Document>> resp =
+                dbClient.deleteDocument(getDocumentURI(col, id), new RequestOptions());
+
+        resp.doOnError(error -> {throw new NotFoundException();});
     }
 
     public static String getResourceJson(String col, String query) {
@@ -54,8 +72,8 @@ public class Database {
         String collection = getCollectionString(col);
 
         Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection, query, buildDefaultFeedOptions())
-                    .toBlocking()
-                    .getIterator();
+                .toBlocking()
+                .getIterator();
 
         while(it.hasNext()) {
             List<Document> documentsInFragment = it.next().getResults();
@@ -83,7 +101,6 @@ public class Database {
                 return true;
         }
         return false;
-
     }
 
     private static FeedOptions buildDefaultFeedOptions(){
