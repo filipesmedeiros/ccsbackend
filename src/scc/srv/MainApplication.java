@@ -1,5 +1,7 @@
 package scc.srv;
 
+import resources.Subreddit;
+
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashSet;
@@ -13,6 +15,8 @@ public class MainApplication extends Application {
         Set<Class<?>> set = new HashSet<>();
         set.add(ImagesResource.class);
         set.add(PostsResource.class);
+        set.add(UsersResource.class);
+        set.add(SubredditResource.class);
         return set;
     }
 }

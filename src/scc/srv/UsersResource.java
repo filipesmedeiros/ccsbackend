@@ -3,7 +3,6 @@ package scc.srv;
 import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.Document;
 import com.microsoft.azure.cosmosdb.RequestOptions;
-import resources.Post;
 import resources.User;
 import utils.Database;
 
@@ -31,7 +30,7 @@ public class UsersResource {
     public User getUser(@PathParam("username") String username) {
         System.out.println(username);
         String postJson = Database.getResourceJson(USERS_COL,
-                "SELECT * FROM " + USERS_COL + " p WHERE p.id = " + username);
+                "SELECT * FROM " + USERS_COL + " p WHERE p.id = '" + username + "'");
         return new Gson().fromJson(postJson, User.class);
     }
 }

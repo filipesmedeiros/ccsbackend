@@ -5,7 +5,7 @@ import java.util.Date;
 public class Post {
 
     private String id, subreddit, opUsername, title, text, imageUrl;
-    public Date creationDate;
+    public long creationDate;
 
     public String getSubreddit() {
         return subreddit;
@@ -47,11 +47,11 @@ public class Post {
         this.imageUrl = imageUrl;
     }
 
-    public Date getCreationDate() {
+    public long getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
     }
 

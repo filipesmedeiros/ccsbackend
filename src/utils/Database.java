@@ -1,12 +1,9 @@
 package utils;
 
-import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
-import resources.Post;
 import rx.Observable;
 
-import javax.print.Doc;
 import javax.ws.rs.NotFoundException;
 import java.util.Iterator;
 import java.util.List;
@@ -44,17 +41,27 @@ public class Database {
     }
 
     public static String getResourceJson(String col, String query) {
-        String collection = getCollectionString(col);
+        initializeDatabase();
 
+        String collection = getCollectionString(col);
+        System.out.println(col);
+        System.out.println(query);
         FeedOptions queryOptions = new FeedOptions();
         queryOptions.setEnableCrossPartitionQuery(true);
         queryOptions.setMaxDegreeOfParallelism(-1);
+        System.out.println(col);
+        System.out.println(query);
 
-        Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection, query, queryOptions)
-                .toBlocking()
-                .getIterator();
+        try {
+            Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection, query, queryOptions)
+                    .toBlocking()
+                    .getIterator();
 
+        System.out.println(col);
+        System.out.println(query);
+        int counter = 0;
         while(it.hasNext()) {
+            System.out.println(counter);
             List<Document> documentsInFragment = it.next().getResults();
             System.out.println(documentsInFragment.size());
             if(documentsInFragment.size() > 0) {
@@ -63,7 +70,14 @@ public class Database {
                 System.out.println(d.toJson());
                 return docJson;
             }
+            System.out.println(counter++);
         }
         throw new NotFoundException();
+        } catch(Exception e) {
+            System.out.println("------------------------------------ " + e);
+            e.printStackTrace();
+            System.out.println(e.getMessage());
+            throw e;
+        }
     }
 }
