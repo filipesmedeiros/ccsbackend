@@ -6,6 +6,7 @@ public class Post {
 
     private String id, subreddit, opUsername, title, text, imageUrl;
     public long creationDate;
+    public int likes, dislikes, karma;
 
     public String getSubreddit() {
         return subreddit;
@@ -17,6 +18,30 @@ public class Post {
 
     public String getOpUsername() {
         return opUsername;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public int getDislikes() {
+        return dislikes;
+    }
+
+    public void setDislikes(int dislikes) {
+        this.dislikes = dislikes;
+    }
+
+    public int getKarma() {
+        return karma;
+    }
+
+    public void setKarma(int karma) {
+        this.karma = karma;
     }
 
     public void setOpUsername(String opUsername) {
