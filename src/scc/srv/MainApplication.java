@@ -18,6 +18,7 @@ public class MainApplication extends Application {
 
     // TODO ------ CENAS OPCIONAIS MAS QUE DEVEM SER FIXES E NAO MUITO DIFICEIS ----
     // TODO sistema de subscricao a subreddits, para um user ter a sua propria frontpage
+    // TODO ver requestoptions do cosmos
 
     @Override
     public Set<Class<?>> getClasses() {

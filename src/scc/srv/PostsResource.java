@@ -21,6 +21,12 @@ public class PostsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String addPost(String jsonPost) {
         Document postDoc = new Document(jsonPost);
+        String username = postDoc.get("opUsername").toString();
+        String subreddit = postDoc.get("subreddit").toString();
+        if(!Database.resourceExists(UsersResource.USERS_COL, username))
+            throw new BadRequestException("The author of the post does not exist.");
+        if(!Database.resourceExists(SubredditResource.SUBREDDIT_COL, subreddit))
+            throw new BadRequestException("The subreddit of the post does not exist.");
         postDoc.set("creationDate", new Date().getTime());
         return Database.createResource(POST_COL, postDoc, new RequestOptions(), true);
     }

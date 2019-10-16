@@ -2,6 +2,7 @@ package utils;
 
 import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
+import exceptions.ConflictException;
 import rx.Observable;
 
 import javax.ws.rs.NotFoundException;
@@ -40,44 +41,57 @@ public class Database {
         return resp.toBlocking().first().getResource().getId();
     }
 
+    public static String createResourceIfNotExists(Document doc, String col) {
+
+        if(!Database.resourceExists(col, doc.getId()))
+            return createResource(col, doc, new RequestOptions(), false);
+        throw new ConflictException();
+    }
+
     public static String getResourceJson(String col, String query) {
         initializeDatabase();
 
         String collection = getCollectionString(col);
-        System.out.println(col);
-        System.out.println(query);
-        FeedOptions queryOptions = new FeedOptions();
-        queryOptions.setEnableCrossPartitionQuery(true);
-        queryOptions.setMaxDegreeOfParallelism(-1);
-        System.out.println(col);
-        System.out.println(query);
 
-        try {
-            Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection, query, queryOptions)
+        Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection, query, buildDefaultFeedOptions())
                     .toBlocking()
                     .getIterator();
 
-        System.out.println(col);
-        System.out.println(query);
-        int counter = 0;
         while(it.hasNext()) {
-            System.out.println(counter);
             List<Document> documentsInFragment = it.next().getResults();
-            System.out.println(documentsInFragment.size());
             if(documentsInFragment.size() > 0) {
                 Document d = documentsInFragment.get(0);
-                String docJson = d.toJson();
-                System.out.println(d.toJson());
-                return docJson;
+                return d.toJson();
             }
-            System.out.println(counter++);
         }
         throw new NotFoundException();
-        } catch(Exception e) {
-            System.out.println("------------------------------------ " + e);
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-            throw e;
-        }
     }
+
+    public static boolean resourceExists(String col, String id){
+        initializeDatabase();
+
+        String collection = getCollectionString(col);
+
+        Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection,
+                "SELECT * FROM " + col + " p where p.id = '" + id + "'", buildDefaultFeedOptions())
+                .toBlocking()
+                .getIterator();
+
+        while(it.hasNext()) {
+            List<Document> documentsInFragment = it.next().getResults();
+            if(documentsInFragment.size() > 0)
+                return true;
+        }
+        return false;
+
+    }
+
+    private static FeedOptions buildDefaultFeedOptions(){
+        FeedOptions queryOptions = new FeedOptions();
+        queryOptions.setEnableCrossPartitionQuery(true);
+        queryOptions.setMaxDegreeOfParallelism(-1);
+
+        return queryOptions;
+    }
+
 }
