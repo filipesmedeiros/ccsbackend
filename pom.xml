@@ -33,16 +33,16 @@
       <version>1.7.24</version> 
     </dependency>  
     <dependency> 
-      <groupId>com.google.code.gson</groupId>
+      <groupId>com.google.code.gson</groupId>  
       <artifactId>gson</artifactId>  
       <version>2.8.6</version> 
-    </dependency>
-    <dependency>
-      <groupId>org.jetbrains</groupId>
-      <artifactId>annotations</artifactId>
-      <version>16.0.2</version>
-      <scope>compile</scope>
-    </dependency>
+    </dependency>  
+    <dependency> 
+      <groupId>org.jetbrains</groupId>  
+      <artifactId>annotations</artifactId>  
+      <version>16.0.2</version>  
+      <scope>compile</scope> 
+    </dependency> 
   </dependencies>  
   <build> 
     <sourceDirectory>src</sourceDirectory>  
@@ -68,7 +68,7 @@
         <version>1.7.0</version>  
         <configuration> 
           <schemaVersion>V2</schemaVersion>  
-          <pricingTier>F1</pricingTier>  
+          <pricingTier>B1</pricingTier>  
           <region>westeurope</region>  
           <runtime> 
             <os>linux</os>  
@@ -86,13 +86,13 @@
             </resources> 
           </deployment>  
           <resourceGroup>cssbackend-47967-rg</resourceGroup>  
-          <appName>cssbackend-47967</appName>
+          <appName>cssbackend-47967</appName>  
           <!--
           <properties>
             <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
             <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
           </properties>
-          -->
+          --> 
         </configuration> 
       </plugin> 
     </plugins> 

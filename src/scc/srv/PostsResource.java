@@ -30,12 +30,11 @@ public class PostsResource {
         if(!Database.resourceExists(SubredditResource.SUBREDDIT_COL, subreddit))
             throw new BadRequestException("The subreddit of the post does not exist.");
         postDoc.set("creationDate", new Date().getTime());
-        return Database.createResource(POST_COL, postDoc, new RequestOptions(), true);
+        return Database.createResourceIfNotExists(postDoc, POST_COL, true);
     }
 
     @GET
     @Path("/{postId}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Post getPost(@PathParam("postId") String postId) {
         String postJson = Database.getResourceJson(POST_COL,

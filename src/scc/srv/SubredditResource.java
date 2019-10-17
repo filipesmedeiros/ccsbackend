@@ -18,12 +18,11 @@ public class SubredditResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String addSubreddit(String jsonSubreddit) {
         Document subredditDoc = new Document(jsonSubreddit);
-        return Database.createResourceIfNotExists(subredditDoc, SUBREDDIT_COL);
+        return Database.createResourceIfNotExists(subredditDoc, SUBREDDIT_COL, false);
     }
 
     @GET
     @Path("/{subreddit}")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Subreddit getSubreddit(@PathParam("subreddit") String subreddit) {
         System.out.println(subreddit);

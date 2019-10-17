@@ -5,11 +5,7 @@ import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
 import exceptions.ConflictException;
 import rx.Observable;
 
-import javax.print.Doc;
 import javax.ws.rs.NotFoundException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -53,9 +49,9 @@ public class Database {
         return createResource(col, doc, new RequestOptions(), false);
     }
 
-    public static String createResourceIfNotExists(Document doc, String col) {
+    public static String createResourceIfNotExists(Document doc, String col, boolean autoGenId) {
         if(!Database.resourceExists(col, doc.getId()))
-            return createResource(col, doc, new RequestOptions(), false);
+            return createResource(col, doc, new RequestOptions(), autoGenId);
         throw new ConflictException();
     }
 

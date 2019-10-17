@@ -18,7 +18,7 @@ public class UsersResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String addUser(String jsonUser) {
         Document userDoc = new Document(jsonUser);
-        return Database.createResourceIfNotExists(userDoc, USERS_COL);
+        return Database.createResourceIfNotExists(userDoc, USERS_COL, false);
     }
 
     @GET

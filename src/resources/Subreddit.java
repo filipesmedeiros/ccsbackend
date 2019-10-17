@@ -1,17 +1,18 @@
 package resources;
 
 public class Subreddit {
+
     private String id;
 
     public Subreddit(String id) {
         this.id = id;
     }
 
-    public String getName() {
+    public String getId() {
         return id;
     }
 
-    public void setName(String id) {
+    public void setId(String id) {
         this.id = id;
     }
 }
