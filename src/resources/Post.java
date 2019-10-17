@@ -113,4 +113,19 @@ public class Post {
         }
         return this;
     }
+
+    public static class PostDTOInitialAttributes {
+        public String subreddit, opUsername, title, text, imageUrl;
+
+        /**
+        public static boolean testDocument(Document doc) {
+            int c = PostDTOInitialAttributes.class.getDeclaredFields().length;
+            return doc.has("subreddit")
+                    && doc.has("opUsername")
+                    && doc.has("title")
+                    && doc.has("text")
+                    && doc.has("imageUrl");
+        }
+         **/
+    }
 }

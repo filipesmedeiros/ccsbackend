@@ -6,6 +6,7 @@ import exceptions.ConflictException;
 import rx.Observable;
 
 import javax.ws.rs.NotFoundException;
+import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.List;
 
@@ -97,6 +98,13 @@ public class Database {
                 return true;
         }
         return false;
+    }
+
+    public static boolean testClientJsonWithDoc(Document doc, Class<?> clazz) {
+        for(Field f : clazz.getDeclaredFields())
+            if(!doc.has(f.getName()))
+                return false;
+            return true;
     }
 
     private static FeedOptions buildDefaultFeedOptions(){

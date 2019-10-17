@@ -8,8 +8,7 @@ import java.util.Set;
 @ApplicationPath("/")
 public class MainApplication extends Application {
 
-    // TODO arranjar maneira de verificar formatacao do cliente (JSON), preferencialmente de maneira abstrata
-            // TODO por exemplo um serializer ou assim
+    // TODO verificar se o metodo funciona, incluindo se reflections podem ser usadas no azure...
     // TODO fazer verificacoes quando vamos fazer posts (user existe, etc)
     // TODO verificar se estamos a tratar bem das excecoes que podem aparecer a aceder ao cosmos
     // TODO fazer sistema de upvotes e downvotes

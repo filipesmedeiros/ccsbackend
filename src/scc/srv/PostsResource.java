@@ -23,6 +23,9 @@ public class PostsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public String addPost(String jsonPost) {
         Document postDoc = new Document(jsonPost);
+        if(!Database.testClientJsonWithDoc(postDoc, Post.PostDTOInitialAttributes.class))
+            throw new BadRequestException();
+
         String username = postDoc.get("opUsername").toString();
         String subreddit = postDoc.get("subreddit").toString();
         if(!Database.resourceExists(UsersResource.USERS_COL, username))
