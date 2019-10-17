@@ -18,6 +18,7 @@ public class MainApplication extends Application {
     // TODO decidir e implementar o sistema de frontpage (subreddit)
     // TODO decidir e implementar os comentários de um post
     // TODO apagar/editar users, subreddits etc (texto mas nao titulo nos posts)
+    // TODO as excecoes de WS com mensagem nao mandam essa mensagem em lado nenhum, acho eu, arranjar maneira de mandar
 
     // TODO ------ CENAS OPCIONAIS MAS QUE DEVEM SER FIXES E NAO MUITO DIFICEIS ----
     // TODO sistema de subscricao a subreddits, para um user ter a sua propria frontpage
