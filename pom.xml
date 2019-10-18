@@ -50,7 +50,7 @@
       <type>jar</type>
       <scope>compile</scope>
     </dependency>
-  </dependencies>  
+  </dependencies>
   <build> 
     <sourceDirectory>src</sourceDirectory>  
     <plugins> 
