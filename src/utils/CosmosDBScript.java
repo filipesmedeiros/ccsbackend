@@ -3,7 +3,10 @@ package utils;
 import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.Database;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
+import scc.srv.PostsResource;
+import scc.srv.UsersResource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,7 +19,8 @@ public class CosmosDBScript {
     private static AsyncDocumentClient client;
 
     public static void main(String[] args) {
-
+        // To change between destroy and create, change this line!
+        destroy();
     }
 
     private static void build() {
@@ -38,25 +42,9 @@ public class CosmosDBScript {
                 }
             }
 
-            String collectionName = "Users";
-            List<DocumentCollection> collectionList = client.queryCollections(getDatabaseString(),
-                    "SELECT * FROM root r WHERE r.id='" + collectionName + "'", null).toBlocking().first().getResults();
-
-            if (collectionList.size() == 0) {
-                try {
-                    String databaseLink = getDatabaseString();
-                    DocumentCollection collectionDefinition = new DocumentCollection();
-                    collectionDefinition.setId(collectionName);
-                    PartitionKeyDefinition partitionKeyDef = new PartitionKeyDefinition();
-                    partitionKeyDef.setPaths(Arrays.asList("/name"));
-                    collectionDefinition.setPartitionKey(partitionKeyDef);
-
-                    client.createCollection(databaseLink, collectionDefinition, null).toCompletable().await();
-                } catch (Exception e) {
-                    // TODO: Something has gone terribly wrong.
-                    e.printStackTrace();
-                }
-            }
+            createColl(UsersResource.USERS_COL, "name", null);
+            createColl(PostsResource.POST_COL, "subreddit", null);
+            createColl(PostsResource.POSTVOTE_COL, "subreddit", null);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -65,7 +53,40 @@ public class CosmosDBScript {
     }
 
     private static void destroy() {
+        AsyncDocumentClient client = getDocumentClient();
+        client.deleteDatabase(getDatabaseString(), null);
+    }
 
+    private static void createColl(String name, String partKey, List<String> uniqueKeys) {
+
+        List<DocumentCollection> collectionList = client.queryCollections(getDatabaseString(),
+                "SELECT * FROM root r WHERE r.id='" + name + "'", null).toBlocking().first().getResults();
+        if (collectionList.size() == 0) {
+            try {
+                String databaseLink = getDatabaseString();
+                DocumentCollection collectionDefinition = new DocumentCollection();
+                collectionDefinition.setId(name);
+                PartitionKeyDefinition partitionKeyDef = new PartitionKeyDefinition();
+                partitionKeyDef.setPaths(Arrays.asList(partKey));
+                collectionDefinition.setPartitionKey(partitionKeyDef);
+
+                if (uniqueKeys != null) {
+                    UniqueKeyPolicy uniqueKeyDef = new UniqueKeyPolicy();
+                    List<UniqueKey> uniqueKeyList = new ArrayList<>(uniqueKeys.size());
+                    for(String key : uniqueKeys) {
+                        UniqueKey uniqueKey = new UniqueKey();
+                        uniqueKey.setPaths(Arrays.asList(key));
+                    }
+                    uniqueKeyDef.setUniqueKeys(uniqueKeyList);
+                    collectionDefinition.setUniqueKeyPolicy(uniqueKeyDef);
+                }
+
+                client.createCollection(databaseLink, collectionDefinition, null).toCompletable().await();
+            } catch (Exception e) {
+                // TODO: Something has gone terribly wrong.
+                e.printStackTrace();
+            }
+        }
     }
 
     private static synchronized AsyncDocumentClient getDocumentClient() {

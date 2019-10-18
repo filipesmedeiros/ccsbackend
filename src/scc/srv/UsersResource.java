@@ -27,8 +27,7 @@ public class UsersResource {
     @Produces(MediaType.APPLICATION_JSON)
     public User getUser(@PathParam("username") String username) {
         System.out.println(username);
-        String userJson = Database.getResourceJson(USERS_COL,
-                "SELECT * FROM " + USERS_COL + " p WHERE p.id = '" + username + "'");
+        String userJson = Database.getResourceJsonById(USERS_COL, username);
         return new Gson().fromJson(userJson, User.class);
     }
 }

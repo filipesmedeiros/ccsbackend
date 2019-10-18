@@ -26,8 +26,7 @@ public class SubredditResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Subreddit getSubreddit(@PathParam("subreddit") String subreddit) {
         System.out.println(subreddit);
-        String postJson = Database.getResourceJson(SUBREDDIT_COL,
-                "SELECT * FROM " + SUBREDDIT_COL + " p WHERE p.id = '" + subreddit + "'");
+        String postJson = Database.getResourceJsonById(SUBREDDIT_COL, subreddit);
         return new Gson().fromJson(postJson, Subreddit.class);
     }
 }

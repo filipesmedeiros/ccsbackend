@@ -38,6 +38,8 @@ public class Database {
         return String.format("/dbs/%s/colls/%s", AZURE_DB_ID, col);
     }
 
+
+    // TODO Mudar isto porque o DB acusa conflitos sozinho, mas nao e preciso mudar muito
     public static String createResource(String col, Document doc, RequestOptions requestOptions, boolean autoGenId) {
         initializeDatabase();
 
@@ -63,21 +65,30 @@ public class Database {
         resp.doOnError(error -> {throw new NotFoundException();});
     }
 
+    public static String getResourceJsonById(String col, String id) {
+        System.out.println(col + " ----- "+ id);
+        return getResourceJson(col, "SELECT * from " + col + " x WHERE x.id = '" + id + "'");
+    }
+
     public static String getResourceJson(String col, String query) {
         initializeDatabase();
 
         String collection = getCollectionString(col);
 
-        Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection, query, buildDefaultFeedOptions())
-                .toBlocking()
-                .getIterator();
+        try {
+            Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection, query, buildDefaultFeedOptions())
+                    .toBlocking()
+                    .getIterator();
 
-        while(it.hasNext()) {
-            List<Document> documentsInFragment = it.next().getResults();
-            if(documentsInFragment.size() > 0) {
-                Document d = documentsInFragment.get(0);
-                return d.toJson();
+            while(it.hasNext()) {
+                List<Document> documentsInFragment = it.next().getResults();
+                if(documentsInFragment.size() > 0) {
+                    Document d = documentsInFragment.get(0);
+                    return d.toJson();
+                }
             }
+        } catch(Exception e) {
+            throw new NotFoundException();
         }
         throw new NotFoundException();
     }
@@ -101,10 +112,12 @@ public class Database {
     }
 
     public static boolean testClientJsonWithDoc(Document doc, Class<?> clazz) {
-        for(Field f : clazz.getDeclaredFields())
+        for(Field f : clazz.getDeclaredFields()) {
+            System.out.println(f.getName());
             if(!doc.has(f.getName()))
                 return false;
-            return true;
+        }
+        return true;
     }
 
     private static FeedOptions buildDefaultFeedOptions(){
