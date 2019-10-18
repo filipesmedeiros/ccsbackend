@@ -39,14 +39,60 @@ public class RedisCache {
     }
 
     // TODO what to return
-    public static long lpush(String listName, Document doc, long limit) {
+    public static Long lpush(String listName, Document doc, long limit) {
         initializeRedis();
 
         try(Jedis jedis = jedisPool.getResource()) {
-            long count = jedis.lpush(listName, doc.toJson());
+            Long count = jedis.lpush(listName, doc.toJson());
             if(count > limit)
                 jedis.ltrim(listName, 0, limit);
             return count;
+        }
+    }
+
+    public static Long incr(String entryKey) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            String value = jedis.get(entryKey);
+            if(value == null)
+                return null;
+            return jedis.incr(entryKey);
+        }
+    }
+
+    public static Long decr(String entryKey) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            String value = jedis.get(entryKey);
+            if(value == null)
+                return null;
+            return jedis.decr(entryKey);
+        }
+    }
+
+    public static Long getOrSetLong(String entryKey, Long valueIfNotExists) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            String value = jedis.get(entryKey);
+            if(value == null) {
+                jedis.set(entryKey, valueIfNotExists.toString());
+                return null;
+            }
+            return Long.parseLong(value);
+        }
+    }
+
+    public static boolean newCounter(String counterName) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            if(jedis.get(counterName) != null)
+                return false;
+            jedis.set(counterName, "0");
+            return true;
         }
     }
 }
