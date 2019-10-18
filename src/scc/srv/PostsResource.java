@@ -29,7 +29,7 @@ public class PostsResource {
         String subreddit = postDoc.get("subreddit").toString();
         if(!Database.resourceExists(UsersResource.USERS_COL, username))
             throw new BadRequestException("The author of the post does not exist.");
-        if(!Database.resourceExists(SubredditResource.SUBREDDIT_COL, subreddit))
+        if(!Database.resourceExists(SubredditsResource.SUBREDDIT_COL, subreddit))
             throw new BadRequestException("The subreddit of the post does not exist.");
         postDoc.set("creationDate", new Date().getTime());
         return Database.createResourceIfNotExists(postDoc, POST_COL, true).getId();

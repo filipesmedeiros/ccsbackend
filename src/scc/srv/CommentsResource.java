@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 import java.util.Date;
 
 @Path("/comments")
-public class CommentResource {
+public class CommentsResource {
     public static final String COMMENTS_COL = "Comments";
 
     @POST
@@ -21,14 +21,14 @@ public class CommentResource {
         if(!Database.testClientJsonWithDoc(commentDoc, Comment.CommentDTOInitialAttributes.class))
             throw new BadRequestException();
 
-        String username = commentDoc.get("opUsername").toString();
+        String username = commentDoc.get("username").toString();
         String post = commentDoc.get("post").toString();
-        String parent = commentDoc.get("parent").toString();
+        String parentComment = commentDoc.get("parentComment").toString();
         if(!Database.resourceExists(UsersResource.USERS_COL, username))
             throw new BadRequestException("The author of the comment does not exist.");
         if(!Database.resourceExists(PostsResource.POST_COL, post))
             throw new BadRequestException("The post does not exist.");
-        if(!Database.resourceExists(CommentResource.COMMENTS_COL, parent))
+        if(!Database.resourceExists(CommentsResource.COMMENTS_COL, parentComment) && !parentComment.equals(""))
             throw new BadRequestException("The parent comment does not exist.");
         commentDoc.set("creationDate", new Date().getTime());
         return Database.createResourceIfNotExists(commentDoc, COMMENTS_COL, true).getId();

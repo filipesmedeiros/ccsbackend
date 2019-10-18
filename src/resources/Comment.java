@@ -67,6 +67,6 @@ public class Comment {
     }
 
     public static class CommentDTOInitialAttributes {
-        public String opUsername, title, text, post;
+        public String username, text, post, parentComment;
     }
 }

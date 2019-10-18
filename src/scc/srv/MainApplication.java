@@ -26,6 +26,7 @@ public class MainApplication extends Application {
     // TODO verificacoes tipo tamanho dos usernames etc
     // TODO editar comentarios\
     // TODO Evitar json -> objeto -> json
+    // TODO colisao de hash
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -33,8 +34,8 @@ public class MainApplication extends Application {
         set.add(ImagesResource.class);
         set.add(PostsResource.class);
         set.add(UsersResource.class);
-        set.add(SubredditResource.class);
-        set.add(CommentResource.class);
+        set.add(SubredditsResource.class);
+        set.add(CommentsResource.class);
         return set;
     }
 }

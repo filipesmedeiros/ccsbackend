@@ -9,7 +9,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("/subreddits")
-public class SubredditResource {
+public class SubredditsResource {
 
     public static final String SUBREDDIT_COL = "Subreddits";
 
