@@ -24,6 +24,8 @@ public class MainApplication extends Application {
     // TODO ver requestoptions do cosmos
     // TODO ter karma associado a utilizadores
     // TODO verificacoes tipo tamanho dos usernames etc
+    // TODO editar comentarios\
+    // TODO Evitar json -> objeto -> json
 
     @Override
     public Set<Class<?>> getClasses() {
@@ -32,6 +34,7 @@ public class MainApplication extends Application {
         set.add(PostsResource.class);
         set.add(UsersResource.class);
         set.add(SubredditResource.class);
+        set.add(CommentResource.class);
         return set;
     }
 }

@@ -15,19 +15,18 @@ public class SubredditResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public String addSubreddit(String jsonSubreddit) {
         Document subredditDoc = new Document(jsonSubreddit);
-        return Database.createResourceIfNotExists(subredditDoc, SUBREDDIT_COL, false);
+        return Database.createResourceIfNotExists(subredditDoc, SUBREDDIT_COL, false).getId();
     }
 
     @GET
     @Path("/{subreddit}")
     @Produces(MediaType.APPLICATION_JSON)
     public Subreddit getSubreddit(@PathParam("subreddit") String subreddit) {
-        System.out.println(subreddit);
-        String postJson = Database.getResourceJsonById(SUBREDDIT_COL, subreddit);
-        return new Gson().fromJson(postJson, Subreddit.class);
+        Document subredditDoc = Database.getResourceDocById(SUBREDDIT_COL, subreddit);
+        return new Gson().fromJson(subredditDoc.toJson(), Subreddit.class);
     }
 }
 

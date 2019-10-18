@@ -2,7 +2,6 @@ package scc.srv;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.Document;
-import com.microsoft.azure.cosmosdb.RequestOptions;
 import resources.Post;
 import resources.PostVote;
 import utils.Database;
@@ -20,7 +19,7 @@ public class PostsResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public String addPost(String jsonPost) {
         Document postDoc = new Document(jsonPost);
         if(!Database.testClientJsonWithDoc(postDoc, Post.PostDTOInitialAttributes.class))
@@ -33,16 +32,15 @@ public class PostsResource {
         if(!Database.resourceExists(SubredditResource.SUBREDDIT_COL, subreddit))
             throw new BadRequestException("The subreddit of the post does not exist.");
         postDoc.set("creationDate", new Date().getTime());
-        return Database.createResourceIfNotExists(postDoc, POST_COL, true);
+        return Database.createResourceIfNotExists(postDoc, POST_COL, true).getId();
     }
 
     @GET
     @Path("/{postId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Post getPost(@PathParam("postId") String postId) {
-        String postJson = Database.getResourceJsonById(POST_COL,
-                "SELECT * FROM " + POST_COL + " p WHERE p.id = '" + postId + "'");
-        return new Gson().fromJson(postJson, Post.class);
+        Document postDoc = Database.getResourceDocById(POST_COL, postId);
+        return new Gson().fromJson(postDoc.toJson(), Post.class);
     }
 
     @POST
@@ -92,30 +90,24 @@ public class PostsResource {
         if(!Database.resourceExists(UsersResource.USERS_COL, userId))
             throw new BadRequestException("The author of the vote does not exist.");
 
-        Post post;
-        try {
-            post = gson.fromJson(Database.getResourceJsonById(POST_COL, postId), Post.class);
-        } catch(NotFoundException nfe) {
-            throw new BadRequestException("The post does not exist.");
-        }
+
+        if(!Database.resourceExists(POST_COL, postId))
+            throw new NotFoundException("No post with that id was found");
 
         // TODO Verify is we need atomic operations
 
         String postVoteId = PostVote.generateId(postId, userId);
         PostVote newPostVote = new PostVote(postVoteId, up, postId, userId);
+
         try {
-            PostVote previousPostVote = gson.fromJson(Database.getResourceJsonById(POSTVOTE_COL, postVoteId), PostVote.class);
+            PostVote previousPostVote =
+                    gson.fromJson(Database.getResourceDocById(POSTVOTE_COL, postVoteId).toJson(), PostVote.class);
             if(previousPostVote.isUp() != up) {
-                post.swapOneVote(up);
-                Database.putResourceOverwrite(post.toDocument(), POST_COL);
-                return Database.putResourceOverwrite(newPostVote.toDocument(), POSTVOTE_COL);
+                return Database.putResourceOverwrite(newPostVote.toDocument(), POSTVOTE_COL).getId();
             }
         } catch(NotFoundException nfe) {
-            post.setUpvotes(post.getUpvotes() + (up ? 1 : -1));
-            Database.putResourceOverwrite(post.toDocument(), POST_COL);
-            return Database.putResourceOverwrite(newPostVote.toDocument(), POSTVOTE_COL);
+            return Database.putResourceOverwrite(newPostVote.toDocument(), POSTVOTE_COL).getId();
         }
-
         throw new BadRequestException("User already has upvote on this post.");
     }
 }

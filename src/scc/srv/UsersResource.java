@@ -15,10 +15,10 @@ public class UsersResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public String addUser(String jsonUser) {
         Document userDoc = new Document(jsonUser);
-        return Database.createResourceIfNotExists(userDoc, USERS_COL, false);
+        return Database.createResourceIfNotExists(userDoc, USERS_COL, false).getId();
     }
 
     @GET
@@ -26,8 +26,7 @@ public class UsersResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public User getUser(@PathParam("username") String username) {
-        System.out.println(username);
-        String userJson = Database.getResourceJsonById(USERS_COL, username);
-        return new Gson().fromJson(userJson, User.class);
+        Document userDoc = Database.getResourceDocById(USERS_COL, username);
+        return new Gson().fromJson(userDoc.toJson(), User.class);
     }
 }

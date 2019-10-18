@@ -38,77 +38,73 @@ public class Database {
         return String.format("/dbs/%s/colls/%s", AZURE_DB_ID, col);
     }
 
-
-    // TODO Mudar isto porque o DB acusa conflitos sozinho, mas nao e preciso mudar muito
-    public static String createResource(String col, Document doc, RequestOptions requestOptions, boolean autoGenId) {
+    public static Document putResourceOverwrite(Document doc, String col) {
         initializeDatabase();
-
-        String collection = getCollectionString(col);
-        Observable<ResourceResponse<Document>> resp = dbClient.createDocument(collection, doc, requestOptions, !autoGenId);
-        return resp.toBlocking().first().getResource().getId();
+        return dbClient.upsertDocument(getCollectionString(col), doc,
+                new RequestOptions(), false).toBlocking().first().getResource();
     }
 
-    public static String putResourceOverwrite(Document doc, String col) {
-        return createResource(col, doc, new RequestOptions(), false);
-    }
-
-    public static String createResourceIfNotExists(Document doc, String col, boolean autoGenId) {
-        if(!Database.resourceExists(col, doc.getId()))
-            return createResource(col, doc, new RequestOptions(), autoGenId);
-        throw new ConflictException();
+    //RunTimeException is when CosmosClient finds a conflict
+    public static Document createResourceIfNotExists(Document doc, String col, boolean autoGenId) {
+        initializeDatabase();
+        try{
+            return dbClient.createDocument(getCollectionString(col), doc,
+                    new RequestOptions(), !autoGenId).toBlocking().first().getResource();
+        } catch(RuntimeException e){
+            e.printStackTrace();
+            throw new ConflictException();
+        }
     }
 
     public static void deleteResource(String col, String id) {
+        initializeDatabase();
         Observable<ResourceResponse<Document>> resp =
                 dbClient.deleteDocument(getDocumentURI(col, id), new RequestOptions());
 
         resp.doOnError(error -> {throw new NotFoundException();});
     }
 
-    public static String getResourceJsonById(String col, String id) {
+    public static Document getResourceDocById(String col, String id) {
         System.out.println(col + " ----- "+ id);
-        return getResourceJson(col, "SELECT * from " + col + " x WHERE x.id = '" + id + "'");
+        return getResourceDoc(col, "SELECT * from " + col + " x WHERE x.id = '" + id + "'");
     }
 
-    public static String getResourceJson(String col, String query) {
+    public static Document getResourceDoc(String col, String query) {
         initializeDatabase();
 
         String collection = getCollectionString(col);
+
+        System.out.println(query);
 
         try {
             Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection, query, buildDefaultFeedOptions())
                     .toBlocking()
                     .getIterator();
 
+            System.out.println("out iterator");
+
             while(it.hasNext()) {
+                System.out.println("in iterator");
                 List<Document> documentsInFragment = it.next().getResults();
                 if(documentsInFragment.size() > 0) {
-                    Document d = documentsInFragment.get(0);
-                    return d.toJson();
+                    return documentsInFragment.get(0);
                 }
             }
         } catch(Exception e) {
+            e.printStackTrace();
             throw new NotFoundException();
         }
+        System.out.println("Will throw ex");
         throw new NotFoundException();
     }
 
-    public static boolean resourceExists(String col, String id){
-        initializeDatabase();
-
-        String collection = getCollectionString(col);
-
-        Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection,
-                "SELECT * FROM " + col + " p where p.id = '" + id + "'", buildDefaultFeedOptions())
-                .toBlocking()
-                .getIterator();
-
-        while(it.hasNext()) {
-            List<Document> documentsInFragment = it.next().getResults();
-            if(documentsInFragment.size() > 0)
-                return true;
+    public static boolean resourceExists(String col, String id) {
+        try {
+            getResourceDocById(col, id);
+            return true;
+        } catch(NotFoundException nfe) {
+            return false;
         }
-        return false;
     }
 
     public static boolean testClientJsonWithDoc(Document doc, Class<?> clazz) {

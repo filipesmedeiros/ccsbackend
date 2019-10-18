@@ -1,5 +1,7 @@
 package resources;
 
+import com.microsoft.azure.cosmosdb.Document;
+
 public class User {
 
     private String id, name;
@@ -18,5 +20,12 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Document toDocument() {
+        Document doc = new Document();
+        doc.setId(id);
+        doc.set("name", name);
+        return doc;
     }
 }

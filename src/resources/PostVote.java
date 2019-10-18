@@ -7,6 +7,15 @@ public class PostVote {
     private String id, postId, userId;
     private boolean up;
 
+    public Document toDocument() {
+        Document doc = new Document();
+        doc.setId(id);
+        doc.set("postId", postId);
+        doc.set("userId", userId);
+        doc.set("up", up);
+        return doc;
+    }
+
     public PostVote(boolean up, String postId, String userId) {
         this.id = generateId(postId, userId);
         this.up = up;
@@ -55,13 +64,5 @@ public class PostVote {
 
     public static String generateId(String postId, String userId) {
         return Integer.toString((postId + userId).hashCode());
-    }
-
-    public Document toDocument() {
-        Document doc = new Document();
-        doc.set("up", up);
-        doc.set("postId", postId);
-        doc.set("userId", userId);
-        return doc;
     }
 }
