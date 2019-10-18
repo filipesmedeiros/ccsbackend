@@ -3,8 +3,9 @@ package scc.srv;
 import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.Document;
 import resources.Post;
-import resources.PostVote;
+import resources.Vote;
 import utils.Database;
+import utils.VoteUtil;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -15,7 +16,6 @@ import java.util.Date;
 public class PostsResource {
 
     public static final String POST_COL = "Posts";
-    public static final String POSTVOTE_COL = "PostVotes";
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -48,7 +48,7 @@ public class PostsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String setLike(@PathParam("postId") String postId, String jsonUsername) {
-        return addPostVote(postId, jsonUsername, true);
+        return VoteUtil.addVote(postId, POST_COL,jsonUsername, true, true);
     }
 
     @POST
@@ -56,7 +56,7 @@ public class PostsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void unsetLike(@PathParam("postId") String postId, String jsonUsername) {
-        deletePostVote(postId, jsonUsername);
+        VoteUtil.deleteVote(postId, jsonUsername, true);
     }
 
     @POST
@@ -64,7 +64,7 @@ public class PostsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String setDislike(@PathParam("postId") String postId, String jsonUsername) {
-        return addPostVote(postId, jsonUsername, false);
+        return VoteUtil.addVote(postId, POST_COL,jsonUsername, false, true);
     }
 
     @POST
@@ -72,42 +72,6 @@ public class PostsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void unsetDislike(@PathParam("postId") String postId, String jsonUsername) {
-        deletePostVote(postId, jsonUsername);
-    }
-
-    // TODO having this private method is good?
-    private void deletePostVote(String postId, String jsonUsername) {
-        Document usernameDoc = new Document(jsonUsername);
-        String userId = usernameDoc.getId();
-        String postVoteId = PostVote.generateId(postId, userId);
-        Database.deleteResource(POSTVOTE_COL, postVoteId);
-    }
-
-    private String addPostVote(String postId, String jsonUsername, boolean up) {
-        Gson gson = new Gson();
-        Document usernameDoc = new Document(jsonUsername);
-        String userId = usernameDoc.getId();
-        if(!Database.resourceExists(UsersResource.USERS_COL, userId))
-            throw new BadRequestException("The author of the vote does not exist.");
-
-
-        if(!Database.resourceExists(POST_COL, postId))
-            throw new NotFoundException("No post with that id was found");
-
-        // TODO Verify is we need atomic operations
-
-        String postVoteId = PostVote.generateId(postId, userId);
-        PostVote newPostVote = new PostVote(postVoteId, up, postId, userId);
-
-        try {
-            PostVote previousPostVote =
-                    gson.fromJson(Database.getResourceDocById(POSTVOTE_COL, postVoteId).toJson(), PostVote.class);
-            if(previousPostVote.isUp() != up) {
-                return Database.putResourceOverwrite(newPostVote.toDocument(), POSTVOTE_COL).getId();
-            }
-        } catch(NotFoundException nfe) {
-            return Database.putResourceOverwrite(newPostVote.toDocument(), POSTVOTE_COL).getId();
-        }
-        throw new BadRequestException("User already has upvote on this post.");
+        VoteUtil.deleteVote(postId, jsonUsername, false);
     }
 }

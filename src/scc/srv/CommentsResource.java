@@ -3,7 +3,9 @@ package scc.srv;
 import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.Document;
 import resources.Comment;
+import resources.Vote;
 import utils.Database;
+import utils.VoteUtil;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -41,4 +43,37 @@ public class CommentsResource {
         Document commentDoc = Database.getResourceDocById(COMMENTS_COL, commentId);
         return new Gson().fromJson(commentDoc.toJson(), Comment.class);
     }
+
+    @POST
+    @Path("/{commentId}/setupvote")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String setLike(@PathParam("commentId") String commentId, String jsonUsername) {
+        return VoteUtil.addVote(commentId, COMMENTS_COL, jsonUsername, true, false);
+    }
+
+    @POST
+    @Path("/{commentId}/unsetupvote")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public void unsetLike(@PathParam("commentId") String commentId, String jsonUsername) {
+        VoteUtil.deleteVote(commentId, jsonUsername, true);
+    }
+
+    @POST
+    @Path("/{commentId}/setdownvote")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String setDisike(@PathParam("commentId") String commentId, String jsonUsername) {
+        return VoteUtil.addVote(commentId, COMMENTS_COL, jsonUsername, false, false);
+    }
+
+    @POST
+    @Path("/{commentId}/unsetdownvote")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public void unsetDislike(@PathParam("commentId") String commentId, String jsonUsername) {
+        VoteUtil.deleteVote(commentId, jsonUsername, false);
+    }
+
 }
