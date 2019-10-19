@@ -95,4 +95,27 @@ public class RedisCache {
             return true;
         }
     }
+
+    public static boolean newCounter(String counterName, Long initValue) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            if(jedis.get(counterName) != null)
+                return false;
+            jedis.set(counterName, initValue.toString());
+            return true;
+        }
+    }
+
+    public static Long getLong(String entryKey) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            String value = jedis.get(entryKey);
+            if(value == null) {
+                return null;
+            }
+            return Long.parseLong(value);
+        }
+    }
 }

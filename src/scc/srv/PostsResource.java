@@ -5,6 +5,7 @@ import com.microsoft.azure.cosmosdb.Document;
 import resources.Post;
 import resources.Vote;
 import utils.Database;
+import utils.RedisCache;
 import utils.VoteUtil;
 
 import javax.ws.rs.*;
@@ -40,6 +41,8 @@ public class PostsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Post getPost(@PathParam("postId") String postId) {
         Document postDoc = Database.getResourceDocById(POST_COL, postId);
+        postDoc.set("upvotes", VoteUtil.getVotes(postId, true));
+        postDoc.set("downvotes", VoteUtil.getVotes(postId, false));
         return new Gson().fromJson(postDoc.toJson(), Post.class);
     }
 

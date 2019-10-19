@@ -4,6 +4,7 @@ import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
 import exceptions.ConflictException;
 import rx.Observable;
+import rx.Observer;
 
 import javax.ws.rs.NotFoundException;
 import java.lang.reflect.Field;
@@ -105,6 +106,14 @@ public class Database {
         } catch(NotFoundException nfe) {
             return false;
         }
+    }
+
+    public static Document count(String col, String query) {
+        initializeDatabase();
+
+        return dbClient.queryDocuments(getCollectionString(col), query,
+                buildDefaultFeedOptions())
+                .toBlocking().first().getResults().get(0);
     }
 
     public static boolean testClientJsonWithDoc(Document doc, Class<?> clazz) {

@@ -47,4 +47,18 @@ public class VoteUtil {
 
         Database.deleteResource(VOTE_COL, voteId);
     }
+
+    // TODO Prints to debug before deploy
+    public static Long getVotes(String submissionId, boolean up) {
+        String cacheKey = submissionId + (up ? ":upvotes" : ":downvotes");
+        Long voteCount = RedisCache.getLong(cacheKey);
+        if(voteCount == null) {
+            Document doc = Database.count(VOTE_COL, "SELECT VALUE COUNT(1) as voteCount FROM " + VOTE_COL +
+                    " v WHERE v.submissionId = '" + submissionId + "' AND v.up = " + up);
+            voteCount = (Long) doc.get("voteCount");
+            RedisCache.newCounter(cacheKey, voteCount);
+            return voteCount;
+        }
+        return voteCount;
+    }
 }

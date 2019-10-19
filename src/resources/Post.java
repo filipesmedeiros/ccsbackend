@@ -78,4 +78,11 @@ public class Post {
     public static class PostDTOInitialAttributes {
         public String subreddit, opUsername, title, text, imageUrl;
     }
+
+    public static class PostDTOWithVotes {
+        public String id, subreddit, opUsername, title, text, imageUrl, creationDate, upvotes, downvotes;
+        // TODO karma
+
+
+    }
 }
