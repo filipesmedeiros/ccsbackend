@@ -4,12 +4,54 @@ import api.PostsResource;
 import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.Document;
 import redis.clients.jedis.Tuple;
+import resources.Post;
 
-import java.util.Set;
+import javax.print.Doc;
+import java.util.*;
 
+import static utils.Database.getResourceListDocs;
 import static utils.RedisCache.getSortedSet;
 
 public class Scores {
+
+    public static long getSubredditScore() {
+        if()
+    }
+
+    public static long calcSubredditScoreOnDB(String subreddit) {
+        List<TopPostInCacheWithScore> topPosts = calcTopPostsOfSubredditOnDB(subreddit);
+        long subredditScore = 0;
+        for(TopPostInCacheWithScore post : topPosts)
+            subredditScore += post.score;
+        return subredditScore;
+    }
+
+    public static List<TopPostInCacheWithScore> calcTopPostsOfSubredditOnDB(String subreddit) {
+        // TODO optimize query
+        String query = "SELECT * FROM " + PostsResource.POST_COL + " p WHERE p.subreddit = '" + subreddit + "' AND " +
+                "p.timestamp >= " + Date.timestampMinusHours(3);
+        List<Document> results = Database.getResourceListDocs(PostsResource.POST_COL, query);
+
+        SortedSet<TopPostInCacheWithScore> sortedPosts = new TreeSet<>(Comparator.comparingLong(post -> post.score));
+
+        results.forEach(postDoc -> {
+            String postId = postDoc.getId();
+            Long score = getPostScore(postId).score;
+            sortedPosts.add(new TopPostInCacheWithScore(new TopPostInCache(Post.fromDocument(postDoc),
+                    System.currentTimeMillis()), score));
+        });
+
+        List<TopPostInCacheWithScore> frontPage = new LinkedList<>();
+        Iterator<TopPostInCacheWithScore> iterator = sortedPosts.iterator();
+        int counter = AppConfig.SUBREDDIT_FRONTPAGE_SIZE * 2;
+        while(iterator.hasNext())
+            if(counter-- > 0) // TODO >=?
+                frontPage.add(iterator.next());
+            else
+                break;
+
+        return frontPage;
+    }
 
     public static ScoreWithSource getPostScore(String postId) {
         // TODO how to do this better?
@@ -19,7 +61,7 @@ public class Scores {
         Set<Tuple> topPostsOfSubreddit = RedisCache.getSortedSet(getSubredditTopCacheKey(subreddit));
         for(Tuple post : topPostsOfSubreddit) {
             TopPostInCache formattedPost = new Gson().fromJson(post.getElement(), TopPostInCache.class);
-            if(formattedPost.getId().equals(postId))
+            if(formattedPost.post.getId().equals(postId))
                 return new ScoreWithSource((long) post.getScore(), true); // TODO cast to long???
         }
 
@@ -50,41 +92,27 @@ public class Scores {
 
     private static class TopPostInCache {
 
-        private String id;
-        private long timestamp, cacheTimestamp;
+        private Post post;
+        private long cacheTimestamp;
 
-        public TopPostInCache(String id, long timestamp, long cacheTimestamp) {
-            this.id = id;
-            this.timestamp = timestamp;
+        public TopPostInCache(Post post, long cacheTimestamp) {
+            this.post = post;
             this.cacheTimestamp = cacheTimestamp;
         }
 
         public TopPostInCache() {
 
         }
+    }
 
-        public String getId() {
-            return id;
-        }
+    public static class TopPostInCacheWithScore {
 
-        public void setId(String id) {
-            this.id = id;
-        }
+        private TopPostInCache post;
+        private long score;
 
-        public long getTimestamp() {
-            return timestamp;
-        }
-
-        public void setTimestamp(long timestamp) {
-            this.timestamp = timestamp;
-        }
-
-        public long getCacheTimestamp() {
-            return cacheTimestamp;
-        }
-
-        public void setCacheTimestamp(long cacheTimestamp) {
-            this.cacheTimestamp = cacheTimestamp;
+        public TopPostInCacheWithScore(TopPostInCache post, long score) {
+            this.post = post;
+            this.score = score;
         }
     }
 

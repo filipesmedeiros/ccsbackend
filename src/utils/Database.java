@@ -8,6 +8,7 @@ import rx.Observable;
 import javax.ws.rs.NotFoundException;
 import java.lang.reflect.Field;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Database {
@@ -81,14 +82,11 @@ public class Database {
                     .toBlocking()
                     .getIterator();
 
-            System.out.println("out iterator");
-
             while(it.hasNext()) {
                 System.out.println("in iterator");
                 List<Document> documentsInFragment = it.next().getResults();
-                if(documentsInFragment.size() > 0) {
+                if(documentsInFragment.size() > 0)
                     return documentsInFragment.get(0);
-                }
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -96,6 +94,33 @@ public class Database {
         }
         System.out.println("Will throw ex");
         throw new NotFoundException();
+    }
+
+    public static List<Document> getResourceListDocs(String col, String query) {
+        initializeDatabase();
+
+        String collection = getCollectionString(col);
+
+        System.out.println(query);
+
+        try {
+            Iterator<FeedResponse<Document>> it = dbClient.queryDocuments(collection, query, buildDefaultFeedOptions())
+                    .toBlocking()
+                    .getIterator();
+
+            List<Document> allResults = new LinkedList<>();
+
+            while(it.hasNext()) {
+                List<Document> documentsInFragment = it.next().getResults();
+                if(documentsInFragment.size() > 0)
+                    allResults.addAll(documentsInFragment); // TODO optimize when partition key??
+            }
+
+            return allResults;
+        } catch(Exception e) {
+            e.printStackTrace();
+            throw new NotFoundException();
+        }
     }
 
     public static boolean resourceExists(String col, String id) {

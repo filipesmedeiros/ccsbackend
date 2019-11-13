@@ -4,8 +4,23 @@ import com.microsoft.azure.cosmosdb.Document;
 
 public class Post {
 
-    private String id, subreddit, opUsername, title, content, isLink, parentPost, rootPost;
+    private String id, subreddit, opUsername, title, content, parentPost, rootPost;
+    private boolean isLink;
     public long timestamp;
+
+    public static Post fromDocument(Document doc) {
+        Post post = new Post();
+        post.id = doc.getId();
+        post.subreddit = doc.getString("subreddit");
+        post.opUsername = doc.getString("opUsername");
+        post.content = doc.getString("content");
+        post.title = doc.getString("title");
+        post.parentPost = doc.getString("parentPost");
+        post.rootPost = doc.getString("rootPost");
+        post.timestamp = doc.getLong("timestamp");
+        post.isLink = doc.getBoolean("isLink");
+        return post;
+    }
 
     public Document toDocument() {
         Document doc = new Document();
@@ -49,11 +64,11 @@ public class Post {
         this.content = content;
     }
 
-    public String getIsLink() {
+    public boolean getIsLink() {
         return isLink;
     }
 
-    public void setIsLink(String isLink) {
+    public void setIsLink(boolean isLink) {
         this.isLink = isLink;
     }
 

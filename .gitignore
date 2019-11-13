@@ -5,3 +5,5 @@ target/*
 .idea
 .idea/*
 *.iml
+azurekeys.properties
+azure.auth
