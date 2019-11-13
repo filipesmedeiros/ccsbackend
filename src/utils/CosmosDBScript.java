@@ -3,8 +3,8 @@ package utils;
 import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.Database;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
-import scc.srv.PostsResource;
-import scc.srv.UsersResource;
+import api.PostsResource;
+import api.UsersResource;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -4,18 +4,20 @@ import com.microsoft.azure.cosmosdb.Document;
 
 public class Post {
 
-    private String id, subreddit, opUsername, title, text, imageUrl;
-    public long creationDate;
+    private String id, subreddit, opUsername, title, content, isLink, parentPost, rootPost;
+    public long timestamp;
 
     public Document toDocument() {
         Document doc = new Document();
         doc.setId(id);
         doc.set("subreddit", subreddit);
         doc.set("opUsername", opUsername);
-        doc.set("text", text);
+        doc.set("content", content);
         doc.set("title", title);
-        doc.set("creationDate", creationDate);
-        doc.set("imageUrl", imageUrl);
+        doc.set("parentPost", parentPost);
+        doc.set("rootPost", rootPost);
+        doc.set("timestamp", timestamp);
+        doc.set("isLink", isLink);
         return doc;
     }
 
@@ -39,32 +41,48 @@ public class Post {
         return title;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getIsLink() {
+        return isLink;
+    }
+
+    public void setIsLink(String isLink) {
+        this.isLink = isLink;
+    }
+
+    public String getParentPost() {
+        return parentPost;
+    }
+
+    public void setParentPost(String parentPost) {
+        this.parentPost = parentPost;
+    }
+
+    public String getRootPost() {
+        return rootPost;
+    }
+
+    public void setRootPost(String rootPost) {
+        this.rootPost = rootPost;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
 
-    public String getText() {
-        return text;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public long getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(long creationDate) {
-        this.creationDate = creationDate;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getId() {
@@ -80,7 +98,7 @@ public class Post {
     }
 
     public static class PostDTOWithVotes {
-        public String id, subreddit, opUsername, title, text, imageUrl, creationDate, upvotes, downvotes;
+        public String id, subreddit, opUsername, title, text, imageUrl, timestamp, upvotes, downvotes;
         // TODO karma
 
 

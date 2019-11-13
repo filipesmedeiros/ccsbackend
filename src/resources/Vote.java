@@ -6,14 +6,13 @@ public class Vote {
 
     private String id, submissionId, userId;
     private long timestamp;
-    private boolean up, isPost;
+    private boolean up;
 
-    public Vote(String id, boolean up, String submissionId, String userId, boolean isPost) {
+    public Vote(String id, boolean up, String submissionId, String userId) {
         this.id = id;
         this.up = up;
         this.submissionId = submissionId;
         this.userId = userId;
-        this.isPost = isPost;
         timestamp = System.currentTimeMillis();
     }
 
@@ -61,14 +60,6 @@ public class Vote {
         return Integer.toString((postCommentId + userId).hashCode());
     }
 
-    public boolean isPost() {
-        return isPost;
-    }
-
-    public void setPost(boolean post) {
-        isPost = post;
-    }
-
     public Document toDocument() {
         Document doc = new Document();
         doc.setId(id);
@@ -76,7 +67,6 @@ public class Vote {
         doc.set("userId", userId);
         doc.set("up", up);
         doc.set("timestamp", timestamp);
-        doc.set("isPost", isPost);
         return doc;
     }
 }

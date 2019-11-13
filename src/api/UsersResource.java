@@ -1,4 +1,4 @@
-package scc.srv;
+package api;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.Document;

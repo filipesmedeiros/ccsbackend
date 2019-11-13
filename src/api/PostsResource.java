@@ -1,12 +1,10 @@
-package scc.srv;
+package api;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.Document;
 import resources.Post;
-import resources.Vote;
 import utils.Database;
-import utils.RedisCache;
-import utils.VoteUtil;
+import utils.Votes;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -32,7 +30,10 @@ public class PostsResource {
             throw new BadRequestException("The author of the post does not exist.");
         if(!Database.resourceExists(SubredditsResource.SUBREDDIT_COL, subreddit))
             throw new BadRequestException("The subreddit of the post does not exist.");
-        postDoc.set("creationDate", new Date().getTime());
+        postDoc.set("timestamp", new Date().getTime());
+
+        // TODO set isLink
+
         return Database.createResourceIfNotExists(postDoc, POST_COL, true).getId();
     }
 
@@ -41,8 +42,8 @@ public class PostsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Post getPost(@PathParam("postId") String postId) {
         Document postDoc = Database.getResourceDocById(POST_COL, postId);
-        postDoc.set("upvotes", VoteUtil.getVotes(postId, true));
-        postDoc.set("downvotes", VoteUtil.getVotes(postId, false));
+        postDoc.set("upvotes", Votes.getVotes(postId, true));
+        postDoc.set("downvotes", Votes.getVotes(postId, false));
         return new Gson().fromJson(postDoc.toJson(), Post.class);
     }
 
@@ -51,7 +52,7 @@ public class PostsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String setLike(@PathParam("postId") String postId, String jsonUsername) {
-        return VoteUtil.addVote(postId, POST_COL,jsonUsername, true, true);
+        return Votes.addVote(postId, POST_COL, jsonUsername, true);
     }
 
     @POST
@@ -59,7 +60,7 @@ public class PostsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void unsetLike(@PathParam("postId") String postId, String jsonUsername) {
-        VoteUtil.deleteVote(postId, jsonUsername, true);
+        Votes.deleteVote(postId, jsonUsername, true);
     }
 
     @POST
@@ -67,7 +68,7 @@ public class PostsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String setDislike(@PathParam("postId") String postId, String jsonUsername) {
-        return VoteUtil.addVote(postId, POST_COL,jsonUsername, false, true);
+        return Votes.addVote(postId, POST_COL, jsonUsername, false);
     }
 
     @POST
@@ -75,6 +76,6 @@ public class PostsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void unsetDislike(@PathParam("postId") String postId, String jsonUsername) {
-        VoteUtil.deleteVote(postId, jsonUsername, false);
+        Votes.deleteVote(postId, jsonUsername, false);
     }
 }

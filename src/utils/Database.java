@@ -4,7 +4,6 @@ import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
 import exceptions.ConflictException;
 import rx.Observable;
-import rx.Observer;
 
 import javax.ws.rs.NotFoundException;
 import java.lang.reflect.Field;

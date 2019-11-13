@@ -7,32 +7,54 @@ import resources.Vote;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-public class VoteUtil {
+public class Votes {
 
     public static final String VOTE_COL = "Votes";
 
-    public static String addVote(String submissionId, String col, String jsonUsername, boolean up, boolean isPost) {
+    public static String addVote(String postId, String col, String jsonUsername, boolean up) {
         Gson gson = new Gson();
         Document usernameDoc = new Document(jsonUsername);
         String userId = usernameDoc.getId();
         if(!Database.resourceExists(col, userId))
             throw new BadRequestException("The author of the vote does not exist.");
 
-        if(!Database.resourceExists(col, submissionId))
+        if(!Database.resourceExists(col, postId))
             throw new NotFoundException("No comment with that id was found");
 
-        String commentVoteId = Vote.generateId(submissionId, userId);
+        String postVoteId = Vote.generateId(postId, userId);
 
-        Vote newVote = new Vote(commentVoteId, up, submissionId, userId, isPost);
+        Vote newVote = new Vote(postVoteId, up, postId, userId);
 
         try {
             Vote previousPostVote =
-                    gson.fromJson(Database.getResourceDocById(VOTE_COL, commentVoteId).toJson(), Vote.class);
+                    gson.fromJson(Database.getResourceDocById(VOTE_COL, postVoteId).toJson(), Vote.class);
             if(previousPostVote.isUp() != up) {
                 return Database.putResourceOverwrite(newVote.toDocument(), VOTE_COL).getId();
             }
         } catch(NotFoundException nfe) {
             return Database.putResourceOverwrite(newVote.toDocument(), VOTE_COL).getId();
+        } finally {
+            String cacheKey = getCacheKey(postId, up);
+            if(RedisCache.getLong(cacheKey) == null) {
+                Long voteCount = countVotesOnBD(postId, up);
+                RedisCache.newCounter(cacheKey, voteCount);
+
+
+
+
+
+                // TODO put in cache and do top posts
+
+
+
+
+
+            } else {
+                if (up)
+                    RedisCache.incr(cacheKey);
+                else
+                    RedisCache.decr(cacheKey);
+            }
         }
         throw new BadRequestException("User already has upvote on this post.");
     }
@@ -49,16 +71,23 @@ public class VoteUtil {
     }
 
     // TODO Prints to debug before deploy
-    public static Long getVotes(String submissionId, boolean up) {
-        String cacheKey = submissionId + (up ? ":upvotes" : ":downvotes");
+    public static Long getVotes(String postId, boolean up) {
+        String cacheKey = getCacheKey(postId, up);
         Long voteCount = RedisCache.getLong(cacheKey);
         if(voteCount == null) {
-            Document doc = Database.count(VOTE_COL, "SELECT VALUE COUNT(1) as voteCount FROM " + VOTE_COL +
-                    " v WHERE v.submissionId = '" + submissionId + "' AND v.up = " + up);
-            voteCount = (Long) doc.get("voteCount");
+            voteCount = countVotesOnBD(postId, up);
             RedisCache.newCounter(cacheKey, voteCount);
-            return voteCount;
         }
         return voteCount;
+    }
+
+    public static Long countVotesOnBD(String postId, boolean up) {
+        Document doc = Database.count(VOTE_COL, "SELECT VALUE COUNT(1) as voteCount FROM " + VOTE_COL +
+                " v WHERE v.submissionId = '" + postId + "' AND v.up = " + up);
+        return (Long) doc.get("voteCount");
+    }
+
+    public static String getCacheKey(String postId, boolean up) {
+        return postId + (up ? ":upvotes" : ":downvotes");
     }
 }

@@ -1,4 +1,4 @@
-package scc.srv;
+package api;
 
 import com.microsoft.azure.storage.StorageException;
 import exceptions.ContainerDoesNotExistException;

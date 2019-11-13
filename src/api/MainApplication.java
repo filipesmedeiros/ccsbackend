@@ -1,4 +1,4 @@
-package scc.srv;
+package api;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
@@ -35,7 +35,6 @@ public class MainApplication extends Application {
         set.add(PostsResource.class);
         set.add(UsersResource.class);
         set.add(SubredditsResource.class);
-        set.add(CommentsResource.class);
         return set;
     }
 }

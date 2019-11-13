@@ -4,8 +4,12 @@ import com.microsoft.azure.cosmosdb.Document;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.Tuple;
 
 import java.time.Duration;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
 // TODO try to abstract the different entries we have in the cache, so the application layer only has worry
 // TODO about putting stuff and taking out stuff, and not how the cache itself manages the entry, unless explicitly
@@ -116,6 +120,15 @@ public class RedisCache {
                 return null;
             }
             return Long.parseLong(value);
+        }
+    }
+
+    public static Set<Tuple> getSortedSet(String entryKey) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            Set<Tuple> set = jedis.zrangeWithScores(entryKey, 0, -1);
+            return set;
         }
     }
 }
