@@ -36,7 +36,7 @@ public class Votes {
         } finally {
             String cacheKey = getCacheKey(postId, up);
             if(RedisCache.getLong(cacheKey) == null) {
-                Long voteCount = countVotesOnBD(postId, up);
+                Long voteCount = countVotesOnDB(postId, up);
                 RedisCache.newCounter(cacheKey, voteCount);
 
 
@@ -50,6 +50,7 @@ public class Votes {
 
 
             } else {
+                //TODO isto nao devia ser incrementar independentmenete se for up ou down
                 if (up)
                     RedisCache.incr(cacheKey);
                 else
@@ -75,13 +76,13 @@ public class Votes {
         String cacheKey = getCacheKey(postId, up);
         Long voteCount = RedisCache.getLong(cacheKey);
         if(voteCount == null) {
-            voteCount = countVotesOnBD(postId, up);
+            voteCount = countVotesOnDB(postId, up);
             RedisCache.newCounter(cacheKey, voteCount);
         }
         return voteCount;
     }
 
-    public static Long countVotesOnBD(String postId, boolean up) {
+    public static Long countVotesOnDB(String postId, boolean up) {
         Document doc = Database.count(VOTE_COL, "SELECT VALUE COUNT(1) as voteCount FROM " + VOTE_COL +
                 " v WHERE v.submissionId = '" + postId + "' AND v.up = " + up);
         return (Long) doc.get("voteCount");

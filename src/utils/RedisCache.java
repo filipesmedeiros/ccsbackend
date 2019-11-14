@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 // TODO try to abstract the different entries we have in the cache, so the application layer only has worry
 // TODO about putting stuff and taking out stuff, and not how the cache itself manages the entry, unless explicitly
@@ -100,13 +101,13 @@ public class RedisCache {
         }
     }
 
-    public static boolean newCounter(String counterName, Long initValue) {
+    public static boolean newCounter(String entryKey, Long initValue) {
         initializeRedis();
 
         try(Jedis jedis = jedisPool.getResource()) {
-            if(jedis.get(counterName) != null)
+            if(jedis.get(entryKey) != null)
                 return false;
-            jedis.set(counterName, initValue.toString());
+            jedis.set(entryKey, initValue.toString());
             return true;
         }
     }
@@ -123,12 +124,57 @@ public class RedisCache {
         }
     }
 
-    public static Set<Tuple> getSortedSet(String entryKey) {
+    public static SortedSet<Tuple> getSortedSet(String entryKey) {
         initializeRedis();
 
         try(Jedis jedis = jedisPool.getResource()) {
+            if(jedis.get(entryKey) == null)
+                return null;
+
             Set<Tuple> set = jedis.zrangeWithScores(entryKey, 0, -1);
-            return set;
+            return new TreeSet<>(set);
+        }
+    }
+
+    public static boolean addToSortedSet(String entryKey, double score, String member) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            boolean created = false;
+            if(jedis.get(entryKey) != null)
+                created = true;
+            jedis.zadd(entryKey, score, member);
+            return created;
+        }
+    }
+
+    public static String popLastFromSortedSet(String entryKey) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            if(jedis.get(entryKey) != null) {
+                String lastMember = jedis.zrange(entryKey, -1, -1).toArray(new String[0])[0];
+                jedis.zrem(entryKey, lastMember);
+                return lastMember;
+            }
+
+            return null;
+        }
+    }
+
+    public static boolean entryExists(String entryKey) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.get(entryKey) != null;
+        }
+    }
+
+    public static boolean removeEntry(String entryKey) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.del(entryKey) > 0;
         }
     }
 }

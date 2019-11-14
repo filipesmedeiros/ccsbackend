@@ -1,58 +1,154 @@
 package utils;
 
 import api.PostsResource;
-import com.google.gson.Gson;
+import api.SubredditsResource;
 import com.microsoft.azure.cosmosdb.Document;
 import redis.clients.jedis.Tuple;
 import resources.Post;
+import resources.Subreddit;
 
-import javax.print.Doc;
 import java.util.*;
-
-import static utils.Database.getResourceListDocs;
-import static utils.RedisCache.getSortedSet;
 
 public class Scores {
 
-    public static long getSubredditScore() {
-        if()
+    public static final String TOP_SUBREDDITS = "topsubreddits";
+
+    public static List<Post> calcAndPutRallFrontpageInCache() {
+        // TODO optimize query
+        String query = "SELECT * FROM " + SubredditsResource.SUBREDDIT_COL + " s " +
+                " ORDER BY p.score DESC " +
+                "OFFSET 0 LIMIT " + AppConfig.NUMBER_TOP_SUBREDDITS;
+        List<Document> topSubsDocs = Database.getResourceListDocs(SubredditsResource.SUBREDDIT_COL, query);
+
+        List<Post> rallFrontpagePosts = new ArrayList<>(AppConfig.RALL_FRONTPAGE_SIZE);
+
+        List<List<Post>> topSubredditsPosts = new ArrayList<>(topSubsDocs.size());
+        topSubsDocs.forEach(subDoc -> topSubredditsPosts.add(getTopPostsOfSubreddit(subDoc.getId())));
+
+        // TODO we have the list, now define a way to select the posts to use
+
+        return rallFrontpagePosts; // TODO this is still empty, see above todo
     }
 
-    public static long calcSubredditScoreOnDB(String subreddit) {
-        List<TopPostInCacheWithScore> topPosts = calcTopPostsOfSubredditOnDB(subreddit);
-        long subredditScore = 0;
-        for(TopPostInCacheWithScore post : topPosts)
-            subredditScore += post.score;
-        return subredditScore;
+    public static boolean addPostOfSubredditToCacheIfTop(Post post) {
+        String entryKey = getSubredditTopCacheKey(post.getSubreddit());
+        SortedSet<Tuple> topPostsOfSubreddit = RedisCache.getSortedSet(entryKey);
+
+        if(topPostsOfSubreddit == null || topPostsOfSubreddit.size() < AppConfig.SUBREDDIT_FRONTPAGE_SIZE) {
+            RedisCache.addToSortedSet(entryKey, post.getScore(), post.toDocument().toJson());
+            return true;
+        }
+
+        if(post.getScore() > topPostsOfSubreddit.last().getScore()) {
+            RedisCache.addToSortedSet(TOP_SUBREDDITS, post.getScore(), post.toDocument().toJson());
+            if(topPostsOfSubreddit.size() + 1 > AppConfig.NUMBER_TOP_SUBREDDITS) {
+                RedisCache.popLastFromSortedSet(TOP_SUBREDDITS);
+            }
+            return true;
+        }
+
+        return false;
     }
 
-    public static List<TopPostInCacheWithScore> calcTopPostsOfSubredditOnDB(String subreddit) {
+    public static boolean removeSubredditTopPosts(String subredditId) {
+        return RedisCache.removeEntry(getSubredditTopCacheKey(subredditId));
+    }
+
+    public static boolean calcAndAddTopPostsOfSubredditToCache(String subredditId) {
+        List<Post> topSubredditPosts = calcTopPostsOfSubredditOnDB(subredditId);
+        topSubredditPosts.forEach(post ->
+                RedisCache.addToSortedSet(getSubredditTopCacheKey(subredditId), post.getScore(), post.toDocument().toJson()));
+
+        return true;
+    }
+
+    public static boolean addSubbreditToCacheIfTop(Subreddit subreddit) {
+        SortedSet<Tuple> topSubreddits = RedisCache.getSortedSet(TOP_SUBREDDITS);
+        if(topSubreddits == null || topSubreddits.size() < AppConfig.NUMBER_TOP_SUBREDDITS) {
+            RedisCache.addToSortedSet(TOP_SUBREDDITS, subreddit.getScore(), subreddit.toDocument().toJson());
+            return true;
+        }
+
+        if(subreddit.getScore() > topSubreddits.last().getScore()) {
+            RedisCache.addToSortedSet(TOP_SUBREDDITS, subreddit.getScore(), subreddit.toDocument().toJson());
+            if(topSubreddits.size() + 1 > AppConfig.NUMBER_TOP_SUBREDDITS) {
+                String subredditAsString = RedisCache.popLastFromSortedSet(TOP_SUBREDDITS);
+                if(subredditAsString == null)
+                    return true;
+
+                // TODO should we do this? We can let it expire, maybe it's better
+                // Subreddit removedSubreddit = Subreddit.fromDocument(new Document(subredditAsString));
+                // removeSubredditTopPosts(removedSubreddit.getId());
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean isTopSubreddit(String subredditId) {
+        SortedSet<Tuple> topSubreddits = RedisCache.getSortedSet(TOP_SUBREDDITS);
+        if(topSubreddits == null || topSubreddits.size() < AppConfig.NUMBER_TOP_SUBREDDITS)
+            return true;
+        long subredditScore = getSubredditScore(subredditId);
+        return subredditScore > topSubreddits.last().getScore();
+    }
+
+    public static boolean isTopSubreddit(Subreddit subreddit, SortedSet<Tuple> topSubreddits) {
+        if(!RedisCache.entryExists(TOP_SUBREDDITS))
+            return true;
+        if(topSubreddits.size() < AppConfig.NUMBER_TOP_SUBREDDITS)
+            return true;
+        return subreddit.getScore() > topSubreddits.last().getScore();
+    }
+
+    public static List<Post> getTopPostsOfSubreddit(String subredit) {
+        SortedSet<Tuple> topPosts = RedisCache.getSortedSet(getSubredditTopCacheKey(subredit));
+
+        if(topPosts != null) {
+            List<Post> topPostList = new ArrayList<>(topPosts.size());
+            for(Tuple t : topPosts)
+                topPostList.add(Post.fromDocument(new Document(t.getElement())));
+            return topPostList;
+        } else
+            return calcTopPostsOfSubredditOnDB(subredit);
+    }
+
+    public static List<Post> calcTopPostsOfSubredditOnDB(String subreddit) {
         // TODO optimize query
         String query = "SELECT * FROM " + PostsResource.POST_COL + " p WHERE p.subreddit = '" + subreddit + "' AND " +
-                "p.timestamp >= " + Date.timestampMinusHours(3);
+                "p.timestamp >= " + Date.timestampMinusHours(AppConfig.HOURS_OF_FRONT_PAGE_POSTS) +
+                " ORDER BY p.score DESC " +
+                "OFFSET 0 LIMIT " + AppConfig.SUBREDDIT_FRONTPAGE_SIZE;
         List<Document> results = Database.getResourceListDocs(PostsResource.POST_COL, query);
-
-        SortedSet<TopPostInCacheWithScore> sortedPosts = new TreeSet<>(Comparator.comparingLong(post -> post.score));
-
-        results.forEach(postDoc -> {
-            String postId = postDoc.getId();
-            Long score = getPostScore(postId).score;
-            sortedPosts.add(new TopPostInCacheWithScore(new TopPostInCache(Post.fromDocument(postDoc),
-                    System.currentTimeMillis()), score));
-        });
-
-        List<TopPostInCacheWithScore> frontPage = new LinkedList<>();
-        Iterator<TopPostInCacheWithScore> iterator = sortedPosts.iterator();
-        int counter = AppConfig.SUBREDDIT_FRONTPAGE_SIZE * 2;
-        while(iterator.hasNext())
-            if(counter-- > 0) // TODO >=?
-                frontPage.add(iterator.next());
-            else
-                break;
-
-        return frontPage;
+        List<Post> topPosts = new ArrayList<>(results.size());
+        for(Document result : results)
+            topPosts.add(Post.fromDocument(result));
+        return topPosts;
     }
 
+    public static long getPostScore(String postId) {
+        Long score = RedisCache.getLong(postId + ":score");
+        if(score == null) {
+            Document postDoc = Database.getResourceDocById(PostsResource.POST_COL, postId);
+            Post post = Post.fromDocument(postDoc);
+            score = post.getScore();
+            RedisCache.getOrSetLong(postId + ":score", score);
+        }
+        return score;
+    }
+
+    public static long getSubredditScore(String subredditId) {
+        Long score = RedisCache.getLong(subredditId + ":score");
+        if(score == null) {
+            Document subredditDoc = Database.getResourceDocById(SubredditsResource.SUBREDDIT_COL, subredditId);
+            score = subredditDoc.getLong("score");
+            RedisCache.getOrSetLong(subredditId + ":score", score);
+        }
+        return score;
+    }
+
+    /*
     public static ScoreWithSource getPostScore(String postId) {
         // TODO how to do this better?
         Document postDoc = Database.getResourceDocById(PostsResource.POST_COL, postId);
@@ -69,7 +165,7 @@ public class Scores {
     }
 
     public static long calcPostScoreOnDB(String postId, boolean alreadyHaveThisCount, long count) {
-        long otherVoteCount = Votes.countVotesOnBD(postId, !alreadyHaveThisCount);
+        long otherVoteCount = Votes.countVotesOnDB(postId, !alreadyHaveThisCount);
 
         long score = alreadyHaveThisCount ?
                 count - (long) (otherVoteCount * 1.2) :
@@ -82,38 +178,13 @@ public class Scores {
     }
 
     public static long calcPostScoreOnDB(String postId) {
-        long upvotes = Votes.countVotesOnBD(postId, true);
+        long upvotes = Votes.countVotesOnDB(postId, true);
         return calcPostScoreOnDB(postId, true, upvotes);
     }
+    */
 
     public static String getSubredditTopCacheKey(String subreddit) {
         return subreddit + ":topposts";
-    }
-
-    private static class TopPostInCache {
-
-        private Post post;
-        private long cacheTimestamp;
-
-        public TopPostInCache(Post post, long cacheTimestamp) {
-            this.post = post;
-            this.cacheTimestamp = cacheTimestamp;
-        }
-
-        public TopPostInCache() {
-
-        }
-    }
-
-    public static class TopPostInCacheWithScore {
-
-        private TopPostInCache post;
-        private long score;
-
-        public TopPostInCacheWithScore(TopPostInCache post, long score) {
-            this.post = post;
-            this.score = score;
-        }
     }
 
     public static class ScoreWithSource {

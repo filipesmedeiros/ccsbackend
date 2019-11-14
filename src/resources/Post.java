@@ -6,7 +6,7 @@ public class Post {
 
     private String id, subreddit, opUsername, title, content, parentPost, rootPost;
     private boolean isLink;
-    public long timestamp;
+    private long timestamp, score;
 
     public static Post fromDocument(Document doc) {
         Post post = new Post();
@@ -19,6 +19,7 @@ public class Post {
         post.rootPost = doc.getString("rootPost");
         post.timestamp = doc.getLong("timestamp");
         post.isLink = doc.getBoolean("isLink");
+        post.score = doc.getLong("score");
         return post;
     }
 
@@ -33,6 +34,7 @@ public class Post {
         doc.set("rootPost", rootPost);
         doc.set("timestamp", timestamp);
         doc.set("isLink", isLink);
+        doc.set("score", score);
         return doc;
     }
 
@@ -106,6 +108,22 @@ public class Post {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public boolean isLink() {
+        return isLink;
+    }
+
+    public void setLink(boolean link) {
+        isLink = link;
+    }
+
+    public long getScore() {
+        return score;
+    }
+
+    public void setScore(long score) {
+        this.score = score;
     }
 
     public static class PostDTOInitialAttributes {
