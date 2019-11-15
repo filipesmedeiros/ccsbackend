@@ -13,21 +13,54 @@ public class Scores {
 
     public static final String TOP_SUBREDDITS = "topsubreddits";
 
+    private static class SubredditWithTopPostList {
+        private Subreddit subreddit;
+        private List<Post> topPosts;
+
+        public SubredditWithTopPostList(Subreddit subreddit, List<Post> topPosts) {
+            this.subreddit = subreddit;
+            this.topPosts = topPosts;
+        }
+    }
+
     public static List<Post> calcAndPutRallFrontpageInCache() {
         // TODO optimize query
         String query = "SELECT * FROM " + SubredditsResource.SUBREDDIT_COL + " s " +
-                " ORDER BY p.score DESC " +
+                " ORDER BY s.score DESC " +
                 "OFFSET 0 LIMIT " + AppConfig.NUMBER_TOP_SUBREDDITS;
         List<Document> topSubsDocs = Database.getResourceListDocs(SubredditsResource.SUBREDDIT_COL, query);
 
         List<Post> rallFrontpagePosts = new ArrayList<>(AppConfig.RALL_FRONTPAGE_SIZE);
 
-        List<List<Post>> topSubredditsPosts = new ArrayList<>(topSubsDocs.size());
-        topSubsDocs.forEach(subDoc -> topSubredditsPosts.add(getTopPostsOfSubreddit(subDoc.getId())));
+        SortedSet<SubredditWithTopPostList> topSubredditsPosts = new TreeSet<>(
+                Comparator.comparingLong(sub -> sub.subreddit.getScore()));
 
-        // TODO we have the list, now define a way to select the posts to use
+        topSubsDocs.forEach(subDoc -> {
+            Subreddit subreddit = Subreddit.fromDocument(subDoc);
+            List<Post> topPosts = getTopPostsOfSubreddit(subreddit.getId());
+            topSubredditsPosts.add(new SubredditWithTopPostList(subreddit, topPosts));
 
-        return rallFrontpagePosts; // TODO this is still empty, see above todo
+            RedisCache.addToSortedSet(TOP_SUBREDDITS, subreddit.getScore(), subDoc.toJson(),
+                    AppConfig.EXPIRE_TIMEOUT_TOP);
+
+            topPosts.forEach(post -> RedisCache.addToSortedSet(getSubredditTopCacheKey(subreddit.getId()),
+                    post.getScore(), post.toDocument().toJson()));
+        });
+
+        while(rallFrontpagePosts.size() < AppConfig.RALL_FRONTPAGE_SIZE) {
+            SubredditWithTopPostList nextSub = topSubredditsPosts.first();
+
+            if(nextSub.topPosts.size() == 0)
+                break;
+
+            Post addedPost = nextSub.topPosts.remove(0);
+            rallFrontpagePosts.add(addedPost);
+            topSubredditsPosts.remove(nextSub);
+            nextSub.subreddit.decrScore(addedPost.getScore());
+            topSubredditsPosts.add(nextSub);
+        }
+
+        return rallFrontpagePosts;
     }
 
     public static boolean addPostOfSubredditToCacheIfTop(Post post) {
@@ -57,7 +90,8 @@ public class Scores {
     public static boolean calcAndAddTopPostsOfSubredditToCache(String subredditId) {
         List<Post> topSubredditPosts = calcTopPostsOfSubredditOnDB(subredditId);
         topSubredditPosts.forEach(post ->
-                RedisCache.addToSortedSet(getSubredditTopCacheKey(subredditId), post.getScore(), post.toDocument().toJson()));
+                RedisCache.addToSortedSet(getSubredditTopCacheKey(subredditId), post.getScore(),
+                        post.toDocument().toJson()));
 
         return true;
     }
@@ -76,10 +110,15 @@ public class Scores {
                 if(subredditAsString == null)
                     return true;
 
-                // TODO should we do this? We can let it expire, maybe it's better
-                // Subreddit removedSubreddit = Subreddit.fromDocument(new Document(subredditAsString));
-                // removeSubredditTopPosts(removedSubreddit.getId());
+                Subreddit removedSubreddit = Subreddit.fromDocument(new Document(subredditAsString));
+                RedisCache.setExpireTimeout(getSubredditTopCacheKey(removedSubreddit.getId()),
+                        AppConfig.EXPIRE_TIMEOUT_OLD_TOP_SUBREDDIT);
             }
+
+            String entryKey = getSubredditTopCacheKey(subreddit.getId());
+            if(RedisCache.entryExists(entryKey))
+                calcAndAddTopPostsOfSubredditToCache(subreddit.getId());
+
             return true;
         }
 

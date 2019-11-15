@@ -6,4 +6,9 @@ public class Date {
         long milis = hours * 60 * 60 * 1000;
         return System.currentTimeMillis() - milis;
     }
+
+    public static long timestampMinusMinutes(int minutes) {
+        long milis = minutes * 60 * 1000;
+        return System.currentTimeMillis() - milis;
+    }
 }

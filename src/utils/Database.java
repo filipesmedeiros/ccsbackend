@@ -1,5 +1,7 @@
 package utils;
 
+import com.microsoft.azure.cosmos.CosmosClient;
+import com.microsoft.azure.cosmos.CosmosItem;
 import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
 import exceptions.ConflictException;
@@ -121,6 +123,18 @@ public class Database {
             e.printStackTrace();
             throw new NotFoundException();
         }
+    }
+
+    // TODO check with preguica
+    public static CosmosItem getResourceById(String container, String id) {
+        return CosmosClient.create(AZURE_DB_ENDPOINT, Secrets.AZURE_DB_PRIMARY_KEY)
+                .getDatabase(AZURE_DB_ID).getContainer(container).getItem(id);
+    }
+
+    public static void replaceDocument(Document newDocument) {
+        initializeDatabase();
+
+        dbClient.replaceDocument(newDocument, buildDefaultFeedOptions());
     }
 
     public static boolean resourceExists(String col, String id) {

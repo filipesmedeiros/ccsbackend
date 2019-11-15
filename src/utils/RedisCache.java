@@ -148,6 +148,13 @@ public class RedisCache {
         }
     }
 
+    public static boolean addToSortedSet(String entryKey, double score, String member, int timeout) {
+        boolean added = addToSortedSet(entryKey, score, member);
+        if(added)
+            setExpireTimeout(entryKey, timeout);
+        return added;
+    }
+
     public static String popLastFromSortedSet(String entryKey) {
         initializeRedis();
 
@@ -175,6 +182,14 @@ public class RedisCache {
 
         try(Jedis jedis = jedisPool.getResource()) {
             return jedis.del(entryKey) > 0;
+        }
+    }
+
+    public static void setExpireTimeout(String entryKey, int timeout) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            jedis.expire(entryKey, timeout);
         }
     }
 }

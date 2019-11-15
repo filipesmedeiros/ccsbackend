@@ -30,6 +30,11 @@ public class Subreddit {
         this.score = score;
     }
 
+    public long decrScore(long scoreToDecr) {
+        score -= scoreToDecr;
+        return score;
+    }
+
     public static Subreddit fromDocument(Document doc) {
         Subreddit subreddit = new Subreddit();
         subreddit.setId(doc.getId());
