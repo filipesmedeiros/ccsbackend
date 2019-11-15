@@ -33,29 +33,6 @@ public class Votes {
             }
         } catch(NotFoundException nfe) {
             return Database.putResourceOverwrite(newVote.toDocument(), VOTE_COL).getId();
-        } finally {
-            String cacheKey = getCacheKey(postId, up);
-            if(RedisCache.getLong(cacheKey) == null) {
-                Long voteCount = countVotesOnDB(postId, up);
-                RedisCache.newCounter(cacheKey, voteCount);
-
-
-
-
-
-                // TODO put in cache and do top posts
-
-
-
-
-
-            } else {
-                //TODO isto nao devia ser incrementar independentmenete se for up ou down
-                if (up)
-                    RedisCache.incr(cacheKey);
-                else
-                    RedisCache.decr(cacheKey);
-            }
         }
         throw new BadRequestException("User already has upvote on this post.");
     }

@@ -169,6 +169,14 @@ public class RedisCache {
         }
     }
 
+    public static double sortedSetIncr(String entryKey, double incr, String member) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.zincrby(entryKey, incr, member);
+        }
+    }
+
     public static boolean entryExists(String entryKey) {
         initializeRedis();
 

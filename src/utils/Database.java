@@ -134,7 +134,7 @@ public class Database {
     public static void replaceDocument(Document newDocument) {
         initializeDatabase();
 
-        dbClient.replaceDocument(newDocument, buildDefaultFeedOptions());
+        dbClient.replaceDocument(newDocument,  new RequestOptions());
     }
 
     public static boolean resourceExists(String col, String id) {

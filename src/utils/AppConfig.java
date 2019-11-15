@@ -2,9 +2,9 @@ package utils;
 
 public class AppConfig {
 
-    public static final int RALL_FRONTPAGE_SIZE = 25 * 2;
+    public static final int RALL_FRONTPAGE_SIZE = 500;
 
-    public static final int SUBREDDIT_FRONTPAGE_SIZE = 20 * 2;
+    public static final int SUBREDDIT_FRONTPAGE_SIZE = 250;
 
     public static final boolean RALL_DEPENDS_ON_SUBREDDITS = true;
 
@@ -17,4 +17,6 @@ public class AppConfig {
     public static final int EXPIRE_TIMEOUT_TOP = 60 * 20; // seconds
 
     public static final int SCORE_UPDATE_PERIOD = 10; // minutes
+
+    public static final double SCORE_LOST_PER_PERIOD = 0.995;
 }

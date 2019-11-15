@@ -1,7 +1,6 @@
 package functions;
 
 import api.PostsResource;
-import com.microsoft.azure.cosmos.CosmosItem;
 import com.microsoft.azure.cosmosdb.Document;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.FunctionName;
@@ -9,14 +8,13 @@ import com.microsoft.azure.functions.annotation.TimerTrigger;
 import utils.*;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 public class UpdateScoresOnDB {
 
     @FunctionName("update_scores_on_db")
-    public void updateScoresOnDB(@TimerTrigger(name = "keepAliveTrigger", schedule = "* 10 * * * *") String timerInfo,
+    public void updateScoresOnDB(@TimerTrigger(name = "keepAliveTrigger", schedule = "* */10 * * * *") String timerInfo,
                                     ExecutionContext context) {
 
         // TODO Group By???
@@ -69,10 +67,10 @@ public class UpdateScoresOnDB {
         postScores.forEach((postId, score) -> {
             Boolean isInCachePost = isInCache.get(postId);
             if(isInCachePost != null && !isInCachePost) {
-                CosmosItem item = Database.getResourceById(PostsResource.POST_COL, postId);
-                long currentScore = item.getLong("score");
-                item.set("score", currentScore + score);
-                item.replace(item, "/subreddit");
+                Document postDoc = Database.getResourceDocById(PostsResource.POST_COL, postId);
+                long oldScore = postDoc.getLong("score");
+                postDoc.set("score", score + oldScore);
+                Database.replaceDocument(postDoc);
             }
         });
     }

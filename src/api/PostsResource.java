@@ -2,13 +2,16 @@ package api;
 
 import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.Document;
+import redis.clients.jedis.Tuple;
 import resources.Post;
-import utils.Database;
-import utils.Votes;
+import resources.Thread;
+import utils.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
+import java.util.List;
+import java.util.SortedSet;
 
 
 @Path("/posts")
@@ -32,9 +35,39 @@ public class PostsResource {
             throw new BadRequestException("The subreddit of the post does not exist.");
         postDoc.set("timestamp", new Date().getTime());
 
-        // TODO set isLink
-
         return Database.createResourceIfNotExists(postDoc, POST_COL, true).getId();
+    }
+
+    @GET
+    @Path("/{postId}/thread")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getPostThread(@PathParam("postId") String postId) {
+        Thread t = new Thread(Posts.getPostThread(postId));
+        return t.toJson();
+    }
+
+    //TODO
+    @GET
+    @Path("/frontpageall")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getFrontPageAll() {
+        return null;
+    }
+
+    //TODO
+    @GET
+    @Path("/{subredditId}/frontpage")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getFrontPageOfSubreddit(@PathParam("subredditId") String subredditId) {
+        /*
+        SortedSet<Tuple> topPostsOfSubreddit = RedisCache.getSortedSet(Scores.getSubredditTopCacheKey(subredditId));
+
+        topPostsOfSubreddit.forEach( tuple -> {
+            if(tuple == subredditId)
+
+        });
+        */
+        return null;
     }
 
     @GET

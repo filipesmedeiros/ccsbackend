@@ -87,6 +87,11 @@ public class Scores {
         return RedisCache.removeEntry(getSubredditTopCacheKey(subredditId));
     }
 
+    public static void updateTopPostsOfSubredditOnCache(String subredditId) {
+        List<Post> topSubredditPosts = calcTopPostsOfSubredditOnDB(subredditId);
+        topSubredditPosts.forEach(Scores::addPostOfSubredditToCacheIfTop);
+    }
+
     public static boolean calcAndAddTopPostsOfSubredditToCache(String subredditId) {
         List<Post> topSubredditPosts = calcTopPostsOfSubredditOnDB(subredditId);
         topSubredditPosts.forEach(post ->
