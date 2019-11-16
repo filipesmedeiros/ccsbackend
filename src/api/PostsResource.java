@@ -1,6 +1,8 @@
 package api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.microsoft.azure.cosmosdb.Document;
 import redis.clients.jedis.Tuple;
 import resources.Post;
@@ -10,6 +12,7 @@ import utils.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -59,15 +62,17 @@ public class PostsResource {
     @Path("/{subredditId}/frontpage")
     @Produces(MediaType.APPLICATION_JSON)
     public String getFrontPageOfSubreddit(@PathParam("subredditId") String subredditId) {
-        /*
+
         SortedSet<Tuple> topPostsOfSubreddit = RedisCache.getSortedSet(Scores.getSubredditTopCacheKey(subredditId));
+        Gson g = new Gson();
+        List<Post> topPosts = new LinkedList<>();
 
         topPostsOfSubreddit.forEach( tuple -> {
-            if(tuple == subredditId)
-
+            Post post = g.fromJson(tuple.getElement(), Post.class);
+            topPosts.add(post);
         });
-        */
-        return null;
+
+        return g.toJson(topPosts);
     }
 
     @GET
