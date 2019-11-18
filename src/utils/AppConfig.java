@@ -19,4 +19,8 @@ public class AppConfig {
     public static final int SCORE_UPDATE_PERIOD = 10; // minutes
 
     public static final double SCORE_LOST_PER_PERIOD = 0.995;
+
+    public static final int NUMBER_CHILDREN_POSTS = 30;
+
+    public static final int NUMBER_CHILDREN_COMMENTS = 5;
 }

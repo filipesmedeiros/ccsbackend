@@ -43,6 +43,22 @@ public class RedisCache {
         return jedisPool;
     }
 
+    public static String get(String entryKey) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.get(entryKey);
+        }
+    }
+
+    public static String set(String entryKey, String entry) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.set(entryKey, entry);
+        }
+    }
+
     // TODO what to return
     public static Long lpush(String listName, Document doc, long limit) {
         initializeRedis();

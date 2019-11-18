@@ -2,6 +2,9 @@ package utils;
 
 import api.PostsResource;
 import api.SubredditsResource;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.microsoft.azure.cosmosdb.Document;
 import redis.clients.jedis.Tuple;
 import resources.Post;
@@ -12,6 +15,7 @@ import java.util.*;
 public class Scores {
 
     public static final String TOP_SUBREDDITS = "topsubreddits";
+    public static final String RALL_FRONTPAGE_POSTS = "rallfrontpageposts";
 
     private static class SubredditWithTopPostList {
         private Subreddit subreddit;
@@ -21,6 +25,14 @@ public class Scores {
             this.subreddit = subreddit;
             this.topPosts = topPosts;
         }
+    }
+
+    public static String getRallFrontpage() {
+        String s = RedisCache.get(RALL_FRONTPAGE_POSTS);
+        if(s == null)
+            return new Gson().toJson(calcAndPutRallFrontpageInCache());
+
+        return s;
     }
 
     public static List<Post> calcAndPutRallFrontpageInCache() {
@@ -59,6 +71,8 @@ public class Scores {
             nextSub.subreddit.decrScore(addedPost.getScore());
             topSubredditsPosts.add(nextSub);
         }
+
+        RedisCache.set(RALL_FRONTPAGE_POSTS, new Gson().toJson(rallFrontpagePosts));
 
         return rallFrontpagePosts;
     }

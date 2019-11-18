@@ -1,20 +1,15 @@
 package api;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.microsoft.azure.cosmosdb.Document;
-import redis.clients.jedis.Tuple;
 import resources.Post;
-import resources.Thread;
+import resources.PostThread;
 import utils.*;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedSet;
 
 
 @Path("/posts")
@@ -45,7 +40,7 @@ public class PostsResource {
     @Path("/{postId}/thread")
     @Produces(MediaType.APPLICATION_JSON)
     public String getPostThread(@PathParam("postId") String postId) {
-        Thread t = new Thread(Posts.getPostThread(postId));
+        PostThread t = Posts.getPostThread(postId);
         return t.toJson();
     }
 
@@ -54,7 +49,7 @@ public class PostsResource {
     @Path("/frontpageall")
     @Produces(MediaType.APPLICATION_JSON)
     public String getFrontPageAll() {
-        return null;
+        return Scores.getRallFrontpage();
     }
 
     //TODO
@@ -62,17 +57,8 @@ public class PostsResource {
     @Path("/{subredditId}/frontpage")
     @Produces(MediaType.APPLICATION_JSON)
     public String getFrontPageOfSubreddit(@PathParam("subredditId") String subredditId) {
-
-        SortedSet<Tuple> topPostsOfSubreddit = RedisCache.getSortedSet(Scores.getSubredditTopCacheKey(subredditId));
-        Gson g = new Gson();
-        List<Post> topPosts = new LinkedList<>();
-
-        topPostsOfSubreddit.forEach( tuple -> {
-            Post post = g.fromJson(tuple.getElement(), Post.class);
-            topPosts.add(post);
-        });
-
-        return g.toJson(topPosts);
+        List<Post> topPostsOfSubreddit = Scores.getTopPostsOfSubreddit(subredditId);
+        return new Gson().toJson(topPostsOfSubreddit);
     }
 
     @GET
