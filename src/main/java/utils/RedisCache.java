@@ -12,9 +12,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-// TODO try to abstract the different entries we have in the cache, so the application layer only has worry
-// TODO about putting stuff and taking out stuff, and not how the cache itself manages the entry, unless explicitly
-// TODO stated
 public class RedisCache {
 
     private static final String AZURE_CACHE_HOSTNAME = "sccredis4770147967.redis.cache.windows.net";
