@@ -11,10 +11,11 @@ public class Votes {
 
     public static final String VOTE_COL = "Votes";
 
-    public static String addVote(String postId, String col, String jsonUsername, boolean up) {
+    public static String addVote(String postId, String col, String voteData, boolean up) {
         Gson gson = new Gson();
-        Document usernameDoc = new Document(jsonUsername);
-        String userId = usernameDoc.getId();
+        Document usernameDoc = new Document(voteData);
+        String userId = usernameDoc.getString("username");
+        String subreddit = usernameDoc.getString("subredditId");
         if(!Database.resourceExists(col, userId))
             throw new BadRequestException("The author of the vote does not exist.");
 
@@ -23,7 +24,7 @@ public class Votes {
 
         String postVoteId = Vote.generateId(postId, userId);
 
-        Vote newVote = new Vote(postVoteId, up, postId, userId);
+        Vote newVote = new Vote(postVoteId, up, postId, userId, subreddit);
 
         try {
             Vote previousPostVote =

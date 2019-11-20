@@ -17,7 +17,7 @@ import java.util.TreeSet;
 // TODO stated
 public class RedisCache {
 
-    private static final String AZURE_CACHE_HOSTNAME = "ccsbackendCache.redis.cache.windows.net";
+    private static final String AZURE_CACHE_HOSTNAME = "sccredis4770147967.redis.cache.windows.net";
 
     private static JedisPool jedisPool = null;
 
@@ -59,14 +59,22 @@ public class RedisCache {
         }
     }
 
-    // TODO what to return
-    public static Long lpush(String listName, Document doc, long limit) {
+    public static Long lpush(String entryKey, String... strings) {
         initializeRedis();
 
         try(Jedis jedis = jedisPool.getResource()) {
-            Long count = jedis.lpush(listName, doc.toJson());
+            return jedis.lpush(entryKey, strings);
+        }
+    }
+
+    // TODO what to return
+    public static Long lpush(String entryKey, Document doc, long limit) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            Long count = jedis.lpush(entryKey, doc.toJson());
             if(count > limit)
-                jedis.ltrim(listName, 0, limit);
+                jedis.ltrim(entryKey, 0, limit);
             return count;
         }
     }

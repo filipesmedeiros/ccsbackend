@@ -43,23 +43,23 @@ public class AzureManagement
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
 	// This file should be created by running in the console:
 	// az ad sp create-for-rbac --sdk-auth > azure.auth
-	static final String AZURE_AUTH_LOCATION = "azure.auth";
-	static final String AZURE_PROPS_LOCATION = "azurekeys.properties";
+	public static final String AZURE_AUTH_LOCATION = "azure.auth";
+	public static final String AZURE_PROPS_LOCATION = "azurekeys.properties";
 
-	static final String MY_SUFFIX = "4770147967"; // Add your suffix here
+	public static final String MY_SUFFIX = "4770147967"; // Add your suffix here
 
-	static final String AZURE_STORAGE_NAME = "sccstoreeuwest" + MY_SUFFIX;
-	static final String AZURE_BLOB_MEDIA = "images";
+	public static final String AZURE_STORAGE_NAME = "sccstoreeuwest" + MY_SUFFIX;
+	public static final String AZURE_BLOB_MEDIA = "images";
 
-	static final String AZURE_COSMOSDB_NAME = "scccosmos" + MY_SUFFIX;
-	static final String AZURE_COSMOSDB_DATABASE = "scccosmosdb" + MY_SUFFIX;
+	public static final String AZURE_COSMOSDB_NAME = "scccosmos" + MY_SUFFIX;
+	public static final String AZURE_COSMOSDB_DATABASE = "scccosmosdb" + MY_SUFFIX;
 
-	static final String AZURE_REDIS_NAME = "sccredis" + MY_SUFFIX;
+	public static final String AZURE_REDIS_NAME = "sccredis" + MY_SUFFIX;
 
-	static final String AZURE_SERVERLESS_NAME = "scc-serverless-" + MY_SUFFIX;
+	public static final String AZURE_SERVERLESS_NAME = "scc-serverless-" + MY_SUFFIX;
 
-	static final String AZURE_RG_EUWEST = "scc-backend-euwest-" + MY_SUFFIX;
-	static final String AZURE_RG_SERVERLESS_EUWEST = "scc-serverless-euwest-" + MY_SUFFIX;
+	public static final String AZURE_RG_EUWEST = "scc-backend-euwest-" + MY_SUFFIX;
+	public static final String AZURE_RG_SERVERLESS_EUWEST = "scc-backend-euwest-" + MY_SUFFIX;
 
 	public static Azure createManagementClient(String authFile) throws CloudException, IOException {
 		File credFile = new File(AZURE_AUTH_LOCATION);

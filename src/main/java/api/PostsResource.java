@@ -75,31 +75,31 @@ public class PostsResource {
     @Path("/{postId}/setupvote")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String setLike(@PathParam("postId") String postId, String jsonUsername) {
-        return Votes.addVote(postId, POST_COL, jsonUsername, true);
+    public String setLike(@PathParam("postId") String postId, String voteData) {
+        return Votes.addVote(postId, POST_COL, voteData, true);
     }
 
     @POST
     @Path("/{postId}/unsetupvote")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public void unsetLike(@PathParam("postId") String postId, String jsonUsername) {
-        Votes.deleteVote(postId, jsonUsername, true);
+    public void unsetLike(@PathParam("postId") String postId, String voteData) {
+        Votes.deleteVote(postId, voteData, true);
     }
 
     @POST
     @Path("/{postId}/setdownvote")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public String setDislike(@PathParam("postId") String postId, String jsonUsername) {
-        return Votes.addVote(postId, POST_COL, jsonUsername, false);
+    public String setDislike(@PathParam("postId") String postId, String voteData) {
+        return Votes.addVote(postId, POST_COL, voteData, false);
     }
 
     @POST
     @Path("/{postId}/unsetdownvote")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public void unsetDislike(@PathParam("postId") String postId, String jsonUsername) {
-        Votes.deleteVote(postId, jsonUsername, false);
+    public void unsetDislike(@PathParam("postId") String postId, String voteData) {
+        Votes.deleteVote(postId, voteData, false);
     }
 }

@@ -2,13 +2,13 @@ package utils;
 
 public class AppConfig {
 
-    public static final int RALL_FRONTPAGE_SIZE = 500;
+    public static final int ALL_FRONTPAGE_SIZE = 500;
 
     public static final int SUBREDDIT_FRONTPAGE_SIZE = 250;
 
-    public static final boolean RALL_DEPENDS_ON_SUBREDDITS = true;
+    public static final int ALL_FRONTPAGE_UPDATE_PERIOD = 12;
 
-    public static final int HOURS_OF_FRONT_PAGE_POSTS = 24;
+    public static final int FRONTPAGE_TIME_WINDOW = 36; // hours
 
     public static final int NUMBER_TOP_SUBREDDITS = 40;
 
@@ -16,9 +16,11 @@ public class AppConfig {
 
     public static final int EXPIRE_TIMEOUT_TOP = 60 * 20; // seconds
 
-    public static final int SCORE_UPDATE_PERIOD = 10; // minutes
+    public static final int POST_SCORE_UPDATE_PERIOD_ON_CACHE = 30; // minutes
 
-    public static final double SCORE_LOST_PER_PERIOD = 0.995;
+    public static final int SUBREDDIT_SCORE_UPDATE_PERIOD_ON_CACHE = 3; // hours
+
+    public static final int SCORE_UPDATE_PERIOD_ON_DB = 11; // hours
 
     public static final int NUMBER_CHILDREN_POSTS = 30;
 

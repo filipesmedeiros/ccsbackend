@@ -5,6 +5,7 @@ import com.microsoft.azure.cosmos.CosmosItem;
 import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
 import exceptions.ConflictException;
+import management.AzureManagement;
 import rx.Observable;
 
 import javax.ws.rs.NotFoundException;
@@ -17,7 +18,7 @@ public class Database {
 
     private static final String AZURE_DB_URL = "https://ccsbackend-database.documents.azure.com";
     private static final String AZURE_DB_ENDPOINT = AZURE_DB_URL + ":443/";
-    private static final String AZURE_DB_ID = AzureManagement;
+    private static final String AZURE_DB_ID = AzureManagement.AZURE_COSMOSDB_DATABASE;
     private static AsyncDocumentClient dbClient;
 
     private static synchronized AsyncDocumentClient initializeDatabase() {

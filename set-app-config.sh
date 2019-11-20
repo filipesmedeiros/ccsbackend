@@ -1,1 +1,2 @@
-az functionapp config appsettings set --name scc-serverless-4770147967 --resource-group scc-serverless-euwest-4770147967 --settings "BlobStoreConnection=DefaultEndpointsProtocol=https;AccountName=sccstoreeuwest4770147967;AccountKey=8np1K8oA8x3HxcT/i4Y2l1wih+ZIhbWgSPRhDK3YpcYs/42AjxZlw3jq5ILk0PVqDFlXehn2cpnG4RxnB5ESZw==;EndpointSuffix=core.windows.net"
+#!/usr/bin/env bash
+az functionapp config appsettings set --name scc-serverless-4770147967 --resource-group scc-backend-euwest-4770147967 --settings "DefaultEndpointsProtocol=https;AccountName=ccsbackend47967;AccountKey=A+xPNsnA/fwlgEALwLEkQ0y3Rr3NyS5Bzt41wXb1kgev64vdXKYuEclCp6OK0yL1JcFoLeBSBmXUImlhzOrIyw==;EndpointSuffix=core.windows.net"

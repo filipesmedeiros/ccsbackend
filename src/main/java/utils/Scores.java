@@ -3,8 +3,6 @@ package utils;
 import api.PostsResource;
 import api.SubredditsResource;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.microsoft.azure.cosmosdb.Document;
 import redis.clients.jedis.Tuple;
 import resources.Post;
@@ -42,7 +40,7 @@ public class Scores {
                 "OFFSET 0 LIMIT " + AppConfig.NUMBER_TOP_SUBREDDITS;
         List<Document> topSubsDocs = Database.getResourceListDocs(SubredditsResource.SUBREDDIT_COL, query);
 
-        List<Post> rallFrontpagePosts = new ArrayList<>(AppConfig.RALL_FRONTPAGE_SIZE);
+        List<Post> rallFrontpagePosts = new ArrayList<>(AppConfig.ALL_FRONTPAGE_SIZE);
 
         SortedSet<SubredditWithTopPostList> topSubredditsPosts = new TreeSet<>(
                 Comparator.comparingLong(sub -> sub.subreddit.getScore()));
@@ -59,7 +57,7 @@ public class Scores {
                     post.getScore(), post.toDocument().toJson()));
         });
 
-        while(rallFrontpagePosts.size() < AppConfig.RALL_FRONTPAGE_SIZE) {
+        while(rallFrontpagePosts.size() < AppConfig.ALL_FRONTPAGE_SIZE) {
             SubredditWithTopPostList nextSub = topSubredditsPosts.first();
 
             if(nextSub.topPosts.size() == 0)
@@ -175,7 +173,7 @@ public class Scores {
     public static List<Post> calcTopPostsOfSubredditOnDB(String subreddit) {
         // TODO optimize query
         String query = "SELECT * FROM " + PostsResource.POST_COL + " p WHERE p.subreddit = '" + subreddit + "' AND " +
-                "p.timestamp >= " + Date.timestampMinusHours(AppConfig.HOURS_OF_FRONT_PAGE_POSTS) +
+                "p.timestamp >= " + Date.timestampMinusHours(AppConfig.FRONTPAGE_TIME_WINDOW) +
                 " ORDER BY p.score DESC " +
                 "OFFSET 0 LIMIT " + AppConfig.SUBREDDIT_FRONTPAGE_SIZE;
         List<Document> results = Database.getResourceListDocs(PostsResource.POST_COL, query);

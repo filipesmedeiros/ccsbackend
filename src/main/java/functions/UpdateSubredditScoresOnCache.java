@@ -16,8 +16,9 @@ import java.util.Map;
 
 public class UpdateSubredditScoresOnCache {
 
-    @FunctionName("update_scores_on_cache")
-    public void updateScoresOnCache(@TimerTrigger(name = "keepAliveTrigger", schedule = "* * */3 * * *") String timerInfo,
+    @FunctionName("update_subreddit_scores_on_cache")
+    public void updateSubredditScoresOnCache(@TimerTrigger(name = "keepAliveTrigger",
+            schedule = "* * */" + AppConfig.SUBREDDIT_SCORE_UPDATE_PERIOD_ON_CACHE + " * * *") String timerInfo,
                                  ExecutionContext context) {
 
         String query = "SELECT * FROM " + Votes.VOTE_COL + " v" +

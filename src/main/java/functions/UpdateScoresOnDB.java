@@ -20,14 +20,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UpdatePostScoresOnDB {
+public class UpdateScoresOnDB {
 
-    @FunctionName("update_post_scores_on_db")
-    public void updatePostScoresOnDB(@TimerTrigger(name = "keepAliveTrigger", schedule = "* * */11 * * *") String timerInfo,
-                                     ExecutionContext context) {
+    @FunctionName("update_scores_on_db")
+    public void updateScoresOnDB(@TimerTrigger(name = "keepAliveTrigger",
+            schedule = "* * */" + AppConfig.SCORE_UPDATE_PERIOD_ON_DB + " * * *") String timerInfo,
+                                 ExecutionContext context) {
 
         String query = "SELECT * FROM " + Votes.VOTE_COL + " v" +
-                " WHERE v.timestamp >= " + Date.timestampMinusHours(11);
+                " WHERE v.timestamp >= " + Date.timestampMinusHours(AppConfig.SCORE_UPDATE_PERIOD_ON_DB);
 
         List<Document> timeWindowVotes = Database.getResourceListDocs(Votes.VOTE_COL, query);
 
@@ -47,7 +48,7 @@ public class UpdatePostScoresOnDB {
         }
 
         query = "SELECT VALUE COUNT(1) AS commentCount, c.rootPost FROM " + PostsResource.POST_COL + " c" +
-                " WHERE c.timestamp >= " + Date.timestampMinusHours(11) +
+                " WHERE c.timestamp >= " + Date.timestampMinusHours(AppConfig.SCORE_UPDATE_PERIOD_ON_DB) +
                 " AND c.parentPost != ''" +
                 " GROUP BY c.rootPost";
 
