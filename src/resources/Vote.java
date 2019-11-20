@@ -4,15 +4,16 @@ import com.microsoft.azure.cosmosdb.Document;
 
 public class Vote {
 
-    private String id, submissionId, userId;
+    private String id, postId, userId, subredditId;
     private long timestamp;
     private boolean up;
 
-    public Vote(String id, boolean up, String submissionId, String userId) {
+    public Vote(String id, boolean up, String postId, String userId, String subredditId) {
         this.id = id;
         this.up = up;
-        this.submissionId = submissionId;
+        this.postId = postId;
         this.userId = userId;
+        this.subredditId = subredditId;
         timestamp = System.currentTimeMillis();
     }
 
@@ -40,12 +41,20 @@ public class Vote {
         this.up = up;
     }
 
-    public String getSubmissionId() {
-        return submissionId;
+    public String getPostId() {
+        return postId;
     }
 
-    public void setSubmissionId(String submissionId) {
-        this.submissionId = submissionId;
+    public String getSubredditId() {
+        return subredditId;
+    }
+
+    public void setSubredditId(String subredditId) {
+        this.subredditId = subredditId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
     public String getUserId() {
@@ -63,10 +72,22 @@ public class Vote {
     public Document toDocument() {
         Document doc = new Document();
         doc.setId(id);
-        doc.set("submissionId", submissionId);
+        doc.set("postId", postId);
         doc.set("userId", userId);
+        doc.set("subredditId", subredditId);
         doc.set("up", up);
         doc.set("timestamp", timestamp);
         return doc;
+    }
+
+    public static Vote fromDocument(Document doc) {
+        Vote v = new Vote(doc.getId(),
+                doc.getBoolean("up"),
+                doc.getString("postId"),
+                doc.getString("userId"),
+                doc.getString("subredditId"));
+        v.setTimestamp(doc.getLong("timestamp"));
+
+        return v;
     }
 }

@@ -185,14 +185,18 @@ public class Scores {
         return topPosts;
     }
 
+    public static long calcPostScore(String postId) {
+        Document postDoc = Database.getResourceDocById(PostsResource.POST_COL, postId);
+        Post post = Post.fromDocument(postDoc);
+        long score = post.getScore();
+        RedisCache.getOrSetLong(postId + ":score", score);
+        return score;
+    }
+
     public static long getPostScore(String postId) {
         Long score = RedisCache.getLong(postId + ":score");
-        if(score == null) {
-            Document postDoc = Database.getResourceDocById(PostsResource.POST_COL, postId);
-            Post post = Post.fromDocument(postDoc);
-            score = post.getScore();
-            RedisCache.getOrSetLong(postId + ":score", score);
-        }
+        if(score == null)
+            return calcPostScore(postId);
         return score;
     }
 

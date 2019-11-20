@@ -1,3 +1,5 @@
+package management;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
@@ -16,7 +18,7 @@ public class AzureProperties
 		if( props == null) {
 			props = new Properties();
 			try {
-				props.load( new FileInputStream(PROPS_FILE));
+				props.load(new FileInputStream(PROPS_FILE));
 			} catch (IOException e) {
 				// do nothing
 			}

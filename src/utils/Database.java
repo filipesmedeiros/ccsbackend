@@ -17,7 +17,7 @@ public class Database {
 
     private static final String AZURE_DB_URL = "https://ccsbackend-database.documents.azure.com";
     private static final String AZURE_DB_ENDPOINT = AZURE_DB_URL + ":443/";
-    private static final String AZURE_DB_ID = "ccsbackend-database";
+    private static final String AZURE_DB_ID = AzureManagement;
     private static AsyncDocumentClient dbClient;
 
     private static synchronized AsyncDocumentClient initializeDatabase() {

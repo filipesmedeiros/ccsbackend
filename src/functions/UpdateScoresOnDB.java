@@ -44,7 +44,7 @@ public class UpdateScoresOnDB {
             postScores.putIfAbsent(postId, 0L);
 
             Long score = postScores.get(postId);
-            score += up ? 2 : -3;
+            score += up ? AppConfig.UPVOTE_SCORE_VALUE : AppConfig.DOWNVOTE_SCORE_VALUE;
 
             postScores.put(postId, score);
         });
@@ -60,7 +60,7 @@ public class UpdateScoresOnDB {
             postScores.putIfAbsent(postId, 0L);
 
             Long score = postScores.get(postId);
-            score += 3;
+            score += AppConfig.COMMENT_SCORE_VALUE;
             postScores.put(postId, score);
         });
 

@@ -82,6 +82,17 @@ public class RedisCache {
         }
     }
 
+    public static Long incrBy(String entryKey, long by) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            String value = jedis.get(entryKey);
+            if(value == null)
+                return null;
+            return jedis.incrBy(entryKey, by);
+        }
+    }
+
     public static Long decr(String entryKey) {
         initializeRedis();
 
@@ -90,6 +101,17 @@ public class RedisCache {
             if(value == null)
                 return null;
             return jedis.decr(entryKey);
+        }
+    }
+
+    public static Long decrBy(String entryKey, long by) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            String value = jedis.get(entryKey);
+            if(value == null)
+                return null;
+            return jedis.decrBy(entryKey, by);
         }
     }
 

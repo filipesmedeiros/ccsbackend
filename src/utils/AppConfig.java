@@ -23,4 +23,10 @@ public class AppConfig {
     public static final int NUMBER_CHILDREN_POSTS = 30;
 
     public static final int NUMBER_CHILDREN_COMMENTS = 5;
+
+    public static final int UPVOTE_SCORE_VALUE = 2;
+
+    public static final int DOWNVOTE_SCORE_VALUE = -3;
+
+    public static final int COMMENT_SCORE_VALUE = -3;
 }
