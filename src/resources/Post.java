@@ -1,5 +1,6 @@
 package resources;
 
+import com.google.gson.JsonObject;
 import com.microsoft.azure.cosmosdb.Document;
 
 public class Post {
@@ -36,6 +37,21 @@ public class Post {
         doc.set("isLink", isLink);
         doc.set("score", score);
         return doc;
+    }
+
+    public JsonObject toJson() {
+        JsonObject object = new JsonObject();
+        object.addProperty("id", id);
+        object.addProperty("subreddit", subreddit);
+        object.addProperty("opUsername", opUsername);
+        object.addProperty("content", content);
+        object.addProperty("title", title);
+        object.addProperty("parentPost", parentPost);
+        object.addProperty("rootPost", rootPost);
+        object.addProperty("timestamp", timestamp);
+        object.addProperty("isLink", isLink);
+        object.addProperty("score", score);
+        return object;
     }
 
     public String getSubreddit() {

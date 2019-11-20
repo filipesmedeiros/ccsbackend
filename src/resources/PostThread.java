@@ -20,22 +20,25 @@ public class PostThread {
     }
 
     public void addSecondChildren(Post parent, Post post) {
-        firstChildren.get(parent).add(post);
+        List<Post> secondChildren = firstChildren.get(parent);
+
+        if(secondChildren != null)
+            secondChildren.add(post);
     }
 
     public String toJson() {
         JsonObject obj = new JsonObject();
-        obj.addProperty("root", root.toDocument().toJson());
+        obj.add("root", root.toJson());
 
         Post[] firstC = firstChildren.keySet().toArray(new Post[0]);
 
         JsonArray firstChildrenArray = new JsonArray();
         for(Post post : firstC) {
             JsonObject child = new JsonObject();
-            child.addProperty("comment", post.toDocument().toJson());
+            child.add("comment", post.toJson());
 
             JsonArray secondChildren = new JsonArray();
-            firstChildren.get(post).forEach(secondChild -> secondChildren.add(secondChild.toDocument().toJson()));
+            firstChildren.get(post).forEach(secondChild -> secondChildren.add(secondChild.toJson()));
             child.add("children", secondChildren);
 
             firstChildrenArray.add(child);
