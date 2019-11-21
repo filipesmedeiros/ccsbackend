@@ -143,13 +143,7 @@ public class Post {
     }
 
     public static class PostDTOInitialAttributes {
-        public String subreddit, opUsername, title, text, imageUrl;
-    }
-
-    public static class PostDTOWithVotes {
-        public String id, subreddit, opUsername, title, text, imageUrl, timestamp, upvotes, downvotes;
-        // TODO karma
-
-
+        public String subreddit, opUsername, title, content, parentPost, rootPost;
+        private boolean isLink;
     }
 }

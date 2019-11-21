@@ -1,14 +1,15 @@
 package utils;
 
 import com.microsoft.azure.cosmosdb.Document;
+import main.java.utils.Secrets;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Tuple;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -61,6 +62,22 @@ public class RedisCache {
 
         try(Jedis jedis = jedisPool.getResource()) {
             return jedis.lpush(entryKey, strings);
+        }
+    }
+
+    public static Long rpush(String entryKey, String... strings) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.rpush(entryKey, strings);
+        }
+    }
+
+    public static List<String> lrange(String entryKey, int start, int end) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.lrange(entryKey, start, end);
         }
     }
 

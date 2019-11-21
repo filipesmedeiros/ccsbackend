@@ -18,7 +18,8 @@ import java.util.Map;
 public class UpdatePostScoresOnCache {
 
     @FunctionName("update_post_scores_on_cache")
-    public void updatePostScoresOnCache(@TimerTrigger(name = "keepAliveTrigger", schedule = "* */30 * * * *") String timerInfo,
+    public void updatePostScoresOnCache(@TimerTrigger(name = "keepAliveTrigger",
+            schedule = "* */" + AppConfig.POST_SCORE_UPDATE_PERIOD_ON_CACHE + " * * * *") String timerInfo,
                                  ExecutionContext context) {
 
         String query = "SELECT * FROM " + Votes.VOTE_COL + " v" +

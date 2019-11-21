@@ -9,7 +9,6 @@ import utils.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
-import java.util.List;
 
 
 @Path("/posts")
@@ -25,13 +24,22 @@ public class PostsResource {
         if(!Database.testClientJsonWithDoc(postDoc, Post.PostDTOInitialAttributes.class))
             throw new BadRequestException();
 
+        // TODO ir a cache
         String username = postDoc.get("opUsername").toString();
         String subreddit = postDoc.get("subreddit").toString();
+        String rootPost = postDoc.get("rootPost").toString();
+        String parentPost = postDoc.get("parentPost").toString();
         if(!Database.resourceExists(UsersResource.USERS_COL, username))
             throw new BadRequestException("The author of the post does not exist.");
         if(!Database.resourceExists(SubredditsResource.SUBREDDIT_COL, subreddit))
             throw new BadRequestException("The subreddit of the post does not exist.");
+
+        if(!rootPost.equals("") && !Database.resourceExists(PostsResource.POST_COL, rootPost))
+            throw new BadRequestException("The root post of the comment does not exist.");
+        if(!parentPost.equals("") && !Database.resourceExists(PostsResource.POST_COL, parentPost))
+            throw new BadRequestException("The parent post/comment of the comment does not exist.");
         postDoc.set("timestamp", new Date().getTime());
+        postDoc.set("score", 0);
 
         return Database.createResourceIfNotExists(postDoc, POST_COL, true).getId();
     }
@@ -40,7 +48,7 @@ public class PostsResource {
     @Path("/{postId}/thread")
     @Produces(MediaType.APPLICATION_JSON)
     public String getPostThread(@PathParam("postId") String postId) {
-        PostThread t = Posts.getPostThread(postId);
+        PostThread t = Posts.calcPostThread(postId);
         return t.toJson();
     }
 
@@ -49,7 +57,7 @@ public class PostsResource {
     @Path("/frontpageall")
     @Produces(MediaType.APPLICATION_JSON)
     public String getFrontPageAll() {
-        return Scores.getRallFrontpage();
+        return new Gson().toJson(Frontpages.getAllFrontpage());
     }
 
     //TODO
@@ -57,8 +65,7 @@ public class PostsResource {
     @Path("/{subredditId}/frontpage")
     @Produces(MediaType.APPLICATION_JSON)
     public String getFrontPageOfSubreddit(@PathParam("subredditId") String subredditId) {
-        List<Post> topPostsOfSubreddit = Scores.getTopPostsOfSubreddit(subredditId);
-        return new Gson().toJson(topPostsOfSubreddit);
+        return new Gson().toJson(Frontpages.getSubredditFrontpage(subredditId));
     }
 
     @GET

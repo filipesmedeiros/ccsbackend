@@ -5,6 +5,7 @@ import com.microsoft.azure.cosmos.CosmosItem;
 import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
 import exceptions.ConflictException;
+import main.java.utils.Secrets;
 import management.AzureManagement;
 import rx.Observable;
 

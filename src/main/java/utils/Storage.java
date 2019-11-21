@@ -5,6 +5,7 @@ import com.microsoft.azure.storage.StorageException;
 import com.microsoft.azure.storage.blob.*;
 import exceptions.ContainerDoesNotExistException;
 import exceptions.ErrorConnectingToDatabaseException;
+import main.java.utils.Secrets;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -56,7 +56,7 @@ public class Posts {
         return (Long) doc.get("commentCount");
     }
 
-    public static PostThread getPostThread(String postId) {
+    public static PostThread calcPostThread(String postId) {
         Post root = getPost(postId);
         PostThread thread = new PostThread(root);
 
@@ -70,5 +70,20 @@ public class Posts {
         });
 
         return thread;
+    }
+
+    public static PostThread getPostThread(String postId) {
+        if(AppConfig.IS_CACHE_ON) {
+            String thread = RedisCache.get(postId);
+
+            if(thread == null) {
+                PostThread postThread = calcPostThread(postId);
+                RedisCache.set(postId + ":thread", postThread.toJson());
+                RedisCache.setExpireTimeout(postId + ":thread", AppConfig.POST_AND_THREAD_CACHE_TIMEOUT);
+                return postThread;
+            } else
+                return PostThread.fromJson(thread);
+        } else
+            return calcPostThread(postId);
     }
 }

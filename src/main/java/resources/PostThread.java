@@ -46,6 +46,11 @@ public class PostThread {
 
         obj.add("children", firstChildrenArray);
 
-        return obj.getAsString();
+        return obj.toString();
+    }
+
+    public static PostThread fromJson(String json) {
+
+        return null;
     }
 }
