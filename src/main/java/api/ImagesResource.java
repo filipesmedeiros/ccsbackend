@@ -17,12 +17,13 @@ public class ImagesResource {
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
     @Produces(MediaType.APPLICATION_JSON)
     public String upload(byte[] data) {
+
         try {
             return Storage.upload(data, false);
-        } catch (ErrorConnectingToDatabaseException | StorageException e) {
+        } catch(ErrorConnectingToDatabaseException | StorageException e) {
             e.printStackTrace();
             throw new ServiceUnavailableException();
-        } catch (URISyntaxException | InvalidKeyException e) {
+        } catch(URISyntaxException | InvalidKeyException e) {
             e.printStackTrace();
             throw new InternalServerErrorException();
         }

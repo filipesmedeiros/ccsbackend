@@ -20,10 +20,7 @@ public class UpdateAllFrontpageOnCache {
         String query = "SELECT TOP " + AppConfig.ALL_FRONTPAGE_SIZE + " * FROM " + PostsResource.POST_COL + " p" +
                 " WHERE p.timestamp >= " + Date.timestampMinusHours(AppConfig.FRONTPAGE_TIME_WINDOW) +
                 " AND p.parentPost = ''" +
-                " ORDER BY p.score";
-
-        // "SELECT TOP 30 SUM(post.score) AS scoreSum, post, post.subreddit" +
-        //        " FROM POSTS post WHERE post.timestamp > x GROUP BY post.subreddit ORDER BY scoreSum";
+                " ORDER BY p.score DESC";
 
         List<Document> timeWindowPosts = Database.getResourceListDocs(PostsResource.POST_COL, query);
 

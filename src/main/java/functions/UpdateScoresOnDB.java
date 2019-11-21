@@ -2,8 +2,6 @@ package functions;
 
 import api.PostsResource;
 import api.SubredditsResource;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.microsoft.azure.cosmosdb.Document;
 import com.microsoft.azure.functions.ExecutionContext;
 import com.microsoft.azure.functions.annotation.FunctionName;
@@ -47,18 +45,14 @@ public class UpdateScoresOnDB {
             }
         }
 
-        query = "SELECT VALUE COUNT(1) AS commentCount, c.rootPost FROM " + PostsResource.POST_COL + " c" +
+        query = "SELECT c.rootPost FROM " + PostsResource.POST_COL + " c" +
                 " WHERE c.timestamp >= " + Date.timestampMinusHours(AppConfig.SCORE_UPDATE_PERIOD_ON_DB) +
-                " AND c.parentPost != ''" +
-                " GROUP BY c.rootPost";
+                " AND c.parentPost != ''";
 
-        Document commentCount = Database.getResourceDoc(PostsResource.POST_COL, query);
+        List<Document> comments = Database.getResourceListDocs(PostsResource.POST_COL, query);
 
-        System.out.println(commentCount.toJson());
-
-        List<JsonObject> commentCounts = new Gson().fromJson(commentCount.toJson(), List.class);
-        for(JsonObject count : commentCounts) {
-            String rootPostId = count.get("rootPost").getAsString();
+        comments.forEach(commentDoc -> {
+            String rootPostId = commentDoc.getString("rootPost");
             Long score = accScore.get(rootPostId);
 
             if (score == null)
@@ -67,7 +61,7 @@ public class UpdateScoresOnDB {
                 score += AppConfig.COMMENT_SCORE_VALUE;
                 accScore.put(rootPostId, score);
             }
-        }
+        });
 
         Map<String, Long> subredditAccScore = new HashMap<>();
 

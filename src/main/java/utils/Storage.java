@@ -50,7 +50,7 @@ public class Storage {
         } catch (StorageException | URISyntaxException e) {
             e.printStackTrace();
             throw e;
-        } catch (IOException ioe) {
+        } catch(IOException ioe) {
             ioe.printStackTrace();
             throw new ErrorConnectingToDatabaseException();
         }
