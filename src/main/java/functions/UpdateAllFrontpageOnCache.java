@@ -35,5 +35,12 @@ public class UpdateAllFrontpageOnCache {
             RedisCache.removeEntry("allfrontpage:posts");
 
         RedisCache.lpush("allfrontpage:posts", array);
+
+
+
+
+        // TODO ALSO DO THE SUBREDDITS
+
+
     }
 }
