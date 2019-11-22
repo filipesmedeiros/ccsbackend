@@ -156,15 +156,6 @@ public class Database {
                 .toBlocking().first().getResults().get(0);
     }
 
-    public static boolean testClientJsonWithDoc(Document doc, Class<?> clazz) {
-        for(Field f : clazz.getDeclaredFields()) {
-            System.out.println(f.getName());
-            if(!doc.has(f.getName()))
-                return false;
-        }
-        return true;
-    }
-
     private static FeedOptions buildDefaultFeedOptions(){
         FeedOptions queryOptions = new FeedOptions();
         queryOptions.setEnableCrossPartitionQuery(true);

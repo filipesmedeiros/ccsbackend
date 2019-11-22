@@ -1,0 +1,23 @@
+#Create initial set of communities
+config:
+  target: 'https://scc-backend-4770147967.azurewebsites.net'
+  http:
+    pool: 10
+  processor: "./test-utils.js"
+  phases:
+    - duration: 1
+      arrivalCount: 1
+
+scenarios:
+  - name: 'Create communities'
+    flow:
+      - loop:
+        - function: "genNewCommunity"
+        - post:
+            url: "/subreddits"
+            headers:
+              Accept: text/plain
+            json:
+              id: "{{ name }}"
+        count: 250
+          

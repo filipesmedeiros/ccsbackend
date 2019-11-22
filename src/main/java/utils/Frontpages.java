@@ -50,8 +50,10 @@ public class Frontpages {
 
     public static List<Post> calcSubredditFrontpage(String subredditId) {
         String newQuery = "SELECT TOP " + AppConfig.SUBREDDIT_FRONTPAGE_SIZE + " * FROM Posts p " +
+                " WHERE p.timestamp >= " + Date.timestampMinusHours(AppConfig.FRONTPAGE_TIME_WINDOW) +
                 " WHERE p.subreddit = " + subredditId +
-                " AND p.parentPost = ''";
+                " AND p.parentPost = ''" +
+                " ORDER BY p.score DESC";
 
         List<Document> topPostsSub = Database.getResourceListDocs(PostsResource.POST_COL, newQuery);
 

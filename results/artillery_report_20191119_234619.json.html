@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Artillery report</title>
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.min.js' charset='utf-8'></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.6.0/metricsgraphics.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/metrics-graphics/2.6.0/metricsgraphics.min.js"></script>
+
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+  <link href='https://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+  <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.0/ace.js" charset="utf-8"></script>
+
+  <style>
+  body, p, li {
+    font-family: sans-serif;
+    font-size: 10pt;
+  }
+
+  h1 {
+    font-size: 18pt;
+    font-weight: bold;
+  }
+
+  #errorsContainer > p {
+    color: #009900;
+  }
+
+  #footer {
+    padding: 1em;
+    font-size: 0.8em;
+    color: #999;
+    text-align: center;
+    margin-top: 1em;
+    background-color: #eee;
+  }
+  #editor {
+    font-size: 8pt;
+    height: 20em;
+  }
+  </style>
+
+  <script>
+  window.Report = {
+  "aggregate": {
+    "timestamp": "2019-11-19T23:46:26.188Z",
+    "scenariosCreated": 336,
+    "scenariosCompleted": 336,
+    "requestsCompleted": 3329,
+    "latency": {
+      "min": 58.4,
+      "max": 3281,
+      "median": 66.2,
+      "p95": 228.2,
+      "p99": 407.6
+    },
+    "rps": {
+      "count": 3329,
+      "mean": 46.57
+    },
+    "scenarioDuration": {
+      "min": 228.1,
+      "max": 5883.8,
+      "median": 857.9,
+      "p95": 2255.6,
+      "p99": 4624.9
+    },
+    "scenarioCounts": {
+      "Random reader": 270,
+      "Create root post": 40,
+      "Troll": 26
+    },
+    "errors": {},
+    "codes": {
+      "200": 3329
+    },
+    "matches": 0,
+    "customStats": {
+      "GET:/post/last/redis": {
+        "min": 217,
+        "max": 3284,
+        "median": 225,
+        "p95": 412.9,
+        "p99": 2816
+      },
+      "GET:/media/": {
+        "min": 60,
+        "max": 494,
+        "median": 67,
+        "p95": 149,
+        "p99": 392.3
+      },
+      "POST:/post/p": {
+        "min": 64,
+        "max": 1927,
+        "median": 70,
+        "p95": 128.6,
+        "p99": 248.3
+      },
+      "GET:/post/thread/": {
+        "min": 62,
+        "max": 492,
+        "median": 67,
+        "p95": 107,
+        "p99": 332.9
+      },
+      "POST:/post/like/": {
+        "min": 62,
+        "max": 452,
+        "median": 66,
+        "p95": 113.6,
+        "p99": 212.1
+      },
+      "POST:/media": {
+        "min": 66,
+        "max": 776,
+        "median": 75,
+        "p95": 312,
+        "p99": 562
+      }
+    },
+    "counters": {
+      "code 200 on GET:/post/last/redis": 296,
+      "code 200 on GET:/media/": 883,
+      "code 200 on POST:/post/p": 794,
+      "code 200 on GET:/post/thread/": 889,
+      "code 200 on POST:/post/like/": 307,
+      "code 200 on POST:/media": 160
+    },
+    "scenariosAvoided": 0,
+    "phases": [
+      {
+        "name": "Warm up",
+        "duration": 10,
+        "arrivalRate": 1,
+        "rampTo": 5
+      },
+      {
+        "name": "Main test",
+        "duration": 60,
+        "arrivalRate": 5
+      }
+    ]
+  },
+  "intermediate": [
+    {
+      "timestamp": "2019-11-19T23:45:23.662Z",
+      "scenariosCreated": 31,
+      "scenariosCompleted": 26,
+      "requestsCompleted": 305,
+      "latency": {
+        "min": 59.1,
+        "max": 595.8,
+        "median": 65.8,
+        "p95": 230.3,
+        "p99": 278.5
+      },
+      "rps": {
+        "count": 310,
+        "mean": 34.64
+      },
+      "scenarioDuration": {
+        "min": 239.5,
+        "max": 2318.2,
+        "median": 917.3,
+        "p95": 1981.5,
+        "p99": 2318.2
+      },
+      "scenarioCounts": {
+        "Random reader": 25,
+        "Create root post": 3,
+        "Troll": 3
+      },
+      "errors": {},
+      "codes": {
+        "200": 305
+      },
+      "matches": 0,
+      "customStats": {
+        "GET:/post/last/redis": {
+          "min": 220,
+          "max": 648,
+          "median": 230,
+          "p95": 348.8,
+          "p99": 648
+        },
+        "GET:/media/": {
+          "min": 62,
+          "max": 151,
+          "median": 67.5,
+          "p95": 113.8,
+          "p99": 136.6
+        },
+        "POST:/post/p": {
+          "min": 67,
+          "max": 296,
+          "median": 71,
+          "p95": 172.5,
+          "p99": 287.3
+        },
+        "GET:/post/thread/": {
+          "min": 62,
+          "max": 151,
+          "median": 67,
+          "p95": 84.9,
+          "p99": 136.4
+        },
+        "POST:/post/like/": {
+          "min": 63,
+          "max": 194,
+          "median": 69,
+          "p95": 113.8,
+          "p99": 194
+        },
+        "POST:/media": {
+          "min": 69,
+          "max": 197,
+          "median": 74.5,
+          "p95": 192.4,
+          "p99": 197
+        }
+      },
+      "counters": {
+        "code 200 on GET:/post/last/redis": 27,
+        "code 200 on GET:/media/": 98,
+        "code 200 on POST:/post/p": 65,
+        "code 200 on GET:/post/thread/": 76,
+        "code 200 on POST:/post/like/": 25,
+        "code 200 on POST:/media": 14
+      },
+      "concurrency": 5,
+      "pendingRequests": 5,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2019-11-19T23:45:33.657Z",
+      "scenariosCreated": 49,
+      "scenariosCompleted": 48,
+      "requestsCompleted": 504,
+      "latency": {
+        "min": 59,
+        "max": 332.5,
+        "median": 65.6,
+        "p95": 222.2,
+        "p99": 236
+      },
+      "rps": {
+        "count": 505,
+        "mean": 50.6
+      },
+      "scenarioDuration": {
+        "min": 232,
+        "max": 2122.3,
+        "median": 806.9,
+        "p95": 2011.9,
+        "p99": 2122.3
+      },
+      "scenarioCounts": {
+        "Random reader": 40,
+        "Troll": 5,
+        "Create root post": 4
+      },
+      "errors": {},
+      "codes": {
+        "200": 504
+      },
+      "matches": 0,
+      "customStats": {
+        "GET:/media/": {
+          "min": 61,
+          "max": 148,
+          "median": 67,
+          "p95": 103.5,
+          "p99": 124.6
+        },
+        "POST:/media": {
+          "min": 68,
+          "max": 335,
+          "median": 75,
+          "p95": 191,
+          "p99": 335
+        },
+        "GET:/post/last/redis": {
+          "min": 218,
+          "max": 299,
+          "median": 225,
+          "p95": 252,
+          "p99": 299
+        },
+        "POST:/post/like/": {
+          "min": 64,
+          "max": 99,
+          "median": 66,
+          "p95": 84.5,
+          "p99": 99
+        },
+        "POST:/post/p": {
+          "min": 65,
+          "max": 239,
+          "median": 70,
+          "p95": 83.2,
+          "p99": 233.1
+        },
+        "GET:/post/thread/": {
+          "min": 63,
+          "max": 138,
+          "median": 66,
+          "p95": 79.8,
+          "p99": 112.7
+        }
+      },
+      "counters": {
+        "code 200 on GET:/media/": 140,
+        "code 200 on POST:/media": 28,
+        "code 200 on GET:/post/last/redis": 45,
+        "code 200 on POST:/post/like/": 37,
+        "code 200 on POST:/post/p": 149,
+        "code 200 on GET:/post/thread/": 105
+      },
+      "concurrency": 6,
+      "pendingRequests": 6,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2019-11-19T23:45:43.657Z",
+      "scenariosCreated": 50,
+      "scenariosCompleted": 52,
+      "requestsCompleted": 497,
+      "latency": {
+        "min": 59.7,
+        "max": 429.9,
+        "median": 65.7,
+        "p95": 222.9,
+        "p99": 255.6
+      },
+      "rps": {
+        "count": 495,
+        "mean": 49.5
+      },
+      "scenarioDuration": {
+        "min": 231.7,
+        "max": 2229.2,
+        "median": 720.7,
+        "p95": 1986.3,
+        "p99": 2228.1
+      },
+      "scenarioCounts": {
+        "Troll": 5,
+        "Random reader": 42,
+        "Create root post": 3
+      },
+      "errors": {},
+      "codes": {
+        "200": 497
+      },
+      "matches": 0,
+      "customStats": {
+        "GET:/post/thread/": {
+          "min": 62,
+          "max": 267,
+          "median": 66,
+          "p95": 80.6,
+          "p99": 136.8
+        },
+        "POST:/media": {
+          "min": 68,
+          "max": 338,
+          "median": 80.5,
+          "p95": 221.1,
+          "p99": 338
+        },
+        "POST:/post/p": {
+          "min": 66,
+          "max": 231,
+          "median": 70,
+          "p95": 90.8,
+          "p99": 230.1
+        },
+        "POST:/post/like/": {
+          "min": 63,
+          "max": 111,
+          "median": 66,
+          "p95": 76.2,
+          "p99": 111
+        },
+        "GET:/post/last/redis": {
+          "min": 217,
+          "max": 432,
+          "median": 224,
+          "p95": 264.1,
+          "p99": 432
+        },
+        "GET:/media/": {
+          "min": 62,
+          "max": 194,
+          "median": 67,
+          "p95": 98.7,
+          "p99": 153
+        }
+      },
+      "counters": {
+        "code 200 on GET:/post/thread/": 134,
+        "code 200 on POST:/media": 24,
+        "code 200 on POST:/post/p": 141,
+        "code 200 on POST:/post/like/": 47,
+        "code 200 on GET:/post/last/redis": 47,
+        "code 200 on GET:/media/": 104
+      },
+      "concurrency": 4,
+      "pendingRequests": 4,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2019-11-19T23:45:53.655Z",
+      "scenariosCreated": 50,
+      "scenariosCompleted": 50,
+      "requestsCompleted": 457,
+      "latency": {
+        "min": 59.3,
+        "max": 418.2,
+        "median": 65.3,
+        "p95": 226,
+        "p99": 273.1
+      },
+      "rps": {
+        "count": 457,
+        "mean": 45.75
+      },
+      "scenarioDuration": {
+        "min": 232.2,
+        "max": 1935.7,
+        "median": 751.3,
+        "p95": 1529,
+        "p99": 1935.7
+      },
+      "scenarioCounts": {
+        "Random reader": 41,
+        "Troll": 2,
+        "Create root post": 7
+      },
+      "errors": {},
+      "codes": {
+        "200": 457
+      },
+      "matches": 0,
+      "customStats": {
+        "GET:/post/last/redis": {
+          "min": 219,
+          "max": 421,
+          "median": 226,
+          "p95": 268.5,
+          "p99": 421
+        },
+        "POST:/post/p": {
+          "min": 65,
+          "max": 279,
+          "median": 69,
+          "p95": 233,
+          "p99": 274.2
+        },
+        "GET:/post/thread/": {
+          "min": 62,
+          "max": 108,
+          "median": 67,
+          "p95": 90.2,
+          "p99": 104.5
+        },
+        "GET:/media/": {
+          "min": 62,
+          "max": 202,
+          "median": 67,
+          "p95": 83.8,
+          "p99": 150.6
+        },
+        "POST:/post/like/": {
+          "min": 62,
+          "max": 104,
+          "median": 66,
+          "p95": 88.2,
+          "p99": 103.2
+        },
+        "POST:/media": {
+          "min": 68,
+          "max": 339,
+          "median": 75.5,
+          "p95": 338.1,
+          "p99": 339
+        }
+      },
+      "counters": {
+        "code 200 on GET:/post/last/redis": 43,
+        "code 200 on POST:/post/p": 80,
+        "code 200 on GET:/post/thread/": 166,
+        "code 200 on GET:/media/": 99,
+        "code 200 on POST:/post/like/": 57,
+        "code 200 on POST:/media": 12
+      },
+      "concurrency": 4,
+      "pendingRequests": 4,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2019-11-19T23:46:03.656Z",
+      "scenariosCreated": 50,
+      "scenariosCompleted": 51,
+      "requestsCompleted": 417,
+      "latency": {
+        "min": 58.4,
+        "max": 579,
+        "median": 65.6,
+        "p95": 224.2,
+        "p99": 259
+      },
+      "rps": {
+        "count": 416,
+        "mean": 41.64
+      },
+      "scenarioDuration": {
+        "min": 231,
+        "max": 2105.9,
+        "median": 633.2,
+        "p95": 1963.7,
+        "p99": 2105.9
+      },
+      "scenarioCounts": {
+        "Random reader": 40,
+        "Create root post": 7,
+        "Troll": 3
+      },
+      "errors": {},
+      "codes": {
+        "200": 417
+      },
+      "matches": 0,
+      "customStats": {
+        "GET:/post/last/redis": {
+          "min": 217,
+          "max": 268,
+          "median": 224,
+          "p95": 250.9,
+          "p99": 268
+        },
+        "POST:/post/p": {
+          "min": 66,
+          "max": 254,
+          "median": 70,
+          "p95": 122.9,
+          "p99": 243.2
+        },
+        "GET:/post/thread/": {
+          "min": 62,
+          "max": 114,
+          "median": 67,
+          "p95": 89,
+          "p99": 109.8
+        },
+        "GET:/media/": {
+          "min": 60,
+          "max": 298,
+          "median": 66,
+          "p95": 81.4,
+          "p99": 175.2
+        },
+        "POST:/media": {
+          "min": 67,
+          "max": 581,
+          "median": 73,
+          "p95": 495.5,
+          "p99": 581
+        },
+        "POST:/post/like/": {
+          "min": 64,
+          "max": 96,
+          "median": 66,
+          "p95": 89.7,
+          "p99": 96
+        }
+      },
+      "counters": {
+        "code 200 on GET:/post/last/redis": 43,
+        "code 200 on POST:/post/p": 107,
+        "code 200 on GET:/post/thread/": 103,
+        "code 200 on GET:/media/": 121,
+        "code 200 on POST:/media": 19,
+        "code 200 on POST:/post/like/": 24
+      },
+      "concurrency": 3,
+      "pendingRequests": 3,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2019-11-19T23:46:13.657Z",
+      "scenariosCreated": 50,
+      "scenariosCompleted": 44,
+      "requestsCompleted": 520,
+      "latency": {
+        "min": 59.2,
+        "max": 3281,
+        "median": 75.1,
+        "p95": 428.3,
+        "p99": 2366.6
+      },
+      "rps": {
+        "count": 526,
+        "mean": 52.6
+      },
+      "scenarioDuration": {
+        "min": 230,
+        "max": 4933,
+        "median": 1282.3,
+        "p95": 4551.1,
+        "p99": 4933
+      },
+      "scenarioCounts": {
+        "Create root post": 7,
+        "Troll": 3,
+        "Random reader": 40
+      },
+      "errors": {},
+      "codes": {
+        "200": 520
+      },
+      "matches": 0,
+      "customStats": {
+        "GET:/post/last/redis": {
+          "min": 217,
+          "max": 3284,
+          "median": 249,
+          "p95": 2977,
+          "p99": 3284
+        },
+        "GET:/media/": {
+          "min": 61,
+          "max": 494,
+          "median": 80,
+          "p95": 393.3,
+          "p99": 467.3
+        },
+        "POST:/post/p": {
+          "min": 67,
+          "max": 1927,
+          "median": 71,
+          "p95": 232.8,
+          "p99": 1646.2
+        },
+        "GET:/post/thread/": {
+          "min": 62,
+          "max": 492,
+          "median": 73.5,
+          "p95": 392.1,
+          "p99": 481.1
+        },
+        "POST:/post/like/": {
+          "min": 63,
+          "max": 452,
+          "median": 79,
+          "p95": 224,
+          "p99": 441.4
+        },
+        "POST:/media": {
+          "min": 66,
+          "max": 776,
+          "median": 75,
+          "p95": 383.4,
+          "p99": 776
+        }
+      },
+      "counters": {
+        "code 200 on GET:/post/last/redis": 43,
+        "code 200 on GET:/media/": 173,
+        "code 200 on POST:/post/p": 98,
+        "code 200 on GET:/post/thread/": 128,
+        "code 200 on POST:/post/like/": 55,
+        "code 200 on POST:/media": 23
+      },
+      "concurrency": 9,
+      "pendingRequests": 9,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2019-11-19T23:46:23.658Z",
+      "scenariosCreated": 50,
+      "scenariosCompleted": 55,
+      "requestsCompleted": 497,
+      "latency": {
+        "min": 58.9,
+        "max": 340.7,
+        "median": 66.1,
+        "p95": 223.2,
+        "p99": 244.8
+      },
+      "rps": {
+        "count": 491,
+        "mean": 49.1
+      },
+      "scenarioDuration": {
+        "min": 228.1,
+        "max": 5883.8,
+        "median": 925.8,
+        "p95": 3702.7,
+        "p99": 5839.6
+      },
+      "scenarioCounts": {
+        "Random reader": 37,
+        "Troll": 4,
+        "Create root post": 9
+      },
+      "errors": {},
+      "codes": {
+        "200": 497
+      },
+      "matches": 0,
+      "customStats": {
+        "POST:/post/like/": {
+          "min": 62,
+          "max": 85,
+          "median": 66,
+          "p95": 77.8,
+          "p99": 84.9
+        },
+        "GET:/post/last/redis": {
+          "min": 217,
+          "max": 279,
+          "median": 224,
+          "p95": 251.7,
+          "p99": 279
+        },
+        "GET:/post/thread/": {
+          "min": 62,
+          "max": 125,
+          "median": 67,
+          "p95": 90.2,
+          "p99": 116.3
+        },
+        "GET:/media/": {
+          "min": 62,
+          "max": 118,
+          "median": 67,
+          "p95": 96.1,
+          "p99": 117.2
+        },
+        "POST:/media": {
+          "min": 69,
+          "max": 342,
+          "median": 87,
+          "p95": 306,
+          "p99": 342
+        },
+        "POST:/post/p": {
+          "min": 65,
+          "max": 241,
+          "median": 70,
+          "p95": 228.9,
+          "p99": 236.9
+        }
+      },
+      "counters": {
+        "code 200 on POST:/post/like/": 54,
+        "code 200 on GET:/post/last/redis": 41,
+        "code 200 on GET:/post/thread/": 147,
+        "code 200 on GET:/media/": 129,
+        "code 200 on POST:/media": 25,
+        "code 200 on POST:/post/p": 101
+      },
+      "concurrency": 4,
+      "pendingRequests": 3,
+      "scenariosAvoided": 0
+    },
+    {
+      "timestamp": "2019-11-19T23:46:26.164Z",
+      "scenariosCreated": 6,
+      "scenariosCompleted": 10,
+      "requestsCompleted": 132,
+      "latency": {
+        "min": 61,
+        "max": 261.2,
+        "median": 66.3,
+        "p95": 209.3,
+        "p99": 230.2
+      },
+      "rps": {
+        "count": 129,
+        "mean": 51.39
+      },
+      "scenarioDuration": {
+        "min": 427.6,
+        "max": 2256.8,
+        "median": 1000.6,
+        "p95": 2256.8,
+        "p99": 2256.8
+      },
+      "scenarioCounts": {
+        "Random reader": 5,
+        "Troll": 1
+      },
+      "errors": {},
+      "codes": {
+        "200": 132
+      },
+      "matches": 0,
+      "customStats": {
+        "POST:/media": {
+          "min": 68,
+          "max": 148,
+          "median": 72,
+          "p95": 141.3,
+          "p99": 148
+        },
+        "POST:/post/p": {
+          "min": 64,
+          "max": 131,
+          "median": 69,
+          "p95": 75.7,
+          "p99": 130.3
+        },
+        "GET:/post/last/redis": {
+          "min": 218,
+          "max": 266,
+          "median": 224,
+          "p95": 266,
+          "p99": 266
+        },
+        "POST:/post/like/": {
+          "min": 63,
+          "max": 72,
+          "median": 64.5,
+          "p95": 72,
+          "p99": 72
+        },
+        "GET:/media/": {
+          "min": 62,
+          "max": 107,
+          "median": 68,
+          "p95": 107,
+          "p99": 107
+        },
+        "GET:/post/thread/": {
+          "min": 63,
+          "max": 101,
+          "median": 66,
+          "p95": 71,
+          "p99": 101
+        }
+      },
+      "counters": {
+        "code 200 on POST:/media": 15,
+        "code 200 on POST:/post/p": 53,
+        "code 200 on GET:/post/last/redis": 7,
+        "code 200 on POST:/post/like/": 8,
+        "code 200 on GET:/media/": 19,
+        "code 200 on GET:/post/thread/": 30
+      },
+      "concurrency": 0,
+      "pendingRequests": 0,
+      "scenariosAvoided": 0
+    }
+  ]
+};
+  </script>
+
+  <style>
+      h1 {
+        line-height: 200%;
+      }
+
+      body {
+          background-color: #fcfcfc;
+      }
+
+      .container {
+          width: 100%;
+          min-width: 960px;
+      }
+  </style>
+
+
+</head>
+<body>
+
+<div class="container">
+
+<div class="row" id="header">
+  <div class="col-lg-4 col-lg-offset-4">
+    <pre style="font-size: 5pt; background-color: #fcfcfc; border: none;">
+            _   _ _ _                                                _
+  __ _ _ __| |_(_) | | ___ _ __ _   _      _ __ ___ _ __   ___  _ __| |_
+ / _` | '__| __| | | |/ _ \ '__| | | |    | '__/ _ \ '_ \ / _ \| '__| __|
+| (_| | |  | |_| | | |  __/ |  | |_| |    | | |  __/ |_) | (_) | |  | |_
+ \__,_|_|   \__|_|_|_|\___|_|   \__, |    |_|  \___| .__/ \___/|_|   \__|
+                                |___/              |_|
+
+    </pre>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <h1 class="text-center" id="page-title">Test run on <span id="timestamp">date</span></h1>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-3">
+    <p><strong>Summary</strong></p>
+    <table class="table table-bordered table-hover table-condensed">
+      <tbody>
+        <tr>
+          <td>Test duration</td>
+          <td><span id="testDuration">0</span> sec</td>
+        </tr>
+        <tr>
+          <td>Scenarios created</td>
+          <td><span id="scenariosCreated">0</span></td>
+        </tr>
+
+        <tr>
+          <td>Scenarios completed</td>
+          <td><span id="scenariosCompleted">0</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col-lg-5" id="scenarioCountsContainer">
+    <div>
+      <strong>Scenario counts:</strong>
+
+      <p></p>
+
+      <table class="table table-bordered table-hover table-condensed" id="scenarioCounts">
+      </table>
+    </div>
+  </div>
+
+  <div class="col-lg-1">
+    <div id="codesContainer">
+      <strong>Codes</strong>
+
+      <p></p>
+
+      <table class="table table-bordered table-hover table-condensed" id="codes">
+      </table>
+    </div>
+  </div>
+
+  <div class="col-lg-3">
+    <div id="errorsContainer">
+      <strong>Errors</strong>
+
+      <p></p>
+
+      <table class="table table-bordered table-hover table-condensed" id="errors">
+      </table>
+    </div>
+  </div>
+</div> <!-- /.row -->
+
+<div class="row">
+  <div class="text-center col-lg-12">
+    <h2>Charts</h2>
+  </div>
+</div>
+
+<div class="row">
+  <div class="latency-histogram text-center col-lg-12"></div>
+</div>
+
+<div class="row">
+  <div class="latency text-center col-lg-12"></div>
+</div>
+
+<div class="latency-legend"></div>
+
+<div class="row">
+
+</div>
+
+<div class="row">
+  <div class="concurrency text-center col-lg-12"></div>
+</div>
+
+<div class="row">
+  <div class="rps-mean text-center col-lg-12"></div>
+</div>
+<div class="row">
+  <div class="rps-count text-center col-lg-12"></div>
+</div>
+
+<div class="row">
+  <div class="codes-line text-center col-lg-12"></div>
+</div>
+<div class="row">
+  <div class="errors-line text-center col-lg-12"></div>
+</div>
+
+
+  
+    
+    <div class="row">
+      <div class="id_7608 text-center col-lg-12"></div>
+      <script>
+      var histogramData = _.map(Report.aggregate.customStats['GET:/post/last/redis'], function(v, k) { return {bin: k, value: v} });
+      MG.data_graphic({
+        chart_type: 'bar',
+        x_label: 'Percentile',
+        y_label: '(ms)',
+        animate_on_load: true,
+        title: 'GET:/post/last/redis distribution',
+        description: 'Distribution of GET:/post/last/redis',
+        target: '.id_7608',
+        data: histogramData,
+        x_accessor: 'bin',
+        y_accessor: 'value',
+        binned: true,
+        height: 250,
+        interpolate: 'monotone',
+        padding_percentage: 0,
+        bar_orientation: 'vertical',
+        width: 450
+      });
+      </script>
+    </div>
+  
+    
+    <div class="row">
+      <div class="id_2343 text-center col-lg-12"></div>
+      <script>
+      var histogramData = _.map(Report.aggregate.customStats['GET:/media/'], function(v, k) { return {bin: k, value: v} });
+      MG.data_graphic({
+        chart_type: 'bar',
+        x_label: 'Percentile',
+        y_label: '(ms)',
+        animate_on_load: true,
+        title: 'GET:/media/ distribution',
+        description: 'Distribution of GET:/media/',
+        target: '.id_2343',
+        data: histogramData,
+        x_accessor: 'bin',
+        y_accessor: 'value',
+        binned: true,
+        height: 250,
+        interpolate: 'monotone',
+        padding_percentage: 0,
+        bar_orientation: 'vertical',
+        width: 450
+      });
+      </script>
+    </div>
+  
+    
+    <div class="row">
+      <div class="id_1298 text-center col-lg-12"></div>
+      <script>
+      var histogramData = _.map(Report.aggregate.customStats['POST:/post/p'], function(v, k) { return {bin: k, value: v} });
+      MG.data_graphic({
+        chart_type: 'bar',
+        x_label: 'Percentile',
+        y_label: '(ms)',
+        animate_on_load: true,
+        title: 'POST:/post/p distribution',
+        description: 'Distribution of POST:/post/p',
+        target: '.id_1298',
+        data: histogramData,
+        x_accessor: 'bin',
+        y_accessor: 'value',
+        binned: true,
+        height: 250,
+        interpolate: 'monotone',
+        padding_percentage: 0,
+        bar_orientation: 'vertical',
+        width: 450
+      });
+      </script>
+    </div>
+  
+    
+    <div class="row">
+      <div class="id_5863 text-center col-lg-12"></div>
+      <script>
+      var histogramData = _.map(Report.aggregate.customStats['GET:/post/thread/'], function(v, k) { return {bin: k, value: v} });
+      MG.data_graphic({
+        chart_type: 'bar',
+        x_label: 'Percentile',
+        y_label: '(ms)',
+        animate_on_load: true,
+        title: 'GET:/post/thread/ distribution',
+        description: 'Distribution of GET:/post/thread/',
+        target: '.id_5863',
+        data: histogramData,
+        x_accessor: 'bin',
+        y_accessor: 'value',
+        binned: true,
+        height: 250,
+        interpolate: 'monotone',
+        padding_percentage: 0,
+        bar_orientation: 'vertical',
+        width: 450
+      });
+      </script>
+    </div>
+  
+    
+    <div class="row">
+      <div class="id_3248 text-center col-lg-12"></div>
+      <script>
+      var histogramData = _.map(Report.aggregate.customStats['POST:/post/like/'], function(v, k) { return {bin: k, value: v} });
+      MG.data_graphic({
+        chart_type: 'bar',
+        x_label: 'Percentile',
+        y_label: '(ms)',
+        animate_on_load: true,
+        title: 'POST:/post/like/ distribution',
+        description: 'Distribution of POST:/post/like/',
+        target: '.id_3248',
+        data: histogramData,
+        x_accessor: 'bin',
+        y_accessor: 'value',
+        binned: true,
+        height: 250,
+        interpolate: 'monotone',
+        padding_percentage: 0,
+        bar_orientation: 'vertical',
+        width: 450
+      });
+      </script>
+    </div>
+  
+    
+    <div class="row">
+      <div class="id_8508 text-center col-lg-12"></div>
+      <script>
+      var histogramData = _.map(Report.aggregate.customStats['POST:/media'], function(v, k) { return {bin: k, value: v} });
+      MG.data_graphic({
+        chart_type: 'bar',
+        x_label: 'Percentile',
+        y_label: '(ms)',
+        animate_on_load: true,
+        title: 'POST:/media distribution',
+        description: 'Distribution of POST:/media',
+        target: '.id_8508',
+        data: histogramData,
+        x_accessor: 'bin',
+        y_accessor: 'value',
+        binned: true,
+        height: 250,
+        interpolate: 'monotone',
+        padding_percentage: 0,
+        bar_orientation: 'vertical',
+        width: 450
+      });
+      </script>
+    </div>
+  
+
+
+</div>
+
+<div class="row">
+  <div class="col-lg-8 col-lg-offset-2">
+    <h3 class="text-center">Raw report data</h3>
+    <p>This is the raw JSON stats output that the report was generated from.</p>
+    <div id="editor">
+    </div>
+  </div>
+</div>
+
+<script>
+var editor = ace.edit("editor");
+editor.getSession().setMode("ace/mode/javascript");
+editor.setValue(JSON.stringify(Report, null, 2));
+editor.gotoLine(1);editor.setHighlightActiveLine(false);
+
+var l = _;
+
+$('#timestamp').html(moment(Report.aggregate.timestamp).format('DD MMM YYYY HH:mm:SS'));
+$('#testDuration').html(l.size(Report.intermediate) * 10);
+$('#scenariosCompleted').html(Report.aggregate.scenariosCompleted);
+$('#scenariosCreated').html(Report.aggregate.scenariosCreated);
+
+var markers = [];
+if(l.size(Report.phases) > 0) {
+  markers = l.foldl(Report.phases, function(acc, phase, index) {
+    var label = phase.name || 'Phase ' + (index + 1);
+    var timestamp = (index === 0) ? 0 : Report.phases[index - 1].duration + acc[index - 1].timestamp;
+
+    acc.push({
+      timestamp: timestamp,
+      label: label
+    });
+
+    return acc;
+  }, []);
+}
+
+if (l.size(Report.aggregate.scenarioCounts) > 0) {
+  l.each(Report.aggregate.scenarioCounts, function(count, name) {
+    var $tdName = $('<td>' + name + '</td>');
+    var percentage = Math.round(count / Report.aggregate.scenariosCreated * 100 * 1000) / 1000;
+    var $tdCount = $('<td>' + count + ' (' + percentage + '%)' + '</td>');
+    var $el = $('<tr></tr>')
+      .append($tdName)
+      .append($tdCount)
+      .appendTo($('#scenarioCounts'));
+  });
+} else {
+  $('#scenarioCountsContainer').hide();
+}
+
+if (l.size(Report.aggregate.codes) > 0) {
+  l.each(Report.aggregate.codes, function(count, code) {
+    var anchor = '';
+    if (code >= 100 && code < 200) {
+      anchor = '#1xx_Informational';
+    } else if (code >= 200 && code < 300) {
+      anchor = '#2xx_Success';
+    } else if (code >= 300 && code < 400) {
+      anchor = '#3xx_Redirection';
+    } else if (code >= 400 && code < 500) {
+      anchor = '#4xx_Client_Error';
+    } else if (code >= 500 && code < 600) {
+      anchor = '#5xx_Server_Error';
+    }
+
+    var $a = $('<a>' + code + '</a>').attr('href', 'https://en.wikipedia.org/wiki/List_of_HTTP_status_codes' + anchor);
+    var $td = $('<td></td>').append($a);
+    var $el = $('<tr></tr>')
+      .append($td)
+      .append($('<td>' + count + '</td>'))
+      .appendTo($('#codes'));
+  });
+} else {
+  $('#codesContainer').hide();
+}
+
+if (l.size(Report.aggregate.errors) > 0) {
+  l.each(Report.aggregate.errors, function(count, code) {
+    var $el = $('<tr></tr>')
+      .append($('<td>' + code + '</td>'))
+      .append($('<td>' + count + '</td>'))
+      .appendTo($('#errors'));
+  });
+} else {
+  $('#errorsContainer > p').html('&#10004; Test completed without network or OS errors.');
+}
+
+var histogramData = l.map(Report.aggregate.latency, function(v, k) { return {bin: k, value: v} });
+
+MG.data_graphic({
+  chart_type: 'bar',
+  x_label: 'Percentile',
+  y_label: '(ms)',
+  animate_on_load: true,
+  title: 'Overall Latency Distribution',
+  description: 'Distribution of all observed response latencies',
+  target: '.latency-histogram',
+  data: histogramData,
+  x_accessor: 'bin',
+  y_accessor: 'value',
+  binned: true,
+  height: 250,
+  interpolate: 'monotone',
+  padding_percentage: 0,
+  bar_orientation: 'vertical',
+  width: 450
+});
+
+var chartData = l.map(
+  window.Report.intermediate,
+  function(o,i) {
+    return {
+      timestamp: i*10+10,
+
+      rpsMean: o.rps.mean,
+      rpsCount: o.rps.count,
+      concurrency: o.concurrency,
+      latencyMax: o.latency.max,
+      latencyp99: o.latency.p99,
+      latencyp95: o.latency.p95,
+      latencyMedian: o.latency.median,
+      latencyMin: o.latency.min
+    }
+  });
+
+//
+// Response codes
+//
+
+if (l.size(Report.aggregate.codes) > 0) {
+  var codesData = l.foldl(Report.intermediate, function(acc, o, i) {
+    var res = {};
+    res.timestamp = i*10+10;
+    l.each(o.codes, function(count, code) {
+      res[code] = count;
+    });
+    acc.push(res);
+    return acc;
+  }, []);
+  var uniqueCodes = l.foldl(Report.intermediate, function(acc, o) {
+    l.each(o.codes, function(count, code) {
+      if (l.indexOf(acc, code) === -1) {
+        acc.push(code);
+      }
+    });
+    return acc;
+  }, []);
+
+  MG.data_graphic({
+    x_label: 'Time',
+    y_label: 'Count',
+    title: 'HTTP codes',
+    description: 'Occurence of HTTP response codes',
+    target: '.codes-line',
+    data: codesData,
+    x_accessor: 'timestamp',
+    y_accessor: uniqueCodes,
+    legend: uniqueCodes,
+    right: 50,
+    chart_type: 'line',
+    area: false,
+    markers: markers,
+    width: 900
+  });
+}
+
+//
+// Errors
+//
+
+if (l.size(Report.aggregate.errors) > 0) {
+  var errorData = l.foldl(Report.intermediate, function(acc, o, i) {
+    var res = {};
+    res.timestamp = i*10+10;
+    l.each(o.errors, function(count, name) {
+      res[name] = count;
+    });
+    acc.push(res);
+    return acc;
+  }, []);
+  var uniqueErrors = l.foldl(Report.intermediate, function(acc, o) {
+    l.each(o.errors, function(count, name) {
+      if (l.indexOf(acc, name) === -1) {
+        acc.push(name);
+      }
+    });
+    return acc;
+  }, []);
+
+  MG.data_graphic({
+    title: 'Error Codes',
+    description: 'Occurence of error codes',
+    target: '.errors-line',
+    data: errorData,
+    x_accessor: 'timestamp',
+    y_accessor: uniqueErrors,
+    chart_type: 'line',
+    area: false,
+    markers: markers
+  });
+
+}
+
+//
+// Latency
+//
+MG.data_graphic({
+  chart_type: 'line',
+  x_label: 'Time',
+  y_label: '(ms)',
+  animate_on_load: true,
+  area: false,
+  title: "Latency At Intervals",
+  description: "Latency values at different points during the test run",
+  data: chartData,
+  target: '.latency',
+  width: 900,
+  x_accessor: 'timestamp',
+  y_accessor: ['latencyMin', 'latencyMedian', 'latencyp95', 'latencyMax'],
+  legend: ['min', 'p50', 'p95', 'max'],
+  //legend_target: '.latency-legend',
+  right: 50,
+  interpolate: 'monotone',
+  mouseover: function(d, i) {
+  },
+  markers: markers
+        });
+
+            MG.data_graphic({
+            animate_on_load: true,
+            area: false,
+            y_label: 'Count',
+            x_label: 'Time',
+            title: 'Concurrent users',
+            description: 'Concurrent users',
+            data: chartData,
+            target: '.concurrency',
+            x_accessor: 'timestamp',
+            y_accessor: ['concurrency'],
+            interpolate: 'monotone',
+            markers: markers,
+            width: 900
+            });
+
+MG.data_graphic({
+  animate_on_load: true,
+  area: false,
+  y_label: 'Count',
+  x_label: 'Time',
+  title: 'Mean RPS',
+  description: 'Mean requests per second',
+  data: chartData,
+  target: '.rps-mean',
+  x_accessor: 'timestamp',
+  y_accessor: ['rpsMean'],
+  interpolate: 'monotone',
+  markers: markers,
+  width: 900
+});
+
+MG.data_graphic({
+  animate_on_load: true,
+  area: false,
+  y_label: 'Count',
+  x_label: 'Time',
+  title: 'RPS Count',
+  description: 'Count of requests per second',
+  data: chartData,
+  target: '.rps-count',
+  x_accessor: 'timestamp',
+  y_accessor: ['rpsCount'],
+  interpolate: 'monotone',
+  markers: markers,
+  width: 900
+});
+</script>
+<div id="footer">
+  <footer>This report was created with <a href="https://artillery.io">Artillery</a> - free open-source load-testing for HTTP and WebSockets</footer>
+</div>
+</body>
+</html>

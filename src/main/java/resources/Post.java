@@ -143,6 +143,62 @@ public class Post {
     }
 
     public static class PostDTOInitialAttributes {
+        public String getSubreddit() {
+            return subreddit;
+        }
+
+        public void setSubreddit(String subreddit) {
+            this.subreddit = subreddit;
+        }
+
+        public String getOpUsername() {
+            return opUsername;
+        }
+
+        public void setOpUsername(String opUsername) {
+            this.opUsername = opUsername;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public String getParentPost() {
+            return parentPost;
+        }
+
+        public void setParentPost(String parentPost) {
+            this.parentPost = parentPost;
+        }
+
+        public String getRootPost() {
+            return rootPost;
+        }
+
+        public void setRootPost(String rootPost) {
+            this.rootPost = rootPost;
+        }
+
+        public boolean isLink() {
+            return isLink;
+        }
+
+        public void setLink(boolean link) {
+            isLink = link;
+        }
+
         public String subreddit, opUsername, title, content, parentPost, rootPost;
         private boolean isLink;
     }

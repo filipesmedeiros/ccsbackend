@@ -12,13 +12,24 @@ import static api.PostsResource.POST_COL;
 public class Posts {
 
     public static Post getPost(String postId) {
-        String post = RedisCache.get(postId);
+        if(AppConfig.IS_CACHE_ON) {
+            String post = RedisCache.get(postId + ":post");
+            Long postScore = RedisCache.getLong(postId + ":score");
 
-        if(post == null) {
-            post = Database.getResourceDocById(POST_COL, postId).toJson();
-            RedisCache.set(postId, post);
+            if(post == null || postScore == null) {
+                Document postDoc = Database.getResourceDocById(POST_COL, postId);
+                RedisCache.set(postId + ":post", postDoc.toJson());
+                RedisCache.set(postId + ":score", postDoc.getLong("score").toString());
+                RedisCache.setExpireTimeout(postId + ":post", AppConfig.POST_AND_THREAD_CACHE_TIMEOUT);
+                RedisCache.setExpireTimeout(postId + ":score", AppConfig.POST_AND_THREAD_CACHE_TIMEOUT);
+                return Post.fromDocument(postDoc);
+            } else {
+                Post postFinal = Post.fromDocument(new Document(post));
+                postFinal.setScore(postScore);
+                return postFinal;
+            }
         }
-        return Post.fromDocument(new Document(post));
+        return Post.fromDocument(Database.getResourceDocById(POST_COL, postId));
     }
 
     public static List<Post> postChildren(String postId) {

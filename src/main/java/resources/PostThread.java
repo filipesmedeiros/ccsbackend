@@ -1,7 +1,10 @@
 package resources;
 
+import com.microsoft.azure.cosmosdb.Document;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.*;
 
@@ -50,7 +53,27 @@ public class PostThread {
     }
 
     public static PostThread fromJson(String json) {
+        JSONObject jsonObject = new JSONObject(json);
 
-        return null;
+        JSONObject rootJson = jsonObject.getJSONObject("root");
+        Post root = Post.fromDocument(new Document(rootJson.toString()));
+
+        PostThread thread = new PostThread(root);
+
+        JSONArray rootChildrenJson = jsonObject.getJSONArray("children");
+        for(int i = 0; i < rootChildrenJson.length(); i++) {
+            JSONObject firstChildJson = rootChildrenJson.getJSONObject(i);
+            Post childComment = Post.fromDocument(new Document(firstChildJson.getJSONObject("comment").toString()));
+
+            thread.addFirstChildren(childComment);
+
+            JSONArray secondChildrenJson = firstChildJson.getJSONArray("children");
+            for(int j = 0; j < secondChildrenJson.length(); j++) {
+                Post secondChild = Post.fromDocument(new Document(secondChildrenJson.getJSONObject(j).toString()));
+                thread.addSecondChildren(childComment, secondChild);
+            }
+        }
+
+        return thread;
     }
 }

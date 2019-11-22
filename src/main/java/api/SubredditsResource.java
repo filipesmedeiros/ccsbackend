@@ -18,6 +18,8 @@ public class SubredditsResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String addSubreddit(String jsonSubreddit) {
         Document subredditDoc = new Document(jsonSubreddit);
+        subredditDoc.set("score", 0);
+        System.out.println(jsonSubreddit + "/n -----------------------");
         return Database.createResourceIfNotExists(subredditDoc, SUBREDDIT_COL, false).getId();
     }
 

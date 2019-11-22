@@ -1,6 +1,9 @@
 package utils;
 
+import api.PostsResource;
+import api.UsersResource;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.microsoft.azure.cosmosdb.Document;
 import resources.Vote;
 
@@ -11,15 +14,15 @@ public class Votes {
 
     public static final String VOTE_COL = "Votes";
 
-    public static String addVote(String postId, String col, String voteData, boolean up) {
+    public static String addVote(String postId, String voteData, boolean up) {
         Gson gson = new Gson();
-        Document usernameDoc = new Document(voteData);
-        String userId = usernameDoc.getString("username");
-        String subreddit = usernameDoc.getString("subredditId");
-        if(!Database.resourceExists(col, userId))
+        Document voteDataDoc = new Document(voteData);
+        String userId = voteDataDoc.getString("username");
+        String subreddit = voteDataDoc.getString("subredditId");
+        if(!Database.resourceExists(UsersResource.USERS_COL, userId))
             throw new BadRequestException("The author of the vote does not exist.");
 
-        if(!Database.resourceExists(col, postId))
+        if(!Database.resourceExists(PostsResource.POST_COL, postId))
             throw new NotFoundException("No comment with that id was found");
 
         String postVoteId = Vote.generateId(postId, userId);
@@ -61,9 +64,9 @@ public class Votes {
     }
 
     public static Long countVotesOnDB(String postId, boolean up) {
-        Document doc = Database.count(VOTE_COL, "SELECT VALUE COUNT(1) as voteCount FROM " + VOTE_COL +
+        Document doc = Database.count(VOTE_COL, "SELECT VALUE COUNT(1) FROM " + VOTE_COL +
                 " v WHERE v.submissionId = '" + postId + "' AND v.up = " + up);
-        return (Long) doc.get("voteCount");
+        return new Gson().fromJson(doc.toJson(), JsonArray.class).getAsLong();
     }
 
     public static String getCacheKey(String postId, boolean up) {

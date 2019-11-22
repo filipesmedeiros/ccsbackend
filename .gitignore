@@ -7,3 +7,4 @@ target/*
 *.iml
 azurekeys.properties
 azure.auth
+node_modules/*

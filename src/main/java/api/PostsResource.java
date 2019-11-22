@@ -21,8 +21,7 @@ public class PostsResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String addPost(String jsonPost) {
         Document postDoc = new Document(jsonPost);
-        if(!Database.testClientJsonWithDoc(postDoc, Post.PostDTOInitialAttributes.class))
-            throw new BadRequestException();
+        new Gson().fromJson(jsonPost, Post.PostDTOInitialAttributes.class);
 
         // TODO ir a cache
         String username = postDoc.get("opUsername").toString();
@@ -73,8 +72,6 @@ public class PostsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Post getPost(@PathParam("postId") String postId) {
         Document postDoc = Database.getResourceDocById(POST_COL, postId);
-        postDoc.set("upvotes", Votes.getVotes(postId, true));
-        postDoc.set("downvotes", Votes.getVotes(postId, false));
         return new Gson().fromJson(postDoc.toJson(), Post.class);
     }
 
@@ -83,7 +80,7 @@ public class PostsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String setLike(@PathParam("postId") String postId, String voteData) {
-        return Votes.addVote(postId, POST_COL, voteData, true);
+        return Votes.addVote(postId, voteData, true);
     }
 
     @POST
@@ -99,7 +96,7 @@ public class PostsResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String setDislike(@PathParam("postId") String postId, String voteData) {
-        return Votes.addVote(postId, POST_COL, voteData, false);
+        return Votes.addVote(postId, voteData, false);
     }
 
     @POST

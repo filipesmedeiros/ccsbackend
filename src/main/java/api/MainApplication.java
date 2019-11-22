@@ -8,25 +8,11 @@ import java.util.Set;
 @ApplicationPath("/")
 public class MainApplication extends Application {
 
-    // TODO verificar se o metodo funciona, incluindo se reflections podem ser usadas no azure...
-    // TODO fazer verificacoes quando vamos fazer posts (user existe, etc)
-    // TODO verificar se estamos a tratar bem das excecoes que podem aparecer a aceder ao cosmos
-    // TODO fazer sistema de upvotes e downvotes
-    // TODO fazer os comentarios
-    // TODO decidir e implementar o sistema de frontpage (all)
-    // TODO decidir e implementar o sistema de frontpage (subreddit)
-    // TODO decidir e implementar os comentários de um post
-    // TODO apagar/editar users, subreddits etc (texto mas nao titulo nos posts)
-    // TODO as excecoes de WS com mensagem nao mandam essa mensagem em lado nenhum, acho eu, arranjar maneira de mandar
+    // TODO geo replicate storage com funcao / gerar imagens pequenas com aquele servico do azure
+    // TODO artillery
 
-    // TODO ------ CENAS OPCIONAIS MAS QUE DEVEM SER FIXES E NAO MUITO DIFICEIS ----
-    // TODO sistema de subscricao a subreddits, para um user ter a sua propria frontpage
-    // TODO ver requestoptions do cosmos
-    // TODO ter karma associado a utilizadores
-    // TODO verificacoes tipo tamanho dos usernames etc
-    // TODO editar comentarios\
-    // TODO Evitar json -> objeto -> json
-    // TODO colisao de hash
+    //Perguntar como especificar para que servidor/storage é que os pedidos vao, se ha maneita de fazer a cache barata
+    //se da para fazer a cache replicada sem paga 1000000000000000 de euros por mes
 
     @Override
     public Set<Class<?>> getClasses() {
