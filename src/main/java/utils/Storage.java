@@ -39,6 +39,10 @@ public class Storage {
 
         initializeStorage();
 
+        System.out.println("-----------------------/n");
+        System.out.println("Uploading image/n");
+        System.out.println("-----------------------/n");
+
         try {
             CloudBlobContainer blobContainer = blobClient.getContainerReference(CONTAINER);
             String blobId = Integer.toString(Arrays.hashCode(data));

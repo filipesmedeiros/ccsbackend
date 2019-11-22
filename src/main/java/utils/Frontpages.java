@@ -1,12 +1,8 @@
 package utils;
 
 import api.PostsResource;
-import api.SubredditsResource;
-import com.google.gson.Gson;
 import com.microsoft.azure.cosmosdb.Document;
-import redis.clients.jedis.Tuple;
 import resources.Post;
-import resources.Subreddit;
 
 import java.util.*;
 

@@ -14,10 +14,11 @@ scenarios:
       - loop:
         - function: "genNewUser"
         - post:
-            url: "/user"
+            url: "/users"
             headers:
               Accept: text/plain
             json:
+              id: "{{ name }}"
               name: "{{ name }}"
             afterResponse: "genNewUserReply"
         count: 5000
