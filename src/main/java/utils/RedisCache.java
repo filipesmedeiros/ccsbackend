@@ -1,7 +1,6 @@
 package utils;
 
 import com.microsoft.azure.cosmosdb.Document;
-import main.java.utils.Secrets;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
