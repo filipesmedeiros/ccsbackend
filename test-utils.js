@@ -156,8 +156,7 @@ function genNewPost(context, events, done) {
 	}
 	context.vars.hasImage = false 
 	if(Math.random() < 0.2) {   // 20% of the posts have images
-		context.vars.image = images.sample()
-        context.vars.msg = images.sample()
+        context.vars.msg = context.vars.imageId
 		context.vars.hasImage = true 
 	}
 	return done()
