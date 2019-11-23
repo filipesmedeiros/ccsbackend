@@ -15,7 +15,7 @@ public class UpdateAllFrontpageOnCache {
 
     @FunctionName("update_frontpages_on_cache")
     public void updateFrontpagesOnCache(@TimerTrigger(name = "keepAliveTrigger",
-            schedule = "* * */" + AppConfig.FRONTPAGES_UPDATE_PERIOD + " * * *") String timerInfo,
+            schedule = "0 0 */" + AppConfig.FRONTPAGES_UPDATE_PERIOD + " * * *") String timerInfo,
                                         ExecutionContext context) {
 
         List<Post> topPosts = Frontpages.calcAllFrontpage();
