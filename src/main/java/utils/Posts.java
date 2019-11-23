@@ -20,12 +20,14 @@ public class Posts {
 
     public static List<Post> getLatest(String subreddit, int count) {
         String query = "SELECT TOP " + count + " * FROM " + POST_COL + " p " +
-                "WHERE p.subreddit = " + subreddit;
+                "WHERE p.subreddit = '" + subreddit +
+                "' ORDER BY p.timestamp DESC";
         return executeQueryAndGetPosts(query);
     }
 
     public static List<Post> getLatest(int count) {
-        String query = "SELECT TOP " + count + " * FROM " + POST_COL;
+        String query = "SELECT TOP " + count + " * FROM " + POST_COL +
+                " ORDER BY p.timestamp DESC";
         return executeQueryAndGetPosts(query);
     }
 
