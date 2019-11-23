@@ -20,7 +20,7 @@
     <functionAppRegion>japaneast</functionAppRegion>
     <functionPricingTier>B1</functionPricingTier>
     <functionStagingDirectory>${project.build.directory}/azure-functions/${functionAppName}</functionStagingDirectory>
-    <stagingDirectory>${project.build.directory}/azure-webapp/scc-backend-4770147967</stagingDirectory>
+    <stagingDirectory>${project.build.directory}/azure-webapp/scc-backend-japan-4770147967</stagingDirectory>
     <functionResourceGroup>scc-backend-rc-47701-47967</functionResourceGroup>
   </properties>
 
@@ -222,7 +222,7 @@
             </resources>
           </deployment>
           <resourceGroup>scc-backend-japan-4770147967</resourceGroup>
-          <appName>scc-backend-4770147967</appName>
+          <appName>scc-backend-japan-4770147967</appName>
           <!--
           <properties>
             <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

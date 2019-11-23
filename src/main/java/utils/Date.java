@@ -11,4 +11,8 @@ public class Date {
         long milis = minutes * 60 * 1000;
         return System.currentTimeMillis() - milis;
     }
+
+    public static void main(String[] args) {
+        System.out.println(timestampMinusHours(24));
+    }
 }
