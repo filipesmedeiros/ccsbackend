@@ -22,6 +22,7 @@ public class Database {
 
     private static synchronized AsyncDocumentClient initializeDatabase() {
         if (dbClient == null) {
+            // ConnectionPolicy connectionPolicy = ConnectionPolicy.GetDefault();
             ConnectionPolicy connectionPolicy = new ConnectionPolicy();
             connectionPolicy.setConnectionMode(ConnectionMode.Direct);
             dbClient = new AsyncDocumentClient.Builder()

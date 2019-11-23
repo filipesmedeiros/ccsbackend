@@ -51,7 +51,26 @@ public class PostsResource {
         return t.toJson();
     }
 
-    //TODO
+    @GET
+    @Path("/latest")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getLatestPosts(@QueryParam("count") int count) {
+        if(count > 250)
+            throw new BadRequestException();
+
+        return new Gson().toJson(Posts.getLatest(count));
+    }
+
+    @GET
+    @Path("/latest/{subreddit}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getLatestPosts(@PathParam("subreddit") String subreddit, @QueryParam("count") int count) {
+        if(count > 250)
+            throw new BadRequestException();
+
+        return new Gson().toJson(Posts.getLatest(subreddit, count));
+    }
+
     @GET
     @Path("/frontpageall")
     @Produces(MediaType.APPLICATION_JSON)
