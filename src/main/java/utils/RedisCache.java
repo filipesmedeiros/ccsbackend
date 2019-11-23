@@ -14,7 +14,7 @@ import java.util.TreeSet;
 
 public class RedisCache {
 
-    private static final String AZURE_CACHE_HOSTNAME = "sccredis4770147967.redis.cache.windows.net";
+    private static final String AZURE_CACHE_HOSTNAME = "sccredis4770147967japan.redis.cache.windows.net";
 
     private static JedisPool jedisPool = null;
 
@@ -36,7 +36,7 @@ public class RedisCache {
     public static JedisPool initializeRedis() {
         if(jedisPool == null)
             jedisPool = new JedisPool(jedisPoolConfig(), AZURE_CACHE_HOSTNAME,
-                    6380, 1000, Secrets.AZURE_CACHE_PRIMARY_KEY_EU_WEST, true);
+                    6380, 1000, Secrets.AZURE_CACHE_PRIMARY_KEY_JAPAN_EAST, true);
         return jedisPool;
     }
 
