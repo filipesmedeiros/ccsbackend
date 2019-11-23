@@ -10,6 +10,7 @@
 
   <name>Backend Cloud 47701 47967</name>
 
+  <!--
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -17,12 +18,13 @@
     <azure.functions.maven.plugin.version>1.3.4</azure.functions.maven.plugin.version>
     <azure.functions.java.library.version>1.3.0</azure.functions.java.library.version>
     <functionAppName>scc-serverless-4770147967</functionAppName>
-    <functionAppRegion>westeurope</functionAppRegion>
+    <functionAppRegion>japaneast</functionAppRegion>
     <functionPricingTier>B1</functionPricingTier>
     <functionStagingDirectory>${project.build.directory}/azure-functions/${functionAppName}</functionStagingDirectory>
     <stagingDirectory>${project.build.directory}/azure-webapp/scc-backend-4770147967</stagingDirectory>
     <functionResourceGroup>scc-backend-rc-47701-47967</functionResourceGroup>
   </properties>
+  -->
 
   <repositories>
     <repository>
@@ -205,7 +207,7 @@
         <configuration>
           <schemaVersion>V2</schemaVersion>
           <pricingTier>B1</pricingTier>
-          <region>westeurope</region>
+          <region>japaneast</region>
           <runtime>
             <os>linux</os>
             <javaVersion>jre8</javaVersion>
@@ -221,7 +223,7 @@
               </resource>
             </resources>
           </deployment>
-          <resourceGroup>scc-backend-euwest-4770147967</resourceGroup>
+          <resourceGroup>scc-backend-japan-4770147967</resourceGroup>
           <appName>scc-backend-4770147967</appName>
           <!--
           <properties>
