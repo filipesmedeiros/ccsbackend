@@ -27,7 +27,7 @@ public class Storage {
             if(storageEuWest == null)
                 storageEuWest = CloudStorageAccount.parse(Secrets.AZURE_STORAGE_KEY_EU_WEST);
             if(storageJapanEast == null)
-                storageJapanEast = CloudStorageAccount.parse(Secrets.AZURE_CACHE_PRIMARY_KEY_JAPAN_EAST);
+                storageJapanEast = CloudStorageAccount.parse(utils.Secrets.AZURE_STORAGE_KEY_EU_WEST);
         } catch(URISyntaxException | InvalidKeyException e) {
             System.out.println("Something went wrong with init storageEuWest. Check key.");
             e.printStackTrace();
