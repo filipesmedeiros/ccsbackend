@@ -15,7 +15,7 @@ public class ImagesResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_OCTET_STREAM)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public String upload(byte[] data) {
 
         try {
