@@ -10,7 +10,6 @@
 
   <name>Backend Cloud 47701 47967</name>
 
-  <!--
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -24,7 +23,6 @@
     <stagingDirectory>${project.build.directory}/azure-webapp/scc-backend-4770147967</stagingDirectory>
     <functionResourceGroup>scc-backend-rc-47701-47967</functionResourceGroup>
   </properties>
-  -->
 
   <repositories>
     <repository>
