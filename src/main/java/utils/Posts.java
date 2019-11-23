@@ -11,6 +11,26 @@ import static api.PostsResource.POST_COL;
 
 public class Posts {
 
+    private static List<Post> executeQueryAndGetPosts(String query) {
+        List<Document> docs = Database.getResourceListDocs(POST_COL, query);
+        List<Post> posts = new ArrayList<>(docs.size());
+        docs.forEach(post -> posts.add(Post.fromDocument(post)));
+        return posts;
+    }
+
+    public static List<Post> getLatest(String subreddit, int count) {
+        String query = "SELECT TOP " + count + " * FROM " + POST_COL + " p " +
+                "WHERE p.subreddit = '" + subreddit +
+                "' ORDER BY p.timestamp DESC";
+        return executeQueryAndGetPosts(query);
+    }
+
+    public static List<Post> getLatest(int count) {
+        String query = "SELECT TOP " + count + " * FROM " + POST_COL +
+                " ORDER BY p.timestamp DESC";
+        return executeQueryAndGetPosts(query);
+    }
+
     public static Post getPost(String postId) {
         if(AppConfig.IS_CACHE_ON) {
             String post = RedisCache.get(postId + ":post");
