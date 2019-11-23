@@ -5,12 +5,10 @@ import com.microsoft.azure.cosmos.CosmosItem;
 import com.microsoft.azure.cosmosdb.*;
 import com.microsoft.azure.cosmosdb.rx.AsyncDocumentClient;
 import exceptions.ConflictException;
-import main.java.utils.Secrets;
 import management.AzureManagement;
 import rx.Observable;
 
 import javax.ws.rs.NotFoundException;
-import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
