@@ -59,7 +59,7 @@ public class Storage {
         initializeStorage();
 
         try{
-            CloudBlobContainer blobContainer = blobClientEuWest.getContainerReference(CONTAINER);
+            CloudBlobContainer blobContainer = blobClientJapanEast.getContainerReference(CONTAINER);
             if(!blobContainer.exists())
                 throw new ContainerDoesNotExistException();
             CloudBlob blob = blobContainer.getBlobReferenceFromServer(blobId);

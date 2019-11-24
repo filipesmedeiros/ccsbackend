@@ -313,7 +313,7 @@ function selectFromPostList(requestParams, response, context, ee, next) {
 			context.vars.postlistimages = []
 			for( i = 0; i < resp.length; i++) {
 				if(resp[i].isLink && !context.vars.readimages.has(resp[i].content))
-					context.vars.postlistimages.push(resp[i].content.substring(resp[i].content.findLast("/") + 1,
+					context.vars.postlistimages.push(resp[i].content.substring(resp[i].content.lastIndexOf("/") + 1,
                         resp[i].content.length))
 			}
 			checkHasMoreInImageList(context)
@@ -353,17 +353,29 @@ function selectFromPostList(requestParams, response, context, ee, next) {
 function selectFromPostThread(requestParams, response, context, ee, next) {
 	if( response.body && response.body.length > 0) {
 		let resp = JSON.parse( response.body)
-		if( typeof resp !== 'undefined' && resp.length  > 0) {
+
+		let postList = []
+
+		if(resp.hasOwnProperty("root"))
+			postList.push(resp.root);
+		if(resp.children.length > 0)
+			resp.children.forEach(p => {
+				postList.push(p.comment);
+				if(p.children.length > 0)
+					p.children.forEach(p2 => postList.push(p2));
+			});
+
+		if(typeof resp !== 'undefined' && postList.length  > 0) {
 			let num = random(resp.length / 2)
 			var i
 			for( i = 0 ; i < num; i ++) {
-				let pp = resp.sample()
+				let pp = postList.sample()
 				context.vars.idstoread.push({postId: pp.id, subreddit: pp.community})
 			}
 			context.vars.postlistimages = []
-			if( resp.root.isLink && !context.vars.readimages.has(resp.root.content))
-				context.vars.postlistimages.push(resp.root.content.substring(resp.root.content.findLast("/") + 1,
-					resp.root.content.length))
+			if(postList[0].isLink && !context.vars.readimages.has(postList[0].content))
+				context.vars.postlistimages.push(postList[0].content.substring(postList[0].content.lastIndexOf("/") + 1,
+					postList[0].content.length))
 //			for( i = 0; i < resp.length; i++) {
 //				if( resp[i].image !== "" && ! context.vars.readimages.has(resp[i].image))
 //					context.vars.postlistimages.push(resp[i].image)
@@ -424,7 +436,7 @@ function selectAllFromPostList(requestParams, response, context, ee, next) {
 		context.vars.postlistimages = []
 		for( i = 0; i < resp.length; i++) {
 			if(resp[i].isLink && !context.vars.readimages.has(resp[i].content))
-				context.vars.postlistimages.push(resp[i].content.substring(resp[i].content.findLast("/") + 1,
+				context.vars.postlistimages.push(resp[i].content.substring(resp[i].content.lastIndexOf("/") + 1,
                     resp[i].content.length))
 		}
 		checkHasMoreInImageList(context)

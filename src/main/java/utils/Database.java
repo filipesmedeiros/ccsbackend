@@ -15,7 +15,7 @@ import java.util.List;
 
 public class Database {
 
-    private static final String AZURE_DB_URL = "https://scccosmos4770147967.documents.azure.com";
+    private static final String AZURE_DB_URL = "https://scccosmosdb4770147967.documents.azure.com";
     private static final String AZURE_DB_ENDPOINT = AZURE_DB_URL + ":443/";
     private static final String AZURE_DB_ID = AzureManagement.AZURE_COSMOSDB_DATABASE;
     private static AsyncDocumentClient dbClient;
