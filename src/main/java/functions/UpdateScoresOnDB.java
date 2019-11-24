@@ -22,7 +22,7 @@ public class UpdateScoresOnDB {
 
     @FunctionName("update_scores_on_db")
     public void updateScoresOnDB(@TimerTrigger(name = "keepAliveTrigger",
-            schedule = "* * */" + AppConfig.SCORE_UPDATE_PERIOD_ON_DB + " * * *") String timerInfo,
+            schedule = "0 0 */" + AppConfig.SCORE_UPDATE_PERIOD_ON_DB + " * * *") String timerInfo,
                                  ExecutionContext context) {
 
         String query = "SELECT * FROM " + Votes.VOTE_COL + " v" +
