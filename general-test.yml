@@ -10,12 +10,12 @@ config:
     metricsProcessEndpoint : "myProcessEndpoint"  # function used to aggregate endpoints for statistics
   phases:
     - name: "Warm up"    # WARM UP PHASE: duration: 20s, starting with 1 bew client/sec up to 5 new clients/sec
-      duration: 10
+      duration: 3
       arrivalRate: 1
-      rampTo: 5
+      rampTo: 3
     - name: "Main test"    # MAIN TESTS: duration: 120s, with 5 new clients/sec
-      duration: 120         # NOTE: number of clients per second will depend on the complexity of your scenarios
-      arrivalRate: 5       # you need to try a number that can be handled by the client
+      duration: 5         # NOTE: number of clients per second will depend on the complexity of your scenarios
+      arrivalRate: 3       # you need to try a number that can be handled by the client
 
 
 scenarios:
@@ -116,13 +116,13 @@ scenarios:
     flow:
       - function: "genNewPost"
       - post:
+          ifTrue: "hasImage"
           url: "/images"
           headers:
             Content-Type: application/octet-stream
             Accept: text/plain
           beforeRequest: "setNewPostImageBody"
           afterResponse: "genNewImageReply"
-          ifTrue: "hasImage"
       - post:
           url: "/posts"
           headers:

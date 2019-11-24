@@ -32,6 +32,8 @@ var communityNames = []
 var postIds = []
 var images = []
 
+// TODO this
+
 // All endpoints starting with the following prefixes will be aggregated in the same for the statistics
 var statsPrefix = [ ["/post/thread/","GET"],
 	["/post/like/","POST"],
@@ -145,12 +147,15 @@ function genNewCommunity(context, events, done) {
 function genNewPost(context, events, done) {
 	loadData();
 	context.vars.community = communityNames.sample()
+
+	console.log(context.vars.community);
+
 	context.vars.creator = userNames.sample()
 	context.vars.msg = `${Faker.lorem.paragraph()}`;
 	if( postIds.length > 0 && Math.random() < 0.8) {  // 80% are replies
 		let npost = postIds.sample()
-		context.vars.parentId = npost[0]
-		context.vars.community = npost[1]
+		context.vars.parentId = npost.postId
+		context.vars.community = npost.subreddit
 	} else {
 		context.vars.parentId = null
 	}
@@ -191,9 +196,9 @@ function hasMoreInBrowseList(context, next) {
  */
 function checkHasMoreInImageList(context) {
 	context.vars.hasNextimageid = false
-	while( context.vars.hasNextimageid == false && typeof context.vars.postlistimages !== 'undefeined' && context.vars.postlistimages.length > 0) {
+	while(!context.vars.hasNextimageid && typeof context.vars.postlistimages !== 'undefeined' && context.vars.postlistimages.length > 0) {
 		context.vars.nextimageid = context.vars.postlistimages.splice(-1,1)[0] // remove element from array
-	    context.vars.hasNextimageid = ! context.vars.readimages.has(context.vars.nextimageid)
+	    context.vars.hasNextimageid = !context.vars.readimages.has(context.vars.nextimageid)
 	}
 }
 function hasMoreInImageList(context, next) {
@@ -296,12 +301,13 @@ function selectFromPostList(requestParams, response, context, ee, next) {
 			var i
 			for( i = 0 ; i < num; i ++) {
 				let pp = resp.sample()
-				context.vars.idstoread.push([pp.id,pp.community])
+				//context.vars.idstoread.push([pp.id, pp.community])
+				context.vars.idstoread.push({postId: pp.id, subreddit: pp.subreddit})
 			}
 			context.vars.postlistimages = []
 			for( i = 0; i < resp.length; i++) {
-				if( resp[i].image !== "" && ! context.vars.readimages.has(resp[i].image))
-					context.vars.postlistimages.push(resp[i].image)
+				if(resp[i].isLink && !context.vars.readimages.has(resp[i].content))
+					context.vars.postlistimages.push(resp[i].content)
 			}
 			checkHasMoreInImageList(context)
 		} else {
@@ -311,12 +317,12 @@ function selectFromPostList(requestParams, response, context, ee, next) {
     delete context.vars.like
     delete context.vars.reply
 	if( context.vars.idstoread.length > 0) {
-		context.vars.curid = context.vars.nextid
-		context.vars.curcommunity = context.vars.nextid
 		let pp = context.vars.idstoread.splice(-1,1)[0]
-		context.vars.nextid = pp[0]
-		context.vars.nextcommunity = pp[1]
-	    context.vars.hasNextid = true
+		context.vars.nextid = pp.postId
+		context.vars.nextcommunity = pp.subreddit
+		context.vars.curid = context.vars.nextid
+		context.vars.curcommunity = context.vars.nextcommunity
+		context.vars.hasNextid = true
 	    context.vars.browsecount++
 	} else {
 		context.vars.hasNextid = false
@@ -345,11 +351,11 @@ function selectFromPostThread(requestParams, response, context, ee, next) {
 			var i
 			for( i = 0 ; i < num; i ++) {
 				let pp = resp.sample()
-				context.vars.idstoread.push([pp.id,pp.community])
+				context.vars.idstoread.push({postId: pp.id, subreddit: pp.community})
 			}
 			context.vars.postlistimages = []
-			if( resp.post.image !== "" && ! context.vars.readimages.has(resp.post.image))
-				context.vars.postlistimages.push(resp.post.image)
+			if( resp.post.isLink && !context.vars.readimages.has(resp.post.content))
+				context.vars.postlistimages.push(resp.post.content)
 //			for( i = 0; i < resp.length; i++) {
 //				if( resp[i].image !== "" && ! context.vars.readimages.has(resp[i].image))
 //					context.vars.postlistimages.push(resp[i].image)
@@ -358,8 +364,8 @@ function selectFromPostThread(requestParams, response, context, ee, next) {
 		} else {
 			context.vars.hasNextimageid = false
 		}
-		if( typeof resp.post !== 'undefined') {
-			context.vars.curcommunity = resp.post.community
+		if( typeof resp.root !== 'undefined') {
+			context.vars.curcommunity = resp.root.subreddit
 		} else {
 			context.vars.curcommunity = communityNames.sample()
 		}
@@ -376,11 +382,11 @@ function selectFromPostThread(requestParams, response, context, ee, next) {
 	    delete context.vars.reply
 	}
 	if( context.vars.idstoread.length > 0) {
+		let pp = context.vars.idstoread.splice(-1,1)[0]
+		context.vars.nextid = pp.postId
+		context.vars.nextcommunity = pp.subreddit
 		context.vars.curid = context.vars.nextid
 		context.vars.curcommunity = context.vars.nextcommunity
-		let pp = context.vars.idstoread.splice(-1,1)[0]
-		context.vars.nextid = pp[0]
-		context.vars.nextcommunity = pp[1]
 	    context.vars.hasNextid = true
 	    context.vars.browsecount++
 	} else {
@@ -405,12 +411,12 @@ function selectAllFromPostList(requestParams, response, context, ee, next) {
 		var resp = JSON.parse( response.body)
 		var i
 		for( i = 0 ; i < resp.length; i ++) {
-			context.vars.idstoread.push([resp[i].id,resp[i].community])
+			context.vars.idstoread.push({postId: resp[i].id, subreddit: resp[i].community})
 		}
 		context.vars.postlistimages = []
 		for( i = 0; i < resp.length; i++) {
-			if( resp[i].image !== "" && ! context.vars.readimages.has(resp[i].image))
-				context.vars.postlistimages.push(resp[i].image)
+			if(resp[i].isLink && !context.vars.readimages.has(resp[i].content))
+				context.vars.postlistimages.push(resp[i].content)
 		}
 		checkHasMoreInImageList(context)
 	}
@@ -418,8 +424,8 @@ function selectAllFromPostList(requestParams, response, context, ee, next) {
     delete context.vars.reply
 	if( context.vars.idstoread.length > 0) {
 		let pp = context.vars.idstoread.splice(-1,1)[0]
-		context.vars.nextid = pp[0]
-		context.vars.nextcommunity = pp[1]
+		context.vars.nextid = pp.postId
+		context.vars.nextcommunity = pp.subreddit
 	    context.vars.hasNextid = true
 	    context.vars.browsecount++
 	} else {

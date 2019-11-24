@@ -9,3 +9,4 @@ azurekeys.properties
 azure.auth
 node_modules/*
 *.data
+images/*
