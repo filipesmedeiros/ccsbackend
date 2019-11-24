@@ -45,7 +45,7 @@ public class Storage {
         initializeStorage();
 
         System.out.println("-----------------------/n");
-        System.out.println("Uploading image/n");
+        System.out.println("Uploading image");
         System.out.println("-----------------------/n");
 
         uploadToBoth(data, override, blobClientEuWest);

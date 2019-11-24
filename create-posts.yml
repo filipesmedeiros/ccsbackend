@@ -1,6 +1,6 @@
 #Create initial set of posts
 config:
-  target: 'https://scc-backend-4770147967.azurewebsites.net'
+  target: 'https://scc-backend-euwest-4796747701.azurewebsites.net'
   plugins:
     metrics-by-endpoint: {}
   http:
@@ -36,5 +36,5 @@ scenarios:
               content: "{{ msg }}"
               isLink: "{{ hasImage }}"
             afterResponse: "genNewPostReply"
-        count: 200
+        count: 40
           

@@ -1,6 +1,6 @@
 #Create initial set of communities
 config:
-  target: 'https://scc-backend-4770147967.azurewebsites.net'
+  target: 'https://scc-backend-euwest-4796747701.azurewebsites.net'
   http:
     pool: 10
   processor: "./test-utils.js"

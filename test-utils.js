@@ -35,14 +35,15 @@ var images = []
 // TODO this
 
 // All endpoints starting with the following prefixes will be aggregated in the same for the statistics
-var statsPrefix = [ ["/post/thread/","GET"],
-	["/post/like/","POST"],
-	["/post/unlike/","POST"],
-	["/image/","GET"],
-	["/post","GET"],
-	["/users/","GET"],
-	["/subreddits/","GET"],
-    ["/images/","GET"]
+var statsPrefix = [
+	["/images","POST"],
+    ["/images","GET"],
+	["/posts","GET"],
+    ["/posts","POST"],
+	["/users","GET"],
+    ["/users","POST"],
+	["/subreddits","GET"],
+    ["/subreddits","POST"]
 	]
 
 // Function used to compress statistics
@@ -165,6 +166,11 @@ function genNewPost(context, events, done) {
         context.vars.msg = context.vars.imageId
 		context.vars.hasImage = true 
 	}
+	if(context.vars.nextcommunity == undefined || context.vars.nextcommunity === '')
+        console.log(communityNames.length);
+
+    if(context.vars.creator == undefined || context.vars.creator === '')
+        console.log(communityNames.length);
 	return done()
 }
 
@@ -212,7 +218,7 @@ function hasMoreInImageList(context, next) {
  */
 function genNewPostReply(requestParams, response, context, ee, next) {
 	if( response.body && response.body.length > 0) {
-		postIds.push([response.body,context.vars.community])
+		postIds.push({postId:response.body,subreddit:context.vars.community})
 	}
     return next()
 }
@@ -307,7 +313,8 @@ function selectFromPostList(requestParams, response, context, ee, next) {
 			context.vars.postlistimages = []
 			for( i = 0; i < resp.length; i++) {
 				if(resp[i].isLink && !context.vars.readimages.has(resp[i].content))
-					context.vars.postlistimages.push(resp[i].content)
+					context.vars.postlistimages.push(resp[i].content.substring(resp[i].content.findLast("/") + 1,
+                        resp[i].content.length))
 			}
 			checkHasMoreInImageList(context)
 		} else {
@@ -354,8 +361,9 @@ function selectFromPostThread(requestParams, response, context, ee, next) {
 				context.vars.idstoread.push({postId: pp.id, subreddit: pp.community})
 			}
 			context.vars.postlistimages = []
-			if( resp.post.isLink && !context.vars.readimages.has(resp.post.content))
-				context.vars.postlistimages.push(resp.post.content)
+			if( resp.root.isLink && !context.vars.readimages.has(resp.root.content))
+				context.vars.postlistimages.push(resp.root.content.substring(resp.root.content.findLast("/") + 1,
+					resp.root.content.length))
 //			for( i = 0; i < resp.length; i++) {
 //				if( resp[i].image !== "" && ! context.vars.readimages.has(resp[i].image))
 //					context.vars.postlistimages.push(resp[i].image)
@@ -416,7 +424,8 @@ function selectAllFromPostList(requestParams, response, context, ee, next) {
 		context.vars.postlistimages = []
 		for( i = 0; i < resp.length; i++) {
 			if(resp[i].isLink && !context.vars.readimages.has(resp[i].content))
-				context.vars.postlistimages.push(resp[i].content)
+				context.vars.postlistimages.push(resp[i].content.substring(resp[i].content.findLast("/") + 1,
+                    resp[i].content.length))
 		}
 		checkHasMoreInImageList(context)
 	}
