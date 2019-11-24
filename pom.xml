@@ -6,7 +6,7 @@
   <groupId>pt.unl.fct.di.scc</groupId>
   <artifactId>scc-backend</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
 
   <name>Backend Cloud 47701 47967</name>
 
@@ -19,8 +19,7 @@
     <functionAppName>scc-serverless-4770147967</functionAppName>
     <functionAppRegion>japaneast</functionAppRegion>
     <functionPricingTier>B1</functionPricingTier>
-    <functionStagingDirectory>${project.build.directory}/azure-functions/${functionAppName}</functionStagingDirectory>
-    <stagingDirectory>${project.build.directory}/azure-webapp/scc-backend-japan-4770147967</stagingDirectory>
+    <stagingDirectory>${project.build.directory}/azure-functions/${functionAppName}</stagingDirectory>
     <functionResourceGroup>scc-backend-rc-47701-47967</functionResourceGroup>
   </properties>
 
@@ -155,7 +154,6 @@
       <artifactId>jedis</artifactId>
       <version>3.1.0</version>
     </dependency>
-
     <dependency>
       <groupId>com.microsoft.azure.functions</groupId>
       <artifactId>azure-functions-java-library</artifactId>
@@ -190,48 +188,53 @@
     </pluginManagement>
 
     <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
-        <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>com.microsoft.azure</groupId>
-        <artifactId>azure-webapp-maven-plugin</artifactId>
-        <version>1.7.0</version>
-        <configuration>
-          <schemaVersion>V2</schemaVersion>
-          <pricingTier>B1</pricingTier>
-          <region>japaneast</region>
-          <runtime>
-            <os>linux</os>
-            <javaVersion>jre8</javaVersion>
-            <webContainer>WILDFLY 14</webContainer>
-          </runtime>
-          <deployment>
-            <resources>
-              <resource>
-                <directory>${project.basedir}/target</directory>
-                <includes>
-                  <include>*.war</include>
-                </includes>
-              </resource>
-            </resources>
-          </deployment>
-          <resourceGroup>scc-backend-japan-4770147967</resourceGroup>
-          <appName>scc-backend-japan-4770147967</appName>
-          <!--
-          <properties>
-            <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-            <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-          </properties>
-          -->
-        </configuration>
-      </plugin>
+      <!--
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
+        </plugin>
+        -->
 
+
+      <!--
+  <plugin>
+    <groupId>com.microsoft.azure</groupId>
+    <artifactId>azure-webapp-maven-plugin</artifactId>
+    <version>1.7.0</version>
+    <configuration>
+      <schemaVersion>V2</schemaVersion>
+      <pricingTier>B1</pricingTier>
+      <region>japaneast</region>
+      <runtime>
+        <os>linux</os>
+        <javaVersion>jre8</javaVersion>
+        <webContainer>WILDFLY 14</webContainer>
+      </runtime>
+      <deployment>
+        <resources>
+          <resource>
+            <directory>${project.basedir}/target</directory>
+            <includes>
+              <include>*.war</include>
+            </includes>
+          </resource>
+        </resources>
+      </deployment>
+      <resourceGroup>scc-backend-japan-4770147967</resourceGroup>
+      <appName>scc-backend-japan-4770147967</appName>
+      <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      </properties>
+        </configuration>
+      </plugin>
+      -->
+
+      <!--
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <version>3.2.1</version>
@@ -239,8 +242,8 @@
           <warSourceDirectory>WebContent</warSourceDirectory>
         </configuration>
       </plugin>
+      -->
 
-      <!--
       <plugin>
         <groupId>com.microsoft.azure</groupId>
         <artifactId>azure-functions-maven-plugin</artifactId>
@@ -269,9 +272,7 @@
           </execution>
         </executions>
       </plugin>
-      -->
 
-      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -299,9 +300,7 @@
           </execution>
         </executions>
       </plugin>
-      -->
 
-      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -323,10 +322,8 @@
           </execution>
         </executions>
       </plugin>
-      -->
 
       <!--Remove obj folder generated by .NET SDK in maven clean-->
-      <!--
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <version>3.1.0</version>
@@ -338,7 +335,6 @@
           </filesets>
         </configuration>
       </plugin>
-      -->
     </plugins>
   </build>
 
