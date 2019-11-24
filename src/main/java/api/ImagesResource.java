@@ -14,8 +14,8 @@ import java.security.InvalidKeyException;
 public class ImagesResource {
 
     @POST
-    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes({MediaType.APPLICATION_OCTET_STREAM, "image/*"})
+    @Produces({MediaType.TEXT_PLAIN})
     public String upload(byte[] data) {
 
         try {
@@ -32,7 +32,7 @@ public class ImagesResource {
     @GET
     @Path("/{blobId}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Produces("image/*")
     public byte[] download(@PathParam("blobId") String blobId) {
         try {
             return Storage.download(blobId);

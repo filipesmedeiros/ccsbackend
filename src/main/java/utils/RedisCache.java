@@ -36,7 +36,7 @@ public class RedisCache {
     public static JedisPool initializeRedis() {
         if(jedisPool == null)
             jedisPool = new JedisPool(jedisPoolConfig(), AZURE_CACHE_HOSTNAME,
-                    6380, 1000, Secrets.AZURE_CACHE_PRIMARY_KEY, true);
+                    6380, 1000, Secrets.AZURE_CACHE_PRIMARY_KEY_EU_WEST, true);
         return jedisPool;
     }
 

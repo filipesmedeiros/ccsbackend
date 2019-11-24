@@ -9,7 +9,6 @@ import management.AzureManagement;
 import rx.Observable;
 
 import javax.ws.rs.NotFoundException;
-import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +22,7 @@ public class Database {
 
     private static synchronized AsyncDocumentClient initializeDatabase() {
         if (dbClient == null) {
+            // ConnectionPolicy connectionPolicy = ConnectionPolicy.GetDefault();
             ConnectionPolicy connectionPolicy = new ConnectionPolicy();
             connectionPolicy.setConnectionMode(ConnectionMode.Direct);
             dbClient = new AsyncDocumentClient.Builder()
