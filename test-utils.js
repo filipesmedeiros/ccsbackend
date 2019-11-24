@@ -37,10 +37,10 @@ var statsPrefix = [ ["/post/thread/","GET"],
 	["/post/like/","POST"],
 	["/post/unlike/","POST"],
 	["/image/","GET"],
-	["/post/p/","GET"],
+	["/post","GET"],
 	["/users/","GET"],
-	["/community/","GET"],
-    ["/media/","GET"]
+	["/subreddits/","GET"],
+    ["/images/","GET"]
 	]
 
 // Function used to compress statistics
@@ -156,6 +156,7 @@ function genNewPost(context, events, done) {
 	}
 	context.vars.hasImage = false 
 	if(Math.random() < 0.2) {   // 20% of the posts have images
+		context.vars.img = images.sample() // Nao sei se esta certo
         context.vars.msg = context.vars.imageId
 		context.vars.hasImage = true 
 	}
@@ -290,17 +291,17 @@ function endBrowse(context, next) {
 function selectFromPostList(requestParams, response, context, ee, next) {
 	if( response.body && response.body.length > 0) {
 		let resp = JSON.parse( response.body)
-		if( typeof resp.posts !== 'undefined') {
-			let num = random(resp.posts.length / 2)
+		if( typeof resp !== 'undefined') {
+			let num = random(resp.length / 2)
 			var i
 			for( i = 0 ; i < num; i ++) {
-				let pp = resp.posts.sample()
+				let pp = resp.sample()
 				context.vars.idstoread.push([pp.id,pp.community])
 			}
 			context.vars.postlistimages = []
-			for( i = 0; i < resp.posts.length; i++) {
-				if( resp.posts[i].image !== "" && ! context.vars.readimages.has(resp.posts[i].image))
-					context.vars.postlistimages.push(resp.posts[i].image)
+			for( i = 0; i < resp.length; i++) {
+				if( resp[i].image !== "" && ! context.vars.readimages.has(resp[i].image))
+					context.vars.postlistimages.push(resp[i].image)
 			}
 			checkHasMoreInImageList(context)
 		} else {
@@ -339,19 +340,19 @@ function selectFromPostList(requestParams, response, context, ee, next) {
 function selectFromPostThread(requestParams, response, context, ee, next) {
 	if( response.body && response.body.length > 0) {
 		let resp = JSON.parse( response.body)
-		if( typeof resp.posts !== 'undefined' && resp.posts.length  > 0) {
-			let num = random(resp.posts.length / 2)
+		if( typeof resp !== 'undefined' && resp.length  > 0) {
+			let num = random(resp.length / 2)
 			var i
 			for( i = 0 ; i < num; i ++) {
-				let pp = resp.posts.sample()
+				let pp = resp.sample()
 				context.vars.idstoread.push([pp.id,pp.community])
 			}
 			context.vars.postlistimages = []
 			if( resp.post.image !== "" && ! context.vars.readimages.has(resp.post.image))
 				context.vars.postlistimages.push(resp.post.image)
-//			for( i = 0; i < resp.posts.length; i++) {
-//				if( resp.posts[i].image !== "" && ! context.vars.readimages.has(resp.posts[i].image))
-//					context.vars.postlistimages.push(resp.posts[i].image)
+//			for( i = 0; i < resp.length; i++) {
+//				if( resp[i].image !== "" && ! context.vars.readimages.has(resp[i].image))
+//					context.vars.postlistimages.push(resp[i].image)
 //			}
 			checkHasMoreInImageList(context)
 		} else {
@@ -403,13 +404,13 @@ function selectAllFromPostList(requestParams, response, context, ee, next) {
 	if( response.body && response.body.length > 0) {
 		var resp = JSON.parse( response.body)
 		var i
-		for( i = 0 ; i < resp.posts.length; i ++) {
-			context.vars.idstoread.push([resp.posts[i].id,resp.posts[i].community])
+		for( i = 0 ; i < resp.length; i ++) {
+			context.vars.idstoread.push([resp[i].id,resp[i].community])
 		}
 		context.vars.postlistimages = []
-		for( i = 0; i < resp.posts.length; i++) {
-			if( resp.posts[i].image !== "" && ! context.vars.readimages.has(resp.posts[i].image))
-				context.vars.postlistimages.push(resp.posts[i].image)
+		for( i = 0; i < resp.length; i++) {
+			if( resp[i].image !== "" && ! context.vars.readimages.has(resp[i].image))
+				context.vars.postlistimages.push(resp[i].image)
 		}
 		checkHasMoreInImageList(context)
 	}
