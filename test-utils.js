@@ -18,7 +18,8 @@ module.exports = {
   selectFromPostList,
   selectFromPostThread,
   startBrowse,
-  endBrowse
+  endBrowse,
+	printValues
 }
 
 
@@ -453,5 +454,13 @@ function selectAllFromPostList(requestParams, response, context, ee, next) {
 		context.vars.hasNextid = false
 	}
     return next()
+}
+
+function printValues(requestParams, context, ee, next){
+    if(context.vars.curcommunity == undefined || context.vars.curcommunity == null || context.vars.curcommunity === '')
+    	console.log("LLLLLLLLLLOOOOOOOOOLLLLLLLLLLL")
+    console.log("Current Community->" + context.vars.curcommunity)
+
+	return next()
 }
 

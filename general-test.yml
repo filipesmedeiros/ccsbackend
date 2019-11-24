@@ -10,12 +10,12 @@ config:
     metricsProcessEndpoint : "myProcessEndpoint"  # function used to aggregate endpoints for statistics
   phases:
     - name: "Warm up"    # WARM UP PHASE: duration: 20s, starting with 1 bew client/sec up to 5 new clients/sec
-      duration: 3
+      duration: 20
       arrivalRate: 1
-      rampTo: 3
+      rampTo: 5
     - name: "Main test"    # MAIN TESTS: duration: 120s, with 5 new clients/sec
-      duration: 5         # NOTE: number of clients per second will depend on the complexity of your scenarios
-      arrivalRate: 3       # you need to try a number that can be handled by the client
+      duration: 120         # NOTE: number of clients per second will depend on the complexity of your scenarios
+      arrivalRate: 5       # you need to try a number that can be handled by the client
 
 
 scenarios:
@@ -32,10 +32,10 @@ scenarios:
               ifTrue: "hasNextimageid"
               url: "/images/{{ nextimageid }}"
               headers:
-                Accept: image/*
+                Accept: application/octet-stream
               afterResponse: "getImageReply"
         whileTrue: "hasMoreInImageList"
-      - loop:                          #Browse main loop                   
+      - loop:                          #Browse main loop
           - get:                        # get the thread for the next post (from the previous selected)
               ifTrue: "hasNextid"
               url: "/posts/{{ nextid }}/thread"
@@ -45,15 +45,15 @@ scenarios:
                   ifTrue: "hasNextimageid"
                   url: "/images/{{ nextimageid }}"
                   headers:
-                    Accept: image/*
+                    Accept: application/octet-stream
                   afterResponse: "getImageReply"
             whileTrue: "hasMoreInImageList"
           - post:                                      # execute a like for the post
               ifTrue: "like"
               url: "/posts/{{ curid }}/setupvote"
               json:
-                userId: "{{ sessionuser }}"
-                subredditId: "{{ curcommunity }}"
+                username: "{{ sessionuser }}"
+                subredditId: "{{ community }}"
           - function: "genNewPost"
           - post:                                     # submit an image for a reply
               ifTrue: "hasImage and reply"
@@ -69,13 +69,14 @@ scenarios:
               headers:
                 Accept: text/plain
               json:
-                subreddit: "{{ curcommunity }}"
+                subreddit: "{{ nextcommunity }}"
                 opUsername: "{{ sessionuser }}"
                 title: "Title"
                 parentPost: "{{ curid }}"
                 rootPost: "{{ curid }}"
                 content: "{{ msg }}"
                 isLink: "{{ hasImage }}"
+              beforeRequest: "printValues"
               afterResponse: "genNewPostReply"
         whileTrue: "endBrowse"                          # continue browsing until deciding to stop
 
@@ -108,6 +109,7 @@ scenarios:
                 rootPost: "{{ nextid }}"
                 content: "{{ msg }}"
                 isLink: "{{ hasImage }}"
+              beforeRequest: "printValues"
               afterResponse: "genNewPostReply"
         whileTrue: "hasMoreInBrowseList"
 
@@ -135,4 +137,5 @@ scenarios:
             rootPost: ""
             content: "{{ msg }}"
             isLink: "{{ hasImage }}"
+          beforeRequest: "printValues"
           afterResponse: "genNewPostReply"
