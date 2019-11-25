@@ -158,20 +158,17 @@ function genNewPost(context, events, done) {
 		let npost = postIds.sample()
 		context.vars.parentId = npost.postId
 		context.vars.community = npost.subreddit
+		console.log(context.vars.community)
 	} else {
 		context.vars.parentId = null
 	}
 	context.vars.hasImage = false 
 	if(Math.random() < 0.2) {   // 20% of the posts have images
 		context.vars.img = images.sample() // Nao sei se esta certo
-        context.vars.msg = context.vars.imageId
-		context.vars.hasImage = true 
+		context.vars.msg = context.vars.imageId
+		context.vars.hasImage = true
 	}
-	if(context.vars.nextcommunity == undefined || context.vars.nextcommunity === '')
-        console.log(communityNames.length);
 
-    if(context.vars.creator == undefined || context.vars.creator === '')
-        console.log(communityNames.length);
 	return done()
 }
 
@@ -185,8 +182,8 @@ function genNewPost(context, events, done) {
 function hasMoreInBrowseList(context, next) {
 	if( context.vars.idstoread.length > 0) {
 		let pp = context.vars.idstoread.splice(-1,1)[0]
-		context.vars.nextid = pp[0]
-		context.vars.nextcommunity = pp[1]
+		context.vars.nextid = pp.postId
+		context.vars.nextcommunity = pp.subreddit
 	    context.vars.hasNextid = true
 	    context.vars.browsecount++
 	} else {
@@ -203,7 +200,7 @@ function hasMoreInBrowseList(context, next) {
  */
 function checkHasMoreInImageList(context) {
 	context.vars.hasNextimageid = false
-	while(!context.vars.hasNextimageid && typeof context.vars.postlistimages !== 'undefeined' && context.vars.postlistimages.length > 0) {
+	while(!context.vars.hasNextimageid && typeof context.vars.postlistimages !== 'undefined' && context.vars.postlistimages.length > 0) {
 		context.vars.nextimageid = context.vars.postlistimages.splice(-1,1)[0] // remove element from array
 	    context.vars.hasNextimageid = !context.vars.readimages.has(context.vars.nextimageid)
 	}
@@ -313,7 +310,9 @@ function selectFromPostList(requestParams, response, context, ee, next) {
 			}
 			context.vars.postlistimages = []
 			for( i = 0; i < resp.length; i++) {
-				if(resp[i].isLink && !context.vars.readimages.has(resp[i].content))
+				if(resp[i].isLink && !context.vars.readimages.has(resp[i].content.substring(resp[i].content.lastIndexOf("/") + 1,
+					resp[i].content.length)))
+
 					context.vars.postlistimages.push(resp[i].content.substring(resp[i].content.lastIndexOf("/") + 1,
                         resp[i].content.length))
 			}
@@ -374,7 +373,8 @@ function selectFromPostThread(requestParams, response, context, ee, next) {
 				context.vars.idstoread.push({postId: pp.id, subreddit: pp.community})
 			}
 			context.vars.postlistimages = []
-			if(postList[0].isLink && !context.vars.readimages.has(postList[0].content))
+			if(postList[0].isLink && !context.vars.readimages.has(postList[0].content.substring(postList[0].content.lastIndexOf("/") + 1,
+				postList[0].content.length)))
 				context.vars.postlistimages.push(postList[0].content.substring(postList[0].content.lastIndexOf("/") + 1,
 					postList[0].content.length))
 //			for( i = 0; i < resp.length; i++) {

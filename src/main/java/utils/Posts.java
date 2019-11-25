@@ -105,7 +105,7 @@ public class Posts {
 
     public static PostThread getPostThread(String postId) {
         if(AppConfig.IS_CACHE_ON) {
-            String thread = RedisCache.get(postId);
+            String thread = RedisCache.get(postId + ":thread");
 
             if(thread == null) {
                 PostThread postThread = calcPostThread(postId);
