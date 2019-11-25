@@ -10,11 +10,11 @@ config:
     metricsProcessEndpoint : "myProcessEndpoint"  # function used to aggregate endpoints for statistics
   phases:
     - name: "Warm up"    # WARM UP PHASE: duration: 20s, starting with 1 bew client/sec up to 5 new clients/sec
-      duration: 20
+      duration: 5
       arrivalRate: 1
       rampTo: 5
     - name: "Main test"    # MAIN TESTS: duration: 120s, with 5 new clients/sec
-      duration: 120         # NOTE: number of clients per second will depend on the complexity of your scenarios
+      duration: 20         # NOTE: number of clients per second will depend on the complexity of your scenarios
       arrivalRate: 5       # you need to try a number that can be handled by the client
 
 
@@ -76,7 +76,6 @@ scenarios:
                 rootPost: "{{ curid }}"
                 content: "{{ msg }}"
                 isLink: "{{ hasImage }}"
-              beforeRequest: "printValues"
               afterResponse: "genNewPostReply"
         whileTrue: "endBrowse"                          # continue browsing until deciding to stop
 
@@ -109,7 +108,6 @@ scenarios:
                 rootPost: "{{ nextid }}"
                 content: "{{ msg }}"
                 isLink: "{{ hasImage }}"
-              beforeRequest: "printValues"
               afterResponse: "genNewPostReply"
         whileTrue: "hasMoreInBrowseList"
 
@@ -137,5 +135,4 @@ scenarios:
             rootPost: ""
             content: "{{ msg }}"
             isLink: "{{ hasImage }}"
-          beforeRequest: "printValues"
           afterResponse: "genNewPostReply"

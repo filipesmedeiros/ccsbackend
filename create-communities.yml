@@ -19,5 +19,5 @@ scenarios:
               Accept: text/plain
             json:
               id: "{{ name }}"
-        count: 10
+        count: 25
           

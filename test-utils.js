@@ -18,8 +18,7 @@ module.exports = {
   selectFromPostList,
   selectFromPostThread,
   startBrowse,
-  endBrowse,
-	printValues
+  endBrowse
 }
 
 
@@ -104,7 +103,9 @@ loadData();
  * Generate data for a new user using Faker
  */
 function genNewUser(context, events, done) {
-	const name = `${Faker.name.firstName()}.${Faker.name.lastName()}`
+	let name = `${Faker.name.firstName()}.${Faker.name.lastName()}`
+	while(name.includes("\'"))
+        name = `${Faker.name.firstName()}.${Faker.name.lastName()}`
 	context.vars.name = name
 	userNames.push(name)
 	fs.writeFileSync('usernames.data', JSON.stringify(userNames))
@@ -150,7 +151,6 @@ function genNewPost(context, events, done) {
 	loadData();
 	context.vars.community = communityNames.sample()
 
-	console.log(context.vars.community);
 
 	context.vars.creator = userNames.sample()
 	context.vars.msg = `${Faker.lorem.paragraph()}`;
@@ -163,15 +163,11 @@ function genNewPost(context, events, done) {
 	}
 	context.vars.hasImage = false 
 	if(Math.random() < 0.2) {   // 20% of the posts have images
-		context.vars.img = images.sample() // Nao sei se esta certo
+		context.vars.image = images.sample() // Nao sei se esta certo
         context.vars.msg = context.vars.imageId
 		context.vars.hasImage = true 
 	}
-	if(context.vars.nextcommunity == undefined || context.vars.nextcommunity === '')
-        console.log(communityNames.length);
-
-    if(context.vars.creator == undefined || context.vars.creator === '')
-        console.log(communityNames.length);
+    console.log(context.vars.creator);
 	return done()
 }
 
@@ -185,8 +181,8 @@ function genNewPost(context, events, done) {
 function hasMoreInBrowseList(context, next) {
 	if( context.vars.idstoread.length > 0) {
 		let pp = context.vars.idstoread.splice(-1,1)[0]
-		context.vars.nextid = pp[0]
-		context.vars.nextcommunity = pp[1]
+		context.vars.nextid = pp.postId
+		context.vars.nextcommunity = pp.subreddit
 	    context.vars.hasNextid = true
 	    context.vars.browsecount++
 	} else {
@@ -203,7 +199,7 @@ function hasMoreInBrowseList(context, next) {
  */
 function checkHasMoreInImageList(context) {
 	context.vars.hasNextimageid = false
-	while(!context.vars.hasNextimageid && typeof context.vars.postlistimages !== 'undefeined' && context.vars.postlistimages.length > 0) {
+	while(!context.vars.hasNextimageid && typeof context.vars.postlistimages !== 'undefined' && context.vars.postlistimages.length > 0) {
 		context.vars.nextimageid = context.vars.postlistimages.splice(-1,1)[0] // remove element from array
 	    context.vars.hasNextimageid = !context.vars.readimages.has(context.vars.nextimageid)
 	}
@@ -221,6 +217,7 @@ function genNewPostReply(requestParams, response, context, ee, next) {
 	if( response.body && response.body.length > 0) {
 		postIds.push({postId:response.body,subreddit:context.vars.community})
 	}
+	console.log(response.statusCode)
     return next()
 }
 
@@ -432,7 +429,7 @@ function selectAllFromPostList(requestParams, response, context, ee, next) {
 		var resp = JSON.parse( response.body)
 		var i
 		for( i = 0 ; i < resp.length; i ++) {
-			context.vars.idstoread.push({postId: resp[i].id, subreddit: resp[i].community})
+			context.vars.idstoread.push({postId: resp[i].id, subreddit: resp[i].subreddit})
 		}
 		context.vars.postlistimages = []
 		for( i = 0; i < resp.length; i++) {
@@ -456,11 +453,4 @@ function selectAllFromPostList(requestParams, response, context, ee, next) {
     return next()
 }
 
-function printValues(requestParams, context, ee, next){
-    if(context.vars.curcommunity == undefined || context.vars.curcommunity == null || context.vars.curcommunity === '')
-    	console.log("LLLLLLLLLLOOOOOOOOOLLLLLLLLLLL")
-    console.log("Current Community->" + context.vars.curcommunity)
-
-	return next()
-}
 
