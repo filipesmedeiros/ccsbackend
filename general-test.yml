@@ -24,6 +24,12 @@ scenarios:
     weight: 10
     flow:
       - function: "startBrowse"
+      - get:
+          url: "/posts/voluptas/frontpage"
+      - get:
+          url: "/posts/latest?count=10"
+      - get:
+          url: "/posts/latest/voluptas?count=10"
       - get:                           # get some initial page : last post in this case
           url: "/posts/frontpageall"
           afterResponse: "selectFromPostList"      # select some posts for later browsing
@@ -51,6 +57,24 @@ scenarios:
           - post:                                      # execute a like for the post
               ifTrue: "like"
               url: "/posts/{{ curid }}/setupvote"
+              json:
+                username: "{{ sessionuser }}"
+                subredditId: "{{ community }}"
+          - post:                                      # execute a like for the post
+              ifTrue: "like"
+              url: "/posts/{{ curid }}/unsetupvote"
+              json:
+                username: "{{ sessionuser }}"
+                subredditId: "{{ community }}"
+          - post:                                      # execute a like for the post
+              ifTrue: "like"
+              url: "/posts/{{ curid }}/setdownvote"
+              json:
+                username: "{{ sessionuser }}"
+                subredditId: "{{ community }}"
+          - post:                                      # execute a like for the post
+              ifTrue: "like"
+              url: "/posts/{{ curid }}/unsetdownvote"
               json:
                 username: "{{ sessionuser }}"
                 subredditId: "{{ community }}"

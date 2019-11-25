@@ -158,17 +158,14 @@ function genNewPost(context, events, done) {
 		let npost = postIds.sample()
 		context.vars.parentId = npost.postId
 		context.vars.community = npost.subreddit
-		console.log(context.vars.community)
 	} else {
 		context.vars.parentId = null
 	}
 	context.vars.hasImage = false 
 	if(Math.random() < 0.2) {   // 20% of the posts have images
 		context.vars.image = images.sample() // Nao sei se esta certo
-        context.vars.msg = context.vars.imageId
-		context.vars.hasImage = true 
+		context.vars.hasImage = true
 	}
-    console.log(context.vars.creator);
 
 	return done()
 }
@@ -201,8 +198,10 @@ function hasMoreInBrowseList(context, next) {
  */
 function checkHasMoreInImageList(context) {
 	context.vars.hasNextimageid = false
-	while(!context.vars.hasNextimageid && typeof context.vars.postlistimages !== 'undefined' && context.vars.postlistimages.length > 0) {
+	while(!context.vars.hasNextimageid && typeof context.vars.postlistimages !== 'undefined' && context.vars.postlistimages.length > 0
+		|| context.vars.nextimageid == '' || context.vars.nextimageid === " ") {
 		context.vars.nextimageid = context.vars.postlistimages.splice(-1,1)[0] // remove element from array
+		console.log(context.vars.nextimageid)
 	    context.vars.hasNextimageid = !context.vars.readimages.has(context.vars.nextimageid)
 	}
 }
@@ -219,7 +218,6 @@ function genNewPostReply(requestParams, response, context, ee, next) {
 	if( response.body && response.body.length > 0) {
 		postIds.push({postId:response.body,subreddit:context.vars.community})
 	}
-	console.log(response.statusCode)
     return next()
 }
 
@@ -239,8 +237,10 @@ function setNewPostImageBody(requestParams, context, ee, next) {
  */
 function genNewImageReply(requestParams, response, context, ee, next) {
 	if( response.body && response.body.length > 0) {
-		context.vars.imageId = response.body
-	}
+        context.vars.imageId = response.body
+        context.vars.msg = context.vars.imageId
+
+    }
     return next()
 }
 
@@ -313,10 +313,10 @@ function selectFromPostList(requestParams, response, context, ee, next) {
 			context.vars.postlistimages = []
 			for( i = 0; i < resp.length; i++) {
 				if(resp[i].isLink && !context.vars.readimages.has(resp[i].content.substring(resp[i].content.lastIndexOf("/") + 1,
-					resp[i].content.length)))
-
-					context.vars.postlistimages.push(resp[i].content.substring(resp[i].content.lastIndexOf("/") + 1,
+					resp[i].content.length))) {
+                    context.vars.postlistimages.push(resp[i].content.substring(resp[i].content.lastIndexOf("/") + 1,
                         resp[i].content.length))
+                }
 			}
 			checkHasMoreInImageList(context)
 		} else {
