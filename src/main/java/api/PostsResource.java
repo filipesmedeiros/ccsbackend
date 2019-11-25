@@ -21,6 +21,7 @@ public class PostsResource {
     @Produces(MediaType.TEXT_PLAIN)
     public String addPost(String jsonPost) {
         Document postDoc = new Document(jsonPost);
+
         new Gson().fromJson(jsonPost, Post.PostDTOInitialAttributes.class);
 
         // TODO ir a cache
@@ -30,8 +31,10 @@ public class PostsResource {
         String parentPost = postDoc.get("parentPost").toString();
         if(!Database.resourceExists(UsersResource.USERS_COL, username))
             throw new BadRequestException("The author of the post does not exist.");
-        if(!Database.resourceExists(SubredditsResource.SUBREDDIT_COL, subreddit))
+        if(!Database.resourceExists(SubredditsResource.SUBREDDIT_COL, subreddit)) {
+            System.out.println(postDoc.toJson());
             throw new BadRequestException("The subreddit of the post does not exist.");
+        }
 
         if(!rootPost.equals("") && !Database.resourceExists(PostsResource.POST_COL, rootPost))
             throw new BadRequestException("The root post of the comment does not exist.");
@@ -47,7 +50,7 @@ public class PostsResource {
     @Path("/{postId}/thread")
     @Produces(MediaType.APPLICATION_JSON)
     public String getPostThread(@PathParam("postId") String postId) {
-        PostThread t = Posts.calcPostThread(postId);
+        PostThread t = Posts.getPostThread(postId);
         return t.toJson();
     }
 

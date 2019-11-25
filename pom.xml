@@ -221,8 +221,8 @@
               </resource>
             </resources>
           </deployment>
-          <resourceGroup>scc-backend-japaneast-4770147967</resourceGroup>
-          <appName>scc-backend-japaneast-4796747701</appName>
+          <resourceGroup>scc-backend-japan-4770147967</resourceGroup>
+          <appName>scc-backend-japan-4796747701</appName>
         </configuration>
       </plugin>
 
