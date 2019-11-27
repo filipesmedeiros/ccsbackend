@@ -36,24 +36,31 @@ var images = []
 
 // All endpoints starting with the following prefixes will be aggregated in the same for the statistics
 var statsPrefix = [
-	["/images","POST"],
-    ["/images","GET"],
-	["/posts","GET"],
-    ["/posts","POST"],
-	["/users","GET"],
-    ["/users","POST"],
-	["/subreddits","GET"],
-    ["/subreddits","POST"]
-	]
+	["/images/","POST"],
+    ["/images/","GET"],
+
+	["/posts/latest/","GET"],
+	["/posts/thread/", "GET"],
+	["/posts/","POST"],
+	["/posts/","POST", "set"],
+	["/posts/","POST", "unset"],
+
+    ["/users/","GET"],
+    ["/users/","POST"],
+
+	["/subreddits/frontpage/","GET"],
+    ["/subreddits/","POST"]
+	];
 
 // Function used to compress statistics
 global.myProcessEndpoint = function( str, method) {
 	var i = 0;
 	for( i = 0; i < statsPrefix.length; i++) {
-		if( str.startsWith( statsPrefix[i][0]) && method == statsPrefix[i][1])
-			return method + ":" + statsPrefix[i][0];
+		if(str.startsWith(statsPrefix[i][0]) && method == statsPrefix[i][1])
+			return method + ':' + statsPrefix[i][0];
 	}
-	return method + ":" + str;
+
+	return method + ':' + str;
 }
 
 // Auxiliary function to select an element from an array
@@ -201,7 +208,6 @@ function checkHasMoreInImageList(context) {
 	while(!context.vars.hasNextimageid && typeof context.vars.postlistimages !== 'undefined' && context.vars.postlistimages.length > 0
 		|| context.vars.nextimageid == '' || context.vars.nextimageid === " ") {
 		context.vars.nextimageid = context.vars.postlistimages.splice(-1,1)[0] // remove element from array
-		console.log(context.vars.nextimageid)
 	    context.vars.hasNextimageid = !context.vars.readimages.has(context.vars.nextimageid)
 	}
 }

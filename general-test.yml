@@ -10,11 +10,11 @@ config:
     metricsProcessEndpoint : "myProcessEndpoint"  # function used to aggregate endpoints for statistics
   phases:
     - name: "Warm up"    # WARM UP PHASE: duration: 20s, starting with 1 bew client/sec up to 5 new clients/sec
-      duration: 5
+      duration: 2
       arrivalRate: 1
       rampTo: 5
     - name: "Main test"    # MAIN TESTS: duration: 120s, with 5 new clients/sec
-      duration: 20         # NOTE: number of clients per second will depend on the complexity of your scenarios
+      duration: 5         # NOTE: number of clients per second will depend on the complexity of your scenarios
       arrivalRate: 5       # you need to try a number that can be handled by the client
 
 
@@ -25,7 +25,7 @@ scenarios:
     flow:
       - function: "startBrowse"
       - get:
-          url: "/posts/voluptas/frontpage"
+          url: "/posts/frontpage/voluptas"
       - get:
           url: "/posts/latest?count=10"
       - get:
@@ -44,7 +44,7 @@ scenarios:
       - loop:                          #Browse main loop
           - get:                        # get the thread for the next post (from the previous selected)
               ifTrue: "hasNextid"
-              url: "/posts/{{ nextid }}/thread"
+              url: "/posts/thread/{{ nextid }}"
               afterResponse: "selectFromPostThread"   # select posts to browse next and decide whether to reply or like this post
           - loop:                                    # load the image for the main post
               - get:
@@ -56,25 +56,25 @@ scenarios:
             whileTrue: "hasMoreInImageList"
           - post:                                      # execute a like for the post
               ifTrue: "like"
-              url: "/posts/{{ curid }}/setupvote"
+              url: "/posts/setupvote/{{ curid }}"
               json:
                 username: "{{ sessionuser }}"
                 subredditId: "{{ community }}"
           - post:                                      # execute a like for the post
               ifTrue: "like"
-              url: "/posts/{{ curid }}/unsetupvote"
+              url: "/posts/unsetupvote/{{ curid }}"
               json:
                 username: "{{ sessionuser }}"
                 subredditId: "{{ community }}"
           - post:                                      # execute a like for the post
               ifTrue: "like"
-              url: "/posts/{{ curid }}/setdownvote"
+              url: "/posts/setdownvote/{{ curid }}"
               json:
                 username: "{{ sessionuser }}"
                 subredditId: "{{ community }}"
           - post:                                      # execute a like for the post
               ifTrue: "like"
-              url: "/posts/{{ curid }}/unsetdownvote"
+              url: "/posts/unsetdownvote/{{ curid }}"
               json:
                 username: "{{ sessionuser }}"
                 subredditId: "{{ community }}"

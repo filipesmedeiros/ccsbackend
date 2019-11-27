@@ -28,7 +28,7 @@ public class AppConfig {
 
     public static final long DOWNVOTE_SCORE_VALUE = -3;
 
-    public static final long COMMENT_SCORE_VALUE = -3;
+    public static final long COMMENT_SCORE_VALUE = 3;
 
     public static final boolean IS_CACHE_ON = true;
 }

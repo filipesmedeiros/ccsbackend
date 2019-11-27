@@ -205,7 +205,7 @@
         <configuration>
           <schemaVersion>V2</schemaVersion>
           <pricingTier>B1</pricingTier>
-          <region>japaneast</region>
+          <region>westeurope</region>
           <runtime>
             <os>linux</os>
             <javaVersion>jre8</javaVersion>
@@ -221,8 +221,8 @@
               </resource>
             </resources>
           </deployment>
-          <resourceGroup>scc-backend-japan-4770147967</resourceGroup>
-          <appName>scc-backend-japan-4796747701</appName>
+          <resourceGroup>scc-backend-euwest-4770147967</resourceGroup>
+          <appName>scc-backend-euwest-4796747701</appName>
         </configuration>
       </plugin>
 

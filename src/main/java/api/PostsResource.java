@@ -47,7 +47,7 @@ public class PostsResource {
     }
 
     @GET
-    @Path("/{postId}/thread")
+    @Path("/thread/{postId}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getPostThread(@PathParam("postId") String postId) {
         PostThread t = Posts.getPostThread(postId);
@@ -83,7 +83,7 @@ public class PostsResource {
 
     //TODO
     @GET
-    @Path("/{subredditId}/frontpage")
+    @Path("/frontpage/{subredditId}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getFrontPageOfSubreddit(@PathParam("subredditId") String subredditId) {
         return new Gson().toJson(Frontpages.getSubredditFrontpage(subredditId));
@@ -98,7 +98,7 @@ public class PostsResource {
     }
 
     @POST
-    @Path("/{postId}/setupvote")
+    @Path("/setupvote/{postId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String setLike(@PathParam("postId") String postId, String voteData) {
@@ -106,7 +106,7 @@ public class PostsResource {
     }
 
     @POST
-    @Path("/{postId}/unsetupvote")
+    @Path("/unsetupvote/{postId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void unsetLike(@PathParam("postId") String postId, String voteData) {
@@ -114,7 +114,7 @@ public class PostsResource {
     }
 
     @POST
-    @Path("/{postId}/setdownvote")
+    @Path("/setdownvote/{postId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String setDislike(@PathParam("postId") String postId, String voteData) {
@@ -122,7 +122,7 @@ public class PostsResource {
     }
 
     @POST
-    @Path("/{postId}/unsetdownvote")
+    @Path("/unsetdownvote/{postId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void unsetDislike(@PathParam("postId") String postId, String voteData) {
