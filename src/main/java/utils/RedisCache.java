@@ -80,6 +80,14 @@ public class RedisCache {
         }
     }
 
+    public static long lrem(String entryKey, int count, String element) {
+        initializeRedis();
+
+        try(Jedis jedis = jedisPool.getResource()) {
+            return jedis.lrem(entryKey, count, element);
+        }
+    }
+
     // TODO what to return
     public static Long lpush(String entryKey, Document doc, long limit) {
         initializeRedis();

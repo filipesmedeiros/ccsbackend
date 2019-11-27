@@ -22,7 +22,8 @@ public class Votes {
         if(!Database.resourceExists(UsersResource.USERS_COL, userId))
             throw new BadRequestException("The author of the vote does not exist.");
 
-        if(!Database.resourceExists(PostsResource.POST_COL, postId))
+        Document postDoc = Database.getResourceDocById(PostsResource.POST_COL, postId);
+        if(postDoc.getBoolean("isArchived"))
             throw new NotFoundException("No comment with that id was found");
 
         String postVoteId = Vote.generateId(postId, userId);
@@ -43,7 +44,7 @@ public class Votes {
 
     public static void deleteVote(String submissionId, String jsonUsername, boolean up) {
         Document usernameDoc = new Document(jsonUsername);
-        String userId = usernameDoc.getId();
+        String userId = usernameDoc.getString("username");
         String voteId = Vote.generateId(submissionId, userId);
 
         if((boolean) Database.getResourceDocById(VOTE_COL, voteId).get("up") != up)

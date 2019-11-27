@@ -6,7 +6,7 @@ import com.microsoft.azure.cosmosdb.Document;
 public class Post {
 
     private String id, subreddit, opUsername, title, content, parentPost, rootPost;
-    private boolean isLink;
+    private boolean isLink, isArchived;
     private long timestamp, score;
 
     public static Post fromDocument(Document doc) {
@@ -21,6 +21,7 @@ public class Post {
         post.timestamp = doc.getLong("timestamp");
         post.isLink = doc.getBoolean("isLink");
         post.score = doc.getLong("score");
+        post.isArchived = doc.getBoolean("isArchived");
         return post;
     }
 
@@ -36,6 +37,7 @@ public class Post {
         doc.set("timestamp", timestamp);
         doc.set("isLink", isLink);
         doc.set("score", score);
+        doc.set("isArchived", isArchived);
         return doc;
     }
 
@@ -51,6 +53,7 @@ public class Post {
         object.addProperty("timestamp", timestamp);
         object.addProperty("isLink", isLink);
         object.addProperty("score", score);
+        object.addProperty("isArchived", isArchived);
         return object;
     }
 
@@ -140,6 +143,14 @@ public class Post {
 
     public void setScore(long score) {
         this.score = score;
+    }
+
+    public boolean isArchived() {
+        return isArchived;
+    }
+
+    public void setArchived(boolean archived) {
+        isArchived = archived;
     }
 
     public static class PostDTOInitialAttributes {

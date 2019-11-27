@@ -10,7 +10,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.Date;
 
-
 @Path("/posts")
 public class PostsResource {
 
@@ -41,37 +40,48 @@ public class PostsResource {
         if(!parentPost.equals("") && !Database.resourceExists(PostsResource.POST_COL, parentPost))
             throw new BadRequestException("The parent post/comment of the comment does not exist.");
         postDoc.set("timestamp", new Date().getTime());
+        postDoc.set("isArchived", false);
         postDoc.set("score", 0);
 
         return Database.createResourceIfNotExists(postDoc, POST_COL, true).getId();
     }
 
     @GET
-    @Path("/{postId}/thread")
+    @Path("/thread/{postId}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getPostThread(@PathParam("postId") String postId) {
         PostThread t = Posts.getPostThread(postId);
+        if(t == null)
+            throw new NotFoundException("No post found with that id");
+
         return t.toJson();
+    }
+
+    @DELETE
+    @Path("/{postId}")
+    public void archivePost(@PathParam("postId") String postId) {
+        Posts.archivePost(postId);
     }
 
     @GET
     @Path("/latest")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getLatestPosts(@QueryParam("count") int count) {
+    public String getLatestPosts(@QueryParam("count") int count, @QueryParam("start") int start) {
         if(count > 250)
             throw new BadRequestException();
 
-        return new Gson().toJson(Posts.getLatest(count));
+        return new Gson().toJson(Frontpages.getLatest(start, count));
     }
 
     @GET
     @Path("/latest/{subreddit}")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getLatestPosts(@PathParam("subreddit") String subreddit, @QueryParam("count") int count) {
+    public String getLatestPosts(@PathParam("subreddit") String subreddit, @QueryParam("count") int count,
+                                 @QueryParam("start") int start) {
         if(count > 250)
             throw new BadRequestException();
 
-        return new Gson().toJson(Posts.getLatest(subreddit, count));
+        return new Gson().toJson(Frontpages.getLatest(subreddit, start, count));
     }
 
     @GET
@@ -83,7 +93,7 @@ public class PostsResource {
 
     //TODO
     @GET
-    @Path("/{subredditId}/frontpage")
+    @Path("/frontpage/{subredditId}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getFrontPageOfSubreddit(@PathParam("subredditId") String subredditId) {
         return new Gson().toJson(Frontpages.getSubredditFrontpage(subredditId));
@@ -94,11 +104,14 @@ public class PostsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Post getPost(@PathParam("postId") String postId) {
         Document postDoc = Database.getResourceDocById(POST_COL, postId);
+        if(postDoc.getBoolean("isArchived"))
+            throw new NotFoundException();
+
         return new Gson().fromJson(postDoc.toJson(), Post.class);
     }
 
     @POST
-    @Path("/{postId}/setupvote")
+    @Path("/setupvote/{postId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String setLike(@PathParam("postId") String postId, String voteData) {
@@ -106,7 +119,7 @@ public class PostsResource {
     }
 
     @POST
-    @Path("/{postId}/unsetupvote")
+    @Path("/unsetupvote/{postId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void unsetLike(@PathParam("postId") String postId, String voteData) {
@@ -114,7 +127,7 @@ public class PostsResource {
     }
 
     @POST
-    @Path("/{postId}/setdownvote")
+    @Path("/setdownvote/{postId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public String setDislike(@PathParam("postId") String postId, String voteData) {
@@ -122,7 +135,7 @@ public class PostsResource {
     }
 
     @POST
-    @Path("/{postId}/unsetdownvote")
+    @Path("/unsetdownvote/{postId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public void unsetDislike(@PathParam("postId") String postId, String voteData) {

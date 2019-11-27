@@ -4,32 +4,14 @@ import com.microsoft.azure.cosmosdb.Document;
 import resources.Post;
 import resources.PostThread;
 
+import javax.ws.rs.NotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static api.PostsResource.POST_COL;
+import static utils.Frontpages.ALL_FRONTPAGE_POSTS_CACHEKEY;
 
 public class Posts {
-
-    private static List<Post> executeQueryAndGetPosts(String query) {
-        List<Document> docs = Database.getResourceListDocs(POST_COL, query);
-        List<Post> posts = new ArrayList<>(docs.size());
-        docs.forEach(post -> posts.add(Post.fromDocument(post)));
-        return posts;
-    }
-
-    public static List<Post> getLatest(String subreddit, int count) {
-        String query = "SELECT TOP " + count + " * FROM " + POST_COL + " p " +
-                "WHERE p.subreddit = '" + subreddit +
-                "' ORDER BY p.timestamp DESC";
-        return executeQueryAndGetPosts(query);
-    }
-
-    public static List<Post> getLatest(int count) {
-        String query = "SELECT TOP " + count + " * FROM " + POST_COL +
-                " ORDER BY p.timestamp DESC";
-        return executeQueryAndGetPosts(query);
-    }
 
     public static Post getPost(String postId) {
         if(AppConfig.IS_CACHE_ON) {
@@ -38,6 +20,10 @@ public class Posts {
 
             if(post == null || postScore == null) {
                 Document postDoc = Database.getResourceDocById(POST_COL, postId);
+
+                if(postDoc.getBoolean("isArchived"))
+                    throw new NotFoundException("No post with that id was found");
+
                 RedisCache.set(postId + ":post", postDoc.toJson());
                 RedisCache.set(postId + ":score", postDoc.getLong("score").toString());
                 RedisCache.setExpireTimeout(postId + ":post", AppConfig.POST_AND_THREAD_CACHE_TIMEOUT);
@@ -49,12 +35,16 @@ public class Posts {
                 return postFinal;
             }
         }
-        return Post.fromDocument(Database.getResourceDocById(POST_COL, postId));
+        Post p = Post.fromDocument(Database.getResourceDocById(POST_COL, postId));
+        if(p.isArchived())
+            throw new NotFoundException("No post with that id was found");
+        return p;
     }
 
     public static List<Post> postChildren(String postId) {
         String query = "SELECT * FROM " + POST_COL +
-                " c WHERE c.parentPost = '" + postId + "'" +
+                " c WHERE c.parentPost = '" + postId +
+                "' AND c.isArchived = false" +
                 " ORDER BY c.score DESC";
 
         List<Document> commentDocs = Database.getResourceListDocs(POST_COL, query);
@@ -68,7 +58,8 @@ public class Posts {
 
     public static List<Post> topPostChildren(String postId, int count) {
         String query = "SELECT * FROM " + POST_COL +
-                " c WHERE c.parentPost = '" + postId + "'" +
+                " c WHERE c.parentPost = '" + postId +
+                "' AND c.isArchived = false" +
                 " ORDER BY c.score DESC" +
                 " OFFSET 0 LIMIT " + count;
 
@@ -82,8 +73,12 @@ public class Posts {
     }
 
     public static long countCommentsOnPost(String postId) {
-        Document doc = Database.count(POST_COL, "SELECT VALUE COUNT(1) as commentCount FROM " + POST_COL +
-                " c WHERE c.rootPost = '" + postId + "'");
+        String query = "SELECT VALUE COUNT(1) as commentCount" +
+                " FROM " + POST_COL +
+                " c WHERE c.rootPost = '" + postId +
+                "' AND c.isArchived = false";
+
+        Document doc = Database.count(POST_COL, query);
         return (Long) doc.get("commentCount");
     }
 
@@ -112,9 +107,27 @@ public class Posts {
                 RedisCache.set(postId + ":thread", postThread.toJson());
                 RedisCache.setExpireTimeout(postId + ":thread", AppConfig.POST_AND_THREAD_CACHE_TIMEOUT);
                 return postThread;
-            } else
-                return PostThread.fromJson(thread);
+            } else {
+                PostThread postThread = PostThread.fromJson(thread);
+                return postThread.cleanArchived();
+            }
         } else
             return calcPostThread(postId);
+    }
+
+    public static void archivePost(String postId) {
+        Document postDoc = Database.getResourceDocById(POST_COL, postId);
+        if(postDoc.getBoolean("isArchived"))
+            throw new NotFoundException("No post with that id was found");
+
+        postDoc.set("isArchived", true);
+
+        Database.putResourceOverwrite(postDoc, POST_COL);
+
+        RedisCache.lrem(ALL_FRONTPAGE_POSTS_CACHEKEY, 0, postDoc.toJson()); // Remove all (shouldn't be more than 1)
+
+        RedisCache.removeEntry(postId + ":post");
+        RedisCache.removeEntry(postId + ":score");
+        RedisCache.removeEntry(postId + ":thread");
     }
 }

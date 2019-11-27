@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class PostThread {
 
@@ -27,6 +28,23 @@ public class PostThread {
 
         if(secondChildren != null)
             secondChildren.add(post);
+    }
+
+    public PostThread cleanArchived() {
+        if(root.isArchived())
+            return null;
+
+        firstChildren.forEach((comment, subComments) -> {
+            if(comment.isArchived())
+                firstChildren.remove(comment);
+            else
+                subComments.forEach(subComment -> {
+                    if(subComment.isArchived())
+                        subComments.remove(subComment);
+                });
+        });
+
+        return this;
     }
 
     public String toJson() {

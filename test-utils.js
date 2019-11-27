@@ -35,16 +35,15 @@ var images = []
 // TODO this
 
 // All endpoints starting with the following prefixes will be aggregated in the same for the statistics
-var statsPrefix = [
-	["/images","POST"],
-    ["/images","GET"],
-	["/posts","GET"],
-    ["/posts","POST"],
-	["/users","GET"],
-    ["/users","POST"],
-	["/subreddits","GET"],
-    ["/subreddits","POST"]
-	]
+var statsPrefix = [ ["/post/thread/","GET"],
+    ["/post/like/","POST"],
+    ["/post/unlike/","POST"],
+    ["/image/","GET"],
+    ["/post/p/","GET"],
+    ["/users/","GET"],
+    ["/community/","GET"],
+    ["/media/","GET"]
+];
 
 // Function used to compress statistics
 global.myProcessEndpoint = function( str, method) {
@@ -54,12 +53,12 @@ global.myProcessEndpoint = function( str, method) {
 			return method + ":" + statsPrefix[i][0];
 	}
 	return method + ":" + str;
-}
+};
 
 // Auxiliary function to select an element from an array
 Array.prototype.sample = function(){
 	   return this[Math.floor(Math.random()*this.length)]
-}
+};
 
 // Returns a random value, from 0 to val
 function random( val){
@@ -237,10 +236,8 @@ function setNewPostImageBody(requestParams, context, ee, next) {
  */
 function genNewImageReply(requestParams, response, context, ee, next) {
 	if( response.body && response.body.length > 0) {
-        context.vars.imageId = response.body
-        context.vars.msg = context.vars.imageId
-
-    }
+		context.vars.imageId = response.body
+	}
     return next()
 }
 
